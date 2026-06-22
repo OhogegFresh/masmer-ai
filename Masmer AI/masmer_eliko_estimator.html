@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Eliko Estimator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ── GLOBAL APP NAV ── */
+.g-nav{height:44px;background:#03070E;border-bottom:1px solid rgba(249,115,22,.18);display:flex;align-items:center;padding:0 20px;gap:0;z-index:99999;flex-shrink:0;}
+.g-logo{display:flex;align-items:center;gap:8px;margin-right:28px;flex-shrink:0;}
+.g-mark{width:24px;height:24px;background:linear-gradient(135deg,#F97316,#C2560D);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;color:#fff;}
+.g-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#EEF3FF;}
+.g-name em{color:#F97316;font-style:normal;}
+.g-apps{display:flex;gap:2px;}
+.g-app{display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:7px;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:#7A90B2;transition:all .15s;}
+.g-app:hover{background:rgba(255,255,255,.06);color:#EEF3FF;}
+.g-app.active{background:rgba(249,115,22,.1);color:#F97316;font-weight:600;}
+.g-icon{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.g-sep{width:1px;height:20px;background:rgba(255,255,255,.07);margin:0 8px;}
+.g-sync{margin-left:auto;font-size:10px;color:#3A506A;font-weight:500;transition:color .4s;}
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0D1117;--card:#111827;--card2:#1a2234;
+  --og:#F97316;--og-glow:rgba(249,115,22,.10);--og-bdr:rgba(249,115,22,.32);
+  --text:#F9FAFB;--muted:#9CA3AF;--dim:#4B5563;--border:rgba(255,255,255,.07);
+  --green:#10B981;--blue:#3B82F6;--purple:#8B5CF6;--red:#EF4444;--amber:#F59E0B;
+}
+[data-theme="light"]{
+  --bg:#F2EEE9;--card:#FFFFFF;--card2:#F0ECE7;
+  --text:#18130F;--muted:#726860;--dim:#B3A89E;--border:rgba(0,0,0,.08);
+}
+[data-theme="light"] .header{background:rgba(242,238,233,.96);}
+[data-theme="light"] input,[data-theme="light"] select,[data-theme="light"] textarea{background:#F7F4F0;color:var(--text);border-color:rgba(0,0,0,.12);}
+[data-theme="light"] input::placeholder,[data-theme="light"] textarea::placeholder{color:var(--dim);}
+[data-theme="light"] .client-card{background:#F7F4F0;border-color:rgba(0,0,0,.10);}
+[data-theme="light"] .q-option{background:#F7F4F0;border-color:rgba(0,0,0,.10);}
+[data-theme="light"] .q-option.selected{background:rgba(249,115,22,.08);}
+[data-theme="light"] .mat-table th{background:#EDE9E4;}
+[data-theme="light"] .estimate-out{background:#F7F4F0;color:var(--text);}
+[data-theme="light"] .step-item.done .step-circle{background:var(--green);}
+
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.6;min-height:100vh;}
+
+/* HEADER */
+.header{padding:14px 36px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(13,17,23,.96);backdrop-filter:blur(12px);z-index:100;}
+body{display:flex;flex-direction:column;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo-mark{width:32px;height:32px;background:var(--og);border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:16px;color:#fff;}
+.logo-text{font-family:'Syne',sans-serif;font-weight:700;font-size:17px;letter-spacing:-.3px;}
+.logo-text span{color:var(--og);}
+.header-right{display:flex;align-items:center;gap:12px;}
+.badge{background:var(--og-glow);border:1px solid var(--og-bdr);color:var(--og);padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;}
+.theme-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:5px 12px;border-radius:20px;cursor:pointer;font-size:12px;font-family:'DM Sans',sans-serif;transition:all .18s;}
+.theme-btn:hover{color:var(--text);border-color:var(--og);}
+
+/* STEP INDICATOR */
+.step-bar{padding:28px 36px 0;max-width:900px;margin:0 auto;}
+.steps{display:flex;align-items:center;gap:0;}
+.step-item{display:flex;flex-direction:column;align-items:center;flex:1;position:relative;}
+.step-item:not(:last-child)::after{content:'';position:absolute;top:14px;left:50%;width:100%;height:2px;background:var(--border);z-index:0;}
+.step-item.done:not(:last-child)::after{background:var(--og);}
+.step-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-size:11px;font-weight:700;color:var(--muted);z-index:1;position:relative;transition:all .3s;cursor:default;}
+.step-item.done .step-circle{background:var(--og);border-color:var(--og);color:#fff;}
+.step-item.active .step-circle{border-color:var(--og);color:var(--og);}
+.step-item.done.clickable .step-circle{cursor:pointer;}
+.step-label{font-size:10px;color:var(--muted);margin-top:6px;text-align:center;font-weight:500;white-space:nowrap;}
+.step-item.active .step-label{color:var(--og);}
+.step-item.done .step-label{color:var(--text);}
+
+/* CONTENT */
+.content{padding:32px 36px 80px;max-width:900px;margin:0 auto;}
+.step-panel{display:none;}
+.step-panel.active{display:block;animation:fadein .2s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.panel-title{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.4px;margin-bottom:4px;}
+.panel-sub{color:var(--muted);font-size:13px;margin-bottom:28px;}
+.eliko-label{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--purple);font-weight:600;margin-bottom:6px;}
+.eliko-dot{width:6px;height:6px;background:var(--purple);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px;}
+.card+.card{margin-top:14px;}
+
+/* CLIENT STEP */
+.search-row{display:flex;gap:10px;margin-bottom:20px;}
+.search-input{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:10px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .18s;}
+.search-input:focus{border-color:var(--og);}
+.btn{padding:10px 20px;border-radius:9px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:all .18s;}
+.btn-og{background:var(--og);color:#fff;}
+.btn-og:hover{background:#e06612;}
+.btn-ghost{background:transparent;border:1px solid var(--border);color:var(--muted);}
+.btn-ghost:hover{border-color:var(--og);color:var(--og);}
+.btn-sm{padding:7px 14px;font-size:12px;}
+
+.clients-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.client-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;transition:all .18s;display:flex;align-items:center;gap:12px;}
+.client-card:hover{border-color:var(--og);}
+.client-card.selected{border-color:var(--og);background:rgba(249,115,22,.06);}
+.client-avatar{width:36px;height:36px;border-radius:50%;background:var(--og-glow);border:1px solid var(--og-bdr);display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--og);flex-shrink:0;}
+.client-name{font-weight:600;font-size:13px;}
+.client-addr{font-size:11px;color:var(--muted);margin-top:1px;}
+.new-client-form{margin-top:20px;display:none;}
+.new-client-form.open{display:block;}
+.field-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.field{display:flex;flex-direction:column;gap:5px;}
+.field label{font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+.field input,.field select,.field textarea{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;transition:border-color .18s;}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--og);}
+
+/* JOB BRIEF */
+.brief-area{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;line-height:1.7;resize:vertical;min-height:140px;outline:none;transition:border-color .18s;}
+.brief-area:focus{border-color:var(--og);}
+.brief-hints{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;}
+.hint-chip{background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .15s;}
+.hint-chip:hover{border-color:var(--og);color:var(--og);}
+.detected-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.28);color:var(--green);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600;margin-top:14px;}
+
+/* QUESTIONS */
+.eliko-bubble{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.22);border-radius:12px;padding:14px 18px;margin-bottom:20px;font-size:13px;color:var(--text);line-height:1.6;}
+.eliko-bubble strong{color:var(--purple);}
+.q-block{margin-bottom:20px;}
+.q-label{font-size:13px;font-weight:600;margin-bottom:10px;}
+.q-options{display:flex;flex-wrap:wrap;gap:8px;}
+.q-option{background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 14px;font-size:12px;cursor:pointer;transition:all .15s;color:var(--muted);}
+.q-option:hover{border-color:var(--og);color:var(--og);}
+.q-option.selected{border-color:var(--og);background:rgba(249,115,22,.08);color:var(--og);font-weight:600;}
+.q-text{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:9px 12px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;}
+.q-text:focus{border-color:var(--og);}
+
+/* HD ANIMATION */
+.hd-screen{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;text-align:center;min-height:320px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+.hd-logo{font-family:'Syne',sans-serif;font-size:28px;font-weight:800;color:#F96302;letter-spacing:-1px;}
+.hd-logo span{color:var(--text);}
+.hd-status{font-size:13px;color:var(--muted);height:20px;transition:all .3s;}
+.hd-queries{width:100%;max-width:480px;text-align:left;}
+.hd-query-line{font-size:12px;color:var(--muted);padding:5px 0;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;opacity:0;transition:opacity .4s;}
+.hd-query-line.show{opacity:1;}
+.hd-query-line .q-icon{color:var(--og);font-size:13px;}
+.hd-progress{width:260px;height:3px;background:var(--border);border-radius:3px;overflow:hidden;}
+.hd-bar{height:100%;background:var(--og);border-radius:3px;width:0%;transition:width .4s;}
+
+/* MATERIALS TABLE */
+.mat-wrap{display:none;}
+.mat-wrap.show{display:block;}
+.mat-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.mat-stat{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 16px;}
+.mat-stat-val{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;color:var(--og);}
+.mat-stat-label{font-size:11px;color:var(--muted);margin-top:2px;}
+.mat-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);}
+table.mat-table{width:100%;border-collapse:collapse;}
+.mat-table th{background:var(--card2);padding:10px 12px;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;text-align:left;border-bottom:1px solid var(--border);}
+.mat-table td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:top;}
+.mat-table tr:last-child td{border-bottom:none;}
+.mat-table .section-row td{background:rgba(249,115,22,.06);font-weight:700;font-size:11px;color:var(--og);text-transform:uppercase;letter-spacing:.06em;padding:7px 12px;}
+.mat-table .subtotal-row td{font-weight:600;color:var(--muted);font-size:12px;border-top:1px solid var(--border);}
+.mat-table .total-row td{font-family:'Syne',sans-serif;font-weight:800;color:var(--og);font-size:14px;background:rgba(249,115,22,.06);}
+.hd-link{color:var(--og);text-decoration:none;font-size:11px;}
+.hd-link:hover{text-decoration:underline;}
+.confidential-bar{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.22);border-radius:8px;padding:8px 14px;font-size:11px;color:var(--red);font-weight:700;text-align:center;margin-bottom:16px;text-transform:uppercase;letter-spacing:.06em;}
+
+/* PRICE STEP */
+.price-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;}
+.mat-total-display{background:var(--og-glow);border:1px solid var(--og-bdr);border-radius:10px;padding:16px 20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;}
+.mat-total-display .label{font-size:12px;color:var(--muted);}
+.mat-total-display .amount{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--og);}
+.price-input-row{display:flex;gap:12px;align-items:flex-end;margin-bottom:20px;}
+.price-field{flex:1;}
+.price-field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.price-field input{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:9px;padding:12px 14px;color:var(--text);font-family:'Syne',sans-serif;font-size:20px;font-weight:700;outline:none;transition:border-color .18s;}
+.price-field input:focus{border-color:var(--og);}
+.metrics-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
+.metric{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.metric-val{font-family:'Syne',sans-serif;font-size:18px;font-weight:800;}
+.metric-label{font-size:11px;color:var(--muted);margin-top:2px;}
+.pay-preview{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:16px 20px;}
+.pay-row{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.pay-row:last-child{border-bottom:none;}
+.pay-row .pay-label{color:var(--muted);}
+.pay-row .pay-amt{font-weight:600;font-family:'Syne',sans-serif;}
+.disc-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:20px;}
+.disc-chip{display:flex;align-items:center;gap:7px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:8px 12px;font-size:12px;cursor:pointer;transition:all .15s;color:var(--muted);}
+.disc-chip:hover{border-color:var(--og);}
+.disc-chip input[type=checkbox]{accent-color:var(--og);}
+
+/* ESTIMATE OUTPUT */
+.est-actions{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.estimate-out{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:28px 32px;font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:var(--text);max-height:600px;overflow-y:auto;}
+.est-section-title{font-family:'Syne',sans-serif;font-size:16px;font-weight:800;color:var(--og);margin:20px 0 8px;}
+
+/* NAV BUTTONS */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:28px;}
+.nav-row .btn{min-width:120px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;background:var(--green);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:600;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;}
+.toast.show{opacity:1;}
+</style>
+</head>
+<body>
+
+<!-- ═══ GLOBAL APP NAV ═══ -->
+<nav class="g-nav">
+  <div class="g-logo"><div class="g-mark">M</div><span class="g-name">Masmer <em>AI</em></span></div>
+  <div class="g-apps">
+    <a class="g-app" href="masmer_dashboard.html">
+      <svg class="g-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="g-app" href="masmer_field.html">
+      <svg class="g-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Field Portal
+    </a>
+    <div class="g-sep"></div>
+    <a class="g-app active" href="masmer_eliko_estimator.html">
+      <svg class="g-icon" viewBox="0 0 24 24" style="stroke:#F97316"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span style="color:#F97316">Eliko</span>
+    </a>
+  </div>
+  <div class="g-sync" id="gSync">● Connected</div>
+</nav>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div class="badge">Eliko Estimator</div>
+  <div class="header-right">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">☀️ Light</button>
+  </div>
+</div>
+
+<!-- STEP BAR -->
+<div class="step-bar">
+  <div class="steps">
+    <div class="step-item active" id="si1">
+      <div class="step-circle" onclick="tryGoStep(1)">1</div>
+      <div class="step-label">Client</div>
+    </div>
+    <div class="step-item" id="si2">
+      <div class="step-circle" onclick="tryGoStep(2)">2</div>
+      <div class="step-label">Job Brief</div>
+    </div>
+    <div class="step-item" id="si3">
+      <div class="step-circle" onclick="tryGoStep(3)">3</div>
+      <div class="step-label">Questions</div>
+    </div>
+    <div class="step-item" id="si4">
+      <div class="step-circle" onclick="tryGoStep(4)">4</div>
+      <div class="step-label">Materials</div>
+    </div>
+    <div class="step-item" id="si5">
+      <div class="step-circle" onclick="tryGoStep(5)">5</div>
+      <div class="step-label">Your Price</div>
+    </div>
+    <div class="step-item" id="si6">
+      <div class="step-circle" onclick="tryGoStep(6)">6</div>
+      <div class="step-label">Estimate</div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- STEP 1: CLIENT -->
+<div class="step-panel active" id="step1">
+  <div class="panel-title">Select a Client</div>
+  <div class="panel-sub">Pick an existing client or add a new one to get started.</div>
+
+  <div class="search-row">
+    <input class="search-input" type="text" placeholder="Search clients by name or address..." oninput="filterClients(this.value)" id="clientSearch">
+    <button class="btn btn-ghost" onclick="toggleNewClientForm()">+ New Client</button>
+  </div>
+
+  <div class="clients-grid" id="clientsGrid"></div>
+
+  <div class="new-client-form" id="newClientForm">
+    <div class="card" style="margin-top:16px;">
+      <div style="font-family:'Syne',sans-serif;font-weight:700;font-size:14px;margin-bottom:16px;color:var(--og);">New Client</div>
+      <div class="field-grid">
+        <div class="field"><label>First Name</label><input type="text" id="nc_first" placeholder="Nick"></div>
+        <div class="field"><label>Last Name</label><input type="text" id="nc_last" placeholder="Hyatt"></div>
+        <div class="field"><label>Phone</label><input type="text" id="nc_phone" placeholder="(607) 555-0100"></div>
+        <div class="field"><label>Email</label><input type="text" id="nc_email" placeholder="client@email.com"></div>
+      </div>
+      <div class="field" style="margin-bottom:12px;"><label>Street Address</label><input type="text" id="nc_addr" placeholder="1211 Glenwood Road"></div>
+      <div class="field-grid">
+        <div class="field"><label>City</label><input type="text" id="nc_city" placeholder="Vestal"></div>
+        <div class="field"><label>Zip</label><input type="text" id="nc_zip" placeholder="13850"></div>
+      </div>
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button class="btn btn-og" onclick="saveNewClient()">Save & Select</button>
+        <button class="btn btn-ghost" onclick="toggleNewClientForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <div></div>
+    <button class="btn btn-og" onclick="goStep2()">Next: Job Brief →</button>
+  </div>
+</div>
+
+<!-- STEP 2: JOB BRIEF -->
+<div class="step-panel" id="step2">
+  <div class="eliko-label"><div class="eliko-dot"></div> Eliko is listening</div>
+  <div class="panel-title">Describe the Job</div>
+  <div class="panel-sub">Tell Eliko what needs to be done in plain language - like you're texting your crew.</div>
+
+  <div class="card" id="clientSummaryCard" style="margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+    <div class="client-avatar" id="briefAvatar">?</div>
+    <div>
+      <div id="briefClientName" style="font-weight:600;font-size:14px;">No client selected</div>
+      <div id="briefClientAddr" style="font-size:12px;color:var(--muted);">—</div>
+    </div>
+  </div>
+
+  <textarea class="brief-area" id="jobBrief" placeholder="Example: Full bathroom remodel in a 8x9 bathroom. Demo everything down to studs. New shower with KERDI system, new toilet, vanity, floor tile, and wall tile. Client wants a modern look with large format tile..."></textarea>
+
+  <div class="brief-hints">
+    <span class="hint-chip" onclick="appendHint('Full bathroom remodel, ')">🚿 Bathroom</span>
+    <span class="hint-chip" onclick="appendHint('Full kitchen remodel, ')">🍳 Kitchen</span>
+    <span class="hint-chip" onclick="appendHint('New deck build with Trex, ')">🪵 Deck</span>
+    <span class="hint-chip" onclick="appendHint('Vinyl siding replacement, ')">🏠 Exterior/Siding</span>
+    <span class="hint-chip" onclick="appendHint('Basement finishing, ')">⬇️ Basement</span>
+    <span class="hint-chip" onclick="appendHint('Flooring replacement throughout, ')">🪴 Flooring</span>
+    <span class="hint-chip" onclick="appendHint('Apartment unit conversion, ')">🏢 Apartment</span>
+    <span class="hint-chip" onclick="appendHint('Roofing repair, ')">🔧 Roofing</span>
+  </div>
+
+  <div id="detectedBadge" style="display:none;" class="detected-badge">✓ <span id="detectedType">Bathroom Remodel</span> detected</div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goStep(1)">← Back</button>
+    <button class="btn btn-og" onclick="goStep3()">Send to Eliko →</button>
+  </div>
+</div>
+
+<!-- STEP 3: QUESTIONS -->
+<div class="step-panel" id="step3">
+  <div class="eliko-label"><div class="eliko-dot"></div> Eliko needs a few details</div>
+  <div class="panel-title">Quick Questions</div>
+  <div class="panel-sub">Eliko will use these to build a 100% complete materials list.</div>
+
+  <div class="eliko-bubble">
+    Got it - <strong id="q-job-summary">bathroom remodel</strong> for <strong id="q-client-name">the client</strong>. Before I pull the materials, I need a few quick details to make sure I get everything right down to the last screw.
+  </div>
+
+  <div id="questionsContainer"></div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goStep(2)">← Back</button>
+    <button class="btn btn-og" onclick="goStep4()">Build Materials List →</button>
+  </div>
+</div>
+
+<!-- STEP 4: MATERIALS -->
+<div class="step-panel" id="step4">
+  <div class="eliko-label"><div class="eliko-dot"></div> Eliko is working</div>
+  <div class="panel-title">Home Depot Materials List</div>
+  <div class="panel-sub">Eliko is browsing Home Depot and building your complete list.</div>
+
+  <div class="hd-screen" id="hdAnimation">
+    <div class="hd-logo">The <span>Home</span> Depot</div>
+    <div class="hd-status" id="hdStatus">Connecting to homedepot.com...</div>
+    <div class="hd-queries" id="hdQueries"></div>
+    <div class="hd-progress"><div class="hd-bar" id="hdBar"></div></div>
+  </div>
+
+  <div class="mat-wrap" id="matWrap">
+    <div class="confidential-bar">⚠ Office Use Only - Confidential - Do Not Share With Client</div>
+    <div class="mat-summary" id="matSummary"></div>
+    <div class="mat-table-wrap">
+      <table class="mat-table" id="matTable"></table>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:10px;">
+      <button class="btn btn-ghost btn-sm" onclick="printMaterials()">🖨 Print List</button>
+      <button class="btn btn-ghost btn-sm" onclick="copyMaterials()">📋 Copy</button>
+    </div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goStep(3)">← Back</button>
+    <button class="btn btn-og" id="stepToPrice" style="display:none;" onclick="goStep(5)">Set My Price →</button>
+  </div>
+</div>
+
+<!-- STEP 5: PRICE -->
+<div class="step-panel" id="step5">
+  <div class="eliko-label"><div class="eliko-dot"></div> Final step before estimate</div>
+  <div class="panel-title">Your Project Price</div>
+  <div class="panel-sub">Enter what you're charging the client. Eliko will build the full estimate.</div>
+
+  <div class="price-card">
+    <div class="mat-total-display">
+      <div>
+        <div class="label">Total Materials Cost (with 15% buffer)</div>
+        <div class="amount" id="matTotalDisplay">$0.00</div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);text-align:right;">Home Depot verified<br>prices as of today</div>
+    </div>
+
+    <div class="price-input-row">
+      <div class="price-field">
+        <label>Your Contract Price (what you charge the client)</label>
+        <input type="text" id="contractPrice" placeholder="$74,433.95" oninput="updateMetrics()">
+      </div>
+    </div>
+
+    <div class="disc-row">
+      <label class="disc-chip"><input type="checkbox" id="discVet" onchange="updateMetrics()"> 🎖 Veteran Discount (7.5%)</label>
+      <label class="disc-chip"><input type="checkbox" id="discMulti" onchange="updateMetrics()"> 🔧 Multi-Project Discount (7.5%)</label>
+      <label class="disc-chip"><input type="checkbox" id="discSenior" onchange="updateMetrics()"> 👴 Senior Discount (5%)</label>
+    </div>
+
+    <div class="metrics-row" id="metricsRow">
+      <div class="metric"><div class="metric-val" id="mGross" style="color:var(--green);">—</div><div class="metric-label">Gross Profit</div></div>
+      <div class="metric"><div class="metric-val" id="mMargin" style="color:var(--blue);">—</div><div class="metric-label">Margin %</div></div>
+      <div class="metric"><div class="metric-val" id="mMarkup" style="color:var(--og);">—</div><div class="metric-label">Markup %</div></div>
+    </div>
+
+    <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:10px;color:var(--muted);">Payment Schedule Preview</div>
+    <div class="pay-preview" id="payPreview"></div>
+  </div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goStep(4)">← Back</button>
+    <button class="btn btn-og" onclick="goStep6()">Build Full Estimate →</button>
+  </div>
+</div>
+
+<!-- STEP 6: ESTIMATE -->
+<div class="step-panel" id="step6">
+  <div class="eliko-label"><div class="eliko-dot"></div> Ready to send</div>
+  <div class="panel-title">Full Client Estimate</div>
+  <div class="panel-sub">607 format - copy directly into your quoting system or print.</div>
+
+  <div class="est-actions">
+    <button class="btn btn-og" onclick="copyEstimate()">📋 Copy Estimate</button>
+    <button class="btn btn-ghost" onclick="window.print()">🖨 Print</button>
+    <button class="btn btn-ghost" onclick="goStep(1)">🔄 New Estimate</button>
+  </div>
+
+  <div class="estimate-out" id="estimateOut"></div>
+
+  <div class="nav-row">
+    <button class="btn btn-ghost" onclick="goStep(5)">← Adjust Price</button>
+    <button class="btn btn-og" onclick="goStep(1)">✓ New Estimate</button>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================== MASMER SHARED DB =====================
+const MasmerDB = {
+  _k: k => 'masmer_' + k,
+  get: function(k){ try{ return JSON.parse(localStorage.getItem(this._k(k)))||null; }catch(e){ return null; } },
+  set: function(k,v){ try{ localStorage.setItem(this._k(k), JSON.stringify(v)); }catch(e){} },
+  getClients: function(){ return this.get('clients') || []; },
+  saveClient: function(c){ const a=this.getClients(); const i=a.findIndex(x=>x.id===c.id); if(i>=0)a[i]=c; else a.unshift(c); this.set('clients',a); this._ping(); },
+  getQuotes: function(){ return this.get('quotes') || []; },
+  saveQuote: function(q){ const a=this.getQuotes(); a.unshift(q); this.set('quotes',a.slice(0,100)); this._ping(); },
+  _ping: function(){
+    const el=document.getElementById('gSync'); if(!el) return;
+    const cc=this.getClients().length, qc=this.getQuotes().length;
+    el.textContent=`● ${cc} client${cc!==1?'s':''} · ${qc} quote${qc!==1?'s':''}`;
+    el.style.color='#10B981'; setTimeout(()=>{if(el)el.style.color='#3A506A';},2200);
+  },
+  init: function(){
+    const el=document.getElementById('gSync'); if(!el) return;
+    const cc=this.getClients().length, qc=this.getQuotes().length;
+    // Merge any saved clients into local CLIENTS array
+    const saved=this.getClients();
+    saved.forEach(sc=>{ if(!CLIENTS.find(c=>c.id===sc.id)) CLIENTS.push(sc); });
+    el.textContent=cc||qc ? `● ${cc} client${cc!==1?'s':''} · ${qc} quote${qc!==1?'s':''}` : '● Connected';
+  }
+};
+
+// ===================== THEME =====================
+function toggleTheme(){
+  const h=document.documentElement,b=document.getElementById('themeBtn');
+  if(h.getAttribute('data-theme')==='light'){h.removeAttribute('data-theme');b.textContent='☀️ Light';}
+  else{h.setAttribute('data-theme','light');b.textContent='🌙 Dark';}
+}
+
+// ===================== STATE =====================
+let STATE={
+  currentStep:1,
+  maxStep:1,
+  client:null,
+  jobBrief:'',
+  jobType:null,
+  answers:{},
+  materials:[],
+  matTotal:0,
+  matTotalBuffered:0,
+  contractPrice:0,
+  discountPct:0,
+  paySchedule:[],
+  quoteNum: 1329
+};
+
+// ===================== CLIENTS =====================
+let CLIENTS=[
+  {id:1,first:'Nick',last:'Hyatt',addr:'1211 Glenwood Road',city:'Vestal',zip:'13850',phone:'(607) 555-0181',email:'nhyatt@email.com'},
+  {id:2,first:'Melanie',last:'Conroy Goldman',addr:'1011 N Cayuga St',city:'Ithaca',zip:'14850',phone:'(607) 555-0192',email:'mcg@email.com'},
+  {id:3,first:'Juwel',last:'Isaac',addr:'247 Maple Ave',city:'Binghamton',zip:'13901',phone:'(607) 555-0143',email:''},
+  {id:4,first:'Tommy',last:'Smith',addr:'89 Veterans Blvd',city:'Endicott',zip:'13760',phone:'(607) 555-0167',email:'tsmith@email.com'},
+];
+let nextClientId=5;
+
+function renderClients(list){
+  const g=document.getElementById('clientsGrid');
+  g.innerHTML=list.map(c=>`
+    <div class="client-card ${STATE.client&&STATE.client.id===c.id?'selected':''}" onclick="selectClient(${c.id})">
+      <div class="client-avatar">${c.first[0]}${c.last[0]}</div>
+      <div>
+        <div class="client-name">${c.first} ${c.last}</div>
+        <div class="client-addr">${c.addr}, ${c.city} ${c.zip}</div>
+      </div>
+    </div>`).join('');
+}
+
+function filterClients(v){
+  const q=v.toLowerCase();
+  renderClients(CLIENTS.filter(c=>`${c.first} ${c.last} ${c.addr} ${c.city}`.toLowerCase().includes(q)));
+}
+
+function selectClient(id){
+  STATE.client=CLIENTS.find(c=>c.id===id);
+  renderClients(CLIENTS);
+  // update brief card
+  document.getElementById('briefAvatar').textContent=STATE.client.first[0]+STATE.client.last[0];
+  document.getElementById('briefClientName').textContent=STATE.client.first+' '+STATE.client.last;
+  document.getElementById('briefClientAddr').textContent=STATE.client.addr+', '+STATE.client.city+' '+STATE.client.zip;
+}
+
+function toggleNewClientForm(){
+  const f=document.getElementById('newClientForm');
+  f.classList.toggle('open');
+}
+
+function saveNewClient(){
+  const f=document.getElementById('nc_first').value.trim();
+  const l=document.getElementById('nc_last').value.trim();
+  if(!f||!l){showToast('Enter at least first and last name');return;}
+  const c={
+    id:nextClientId++,first:f,last:l,
+    addr:document.getElementById('nc_addr').value.trim()||'—',
+    city:document.getElementById('nc_city').value.trim()||'',
+    zip:document.getElementById('nc_zip').value.trim()||'',
+    phone:document.getElementById('nc_phone').value.trim()||'',
+    email:document.getElementById('nc_email').value.trim()||''
+  };
+  CLIENTS.unshift(c);
+  MasmerDB.saveClient(c);
+  toggleNewClientForm();
+  renderClients(CLIENTS);
+  selectClient(c.id);
+  showToast('Client saved & synced to Dashboard!');
+}
+
+// ===================== JOB TYPE DETECTION =====================
+const JOB_TYPES={
+  bathroom:{label:'Bathroom Remodel',keywords:['bath','shower','toilet','tub','vanity','kerdi','tile bath','bathroom']},
+  kitchen:{label:'Kitchen Remodel',keywords:['kitchen','cabinet','counter','granite','quartz','island','appliance','backsplash']},
+  deck:{label:'Deck / Railing',keywords:['deck','trex','railing','pergola','porch','composite board','pressure treated deck']},
+  exterior:{label:'Exterior / Siding',keywords:['siding','vinyl','hardie','exterior','gutter','fascia','soffit','roofing','shingle']},
+  basement:{label:'Basement Finishing',keywords:['basement','below grade','egress','sump']},
+  flooring:{label:'Flooring',keywords:['floor','lvt','lvp','hardwood','laminate','tile floor','carpet']},
+  apartment:{label:'Apartment Conversion',keywords:['apartment','unit','conversion','separate','fire-rated','second unit','adu']},
+};
+
+function detectJobType(text){
+  const t=text.toLowerCase();
+  for(const [key,data] of Object.entries(JOB_TYPES)){
+    if(data.keywords.some(k=>t.includes(k))) return key;
+  }
+  return null;
+}
+
+function appendHint(text){
+  const ta=document.getElementById('jobBrief');
+  ta.value+=text;
+  ta.focus();
+  onBriefChange();
+}
+
+function onBriefChange(){
+  const text=document.getElementById('jobBrief').value;
+  const type=detectJobType(text);
+  STATE.jobType=type;
+  STATE.jobBrief=text;
+  const badge=document.getElementById('detectedBadge');
+  if(type){
+    badge.style.display='inline-flex';
+    document.getElementById('detectedType').textContent=JOB_TYPES[type].label;
+  } else {
+    badge.style.display='none';
+  }
+}
+document.getElementById('jobBrief').addEventListener('input',onBriefChange);
+
+// ===================== QUESTIONS =====================
+const QUESTIONS={
+  bathroom:[
+    {id:'dims',label:'What are the bathroom dimensions? (length × width in feet)',type:'text',placeholder:'e.g. 8 x 9'},
+    {id:'scope',label:'What is the scope of the remodel?',type:'options',options:['Full gut to studs','Surface refresh (tile/fixtures only)','Shower only','Partial (describe in brief)']},
+    {id:'shower',label:'Shower type?',type:'options',options:['Walk-in shower','Tub/shower combo','Soaking tub only','No shower change']},
+    {id:'special',label:'Any special systems?',type:'options',options:['KERDI waterproofing','Heated floor','Both','Neither'],multi:true},
+  ],
+  kitchen:[
+    {id:'dims',label:'Kitchen dimensions? (length × width)',type:'text',placeholder:'e.g. 12 x 14'},
+    {id:'cabinets',label:'Cabinet linear footage?',type:'text',placeholder:'e.g. 18 LF upper + 18 LF lower'},
+    {id:'counter',label:'Countertop material?',type:'options',options:['Granite','Quartz','Butcher block','Laminate']},
+    {id:'layout',label:'Layout change?',type:'options',options:['Same layout','Moving plumbing','Moving electrical','Full reconfiguration']},
+  ],
+  deck:[
+    {id:'sqft',label:'Total deck area (sq ft) or dimensions?',type:'text',placeholder:'e.g. 725 sqft or 20x36'},
+    {id:'material',label:'Decking material?',type:'options',options:['Trex Enhance Basics','Trex Select','Pressure Treated','Fiberon Composite']},
+    {id:'railing',label:'Railing included?',type:'options',options:['Yes - vinyl','Yes - aluminum','Yes - wood','No railing']},
+    {id:'extras',label:'Additional features?',type:'options',options:['Stairs','Pergola','Footing/footers','None'],multi:true},
+  ],
+  exterior:[
+    {id:'sqft',label:'Siding area (sq ft)?',type:'text',placeholder:'e.g. 1,200 sqft'},
+    {id:'material',label:'Siding material?',type:'options',options:['Vinyl siding','Hardie Plank','Cedar','OSB + vinyl']},
+    {id:'extras',label:'What else is included?',type:'options',options:['Gutters','Window trim/molding','Fascia/soffit','Roof repair'],multi:true},
+    {id:'sides',label:'How many sides of the house?',type:'options',options:['1 side','2 sides','3 sides','Full house']},
+  ],
+  basement:[
+    {id:'sqft',label:'Basement area (sq ft)?',type:'text',placeholder:'e.g. 800 sqft'},
+    {id:'scope',label:'Scope of work?',type:'options',options:['Full finish (framing to paint)','Partial finish','Just framing','Bathroom addition']},
+    {id:'ceiling',label:'Ceiling type?',type:'options',options:['Drop ceiling','Drywall ceiling','Exposed/industrial','Undecided']},
+    {id:'extras',label:'Additional features?',type:'options',options:['Egress window','Sump pump','Bar/wet area','Full bathroom'],multi:true},
+  ],
+  flooring:[
+    {id:'sqft',label:'Total square footage?',type:'text',placeholder:'e.g. 1,200 sqft'},
+    {id:'material',label:'Flooring material?',type:'options',options:['LVP/LVT','Hardwood','Laminate','Ceramic/Porcelain Tile']},
+    {id:'subfloor',label:'Subfloor condition?',type:'options',options:['Good - just install','Needs repairs','Full subfloor replacement','Unknown']},
+    {id:'rooms',label:'Which rooms?',type:'text',placeholder:'e.g. Living room, 3 bedrooms, hallway'},
+  ],
+  apartment:[
+    {id:'floors',label:'How many floors/units being separated?',type:'options',options:['2 units (1st + 2nd floor)','3 units','Studio conversion','Other']},
+    {id:'scope',label:'What separations are needed?',type:'options',options:['Fire-rated wall/ceiling separation','Separate entrances','Both'],multi:true},
+    {id:'kitchen',label:'New kitchen needed?',type:'options',options:['Yes - full kitchen','Yes - kitchenette','No - existing kitchen stays']},
+    {id:'utilities',label:'Utility separation?',type:'options',options:['Electrical panel','Gas line','Laundry hookups','All of the above'],multi:true},
+  ],
+};
+
+function renderQuestions(){
+  const type=STATE.jobType||'bathroom';
+  const qs=QUESTIONS[type]||QUESTIONS['bathroom'];
+  const c=document.getElementById('questionsContainer');
+  document.getElementById('q-job-summary').textContent=JOB_TYPES[type]?JOB_TYPES[type].label.toLowerCase():'the job';
+  document.getElementById('q-client-name').textContent=STATE.client?STATE.client.first:'the client';
+  c.innerHTML=qs.map((q,i)=>{
+    if(q.type==='text') return `
+      <div class="q-block">
+        <div class="q-label">${i+1}. ${q.label}</div>
+        <input class="q-text" id="qa_${q.id}" placeholder="${q.placeholder||''}" oninput="STATE.answers['${q.id}']=this.value">
+      </div>`;
+    return `
+      <div class="q-block">
+        <div class="q-label">${i+1}. ${q.label}${q.multi?' (select all that apply)':''}</div>
+        <div class="q-options">
+          ${q.options.map(o=>`<div class="q-option" onclick="selectOption(this,'${q.id}','${o}',${!!q.multi})">${o}</div>`).join('')}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function selectOption(el,qid,val,multi){
+  if(multi){
+    el.classList.toggle('selected');
+    const sel=Array.from(el.closest('.q-options').querySelectorAll('.selected')).map(e=>e.textContent);
+    STATE.answers[qid]=sel;
+  } else {
+    el.closest('.q-options').querySelectorAll('.q-option').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');
+    STATE.answers[qid]=val;
+  }
+}
+
+// ===================== MATERIALS DATA =====================
+function buildMaterialsData(){
+  const type=STATE.jobType||'bathroom';
+  const a=STATE.answers;
+  let sections=[];
+  const sqft=parseFloat((a.dims||a.sqft||'56').replace(/[^0-9.x×]/gi,' ').trim().split(/[x×\s]+/).reduce((acc,n,i,arr)=>i===0?parseFloat(n)||56:(acc*(parseFloat(n)||1)),1))||56;
+
+  if(type==='bathroom'){
+    const wallSqft=Math.ceil(sqft*2.8);
+    const hasKerdi=(a.special&&(Array.isArray(a.special)?a.special.includes('KERDI waterproofing'):a.special==='KERDI waterproofing'))||String(STATE.jobBrief).toLowerCase().includes('kerdi');
+    sections=[
+      {name:'DEMOLITION & PREP',items:[
+        {desc:'Contractor trash bags 42gal 20ct',qty:3,unit:'box',price:14.97,sku:'HDX-100-Gal'},
+        {desc:'5-in-1 multi-tool scraper',qty:1,unit:'ea',price:12.98,sku:'HDX-Multi'},
+        {desc:'Reciprocating saw blades demolition 3pk',qty:2,unit:'pk',price:19.97,sku:'Diablo-DS'},
+        {desc:'Plastic sheeting 10x25 ft',qty:2,unit:'roll',price:11.97,sku:'HDX-Plastic'},
+        {desc:'Safety glasses',qty:2,unit:'ea',price:3.97,sku:'HDX-Safety'},
+        {desc:'N95 dust masks 10pk',qty:2,unit:'pk',price:16.97,sku:'3M-N95'},
+      ]},
+      {name:'WATERPROOFING'+( hasKerdi?' - SCHLUTER KERDI SYSTEM':''),items:hasKerdi?[
+        {desc:'Schluter KERDI Waterproofing Membrane 54"x10\'',qty:Math.ceil(sqft/38),unit:'roll',price:89.97,sku:'K100GT/125'},
+        {desc:'Schluter KERDI-BAND 5" x 33\'',qty:2,unit:'ea',price:24.97,sku:'KB5TS/83'},
+        {desc:'Schluter KERDI-CORNER 2"x2" (inside corner)',qty:8,unit:'ea',price:3.49,sku:'KCIS'},
+        {desc:'Schluter KERDI-DRAIN 4" square',qty:1,unit:'ea',price:74.97,sku:'KD4FP'},
+        {desc:'Thinset mortar 50 lb white',qty:Math.ceil(sqft/60)+1,unit:'bag',price:22.97,sku:'Custom-Builder'},
+      ]:[
+        {desc:'RedGard waterproofing membrane 1 gal',qty:2,unit:'gal',price:39.97,sku:'Custom-RG'},
+        {desc:'Waterproofing seam tape 2"x50\'',qty:2,unit:'roll',price:14.97,sku:'Wedi-Tape'},
+        {desc:'Thinset mortar 50 lb gray',qty:Math.ceil(sqft/60)+1,unit:'bag',price:18.97,sku:'Custom-BM'},
+      ]},
+      {name:'FLOOR TILE',items:[
+        {desc:'12"x24" Porcelain Floor Tile (rectified)',qty:Math.ceil(sqft*1.1/15.5),unit:'box',price:34.97,sku:'MSI-Floor'},
+        {desc:'Floor tile spacers 3/16" 500pk',qty:2,unit:'bag',price:5.97,sku:'HDX-Spacer'},
+        {desc:'Grout sanded charcoal 25 lb',qty:Math.ceil(sqft/80),unit:'bag',price:24.97,sku:'Mapei-Grout'},
+        {desc:'Tile leveling system clips + wedges 200pk',qty:Math.ceil(sqft/100)+1,unit:'pk',price:29.97,sku:'Raimondi-TLS'},
+      ]},
+      {name:'WALL TILE',items:[
+        {desc:'4"x12" Subway Tile Ceramic White',qty:Math.ceil(wallSqft*1.1/10.76),unit:'box',price:14.97,sku:'Merola-Subway'},
+        {desc:'Wall tile spacers 1/16" 500pk',qty:3,unit:'bag',price:4.97,sku:'HDX-WS'},
+        {desc:'Non-sanded grout white 10 lb',qty:Math.ceil(wallSqft/120),unit:'bag',price:18.97,sku:'Mapei-NS'},
+        {desc:'Tile adhesive mastic 1 gal',qty:Math.ceil(wallSqft/35),unit:'gal',price:14.97,sku:'Omnigrip'},
+      ]},
+      {name:'PLUMBING FIXTURES',items:[
+        {desc:'Kohler 2-piece elongated toilet 1.28gpf',qty:1,unit:'ea',price:189.00,sku:'Kohler-K3987'},
+        {desc:'Glacier Bay single-handle vanity faucet brushed nickel',qty:1,unit:'ea',price:64.97,sku:'GB-Faucet'},
+        {desc:'Delta shower valve trim kit with diverter',qty:1,unit:'ea',price:149.00,sku:'Delta-T13220'},
+        {desc:'Rain shower head 10" brushed nickel',qty:1,unit:'ea',price:89.97,sku:'Glacier-RSH'},
+        {desc:'Wax ring with bolts toilet flange',qty:1,unit:'ea',price:7.97,sku:'Korky-Wax'},
+        {desc:'Supply lines 12" braided ss 2pk',qty:2,unit:'pk',price:12.97,sku:'BrassCraft'},
+        {desc:'PVC p-trap 1-1/2"',qty:1,unit:'ea',price:5.97,sku:'Oatey-PT'},
+      ]},
+      {name:'VANITY & ACCESSORIES',items:[
+        {desc:'48" bathroom vanity with sink top espresso',qty:1,unit:'ea',price:549.00,sku:'Home-Depot-48V'},
+        {desc:'Bathroom mirror 36x30 frameless',qty:1,unit:'ea',price:89.97,sku:'Glacier-Mirror'},
+        {desc:'Towel bar 24" brushed nickel',qty:1,unit:'ea',price:34.97,sku:'Liberty-TB'},
+        {desc:'TP holder brushed nickel',qty:1,unit:'ea',price:19.97,sku:'Liberty-TP'},
+        {desc:'Robe hook brushed nickel',qty:2,unit:'ea',price:14.97,sku:'Liberty-RH'},
+        {desc:'Exhaust fan 110 CFM with light',qty:1,unit:'ea',price:89.97,sku:'Broan-688'},
+      ]},
+      {name:'DRYWALL & MOISTURE BOARD',items:[
+        {desc:'HardieBacker 1/4" cement board 3x5',qty:Math.ceil(sqft/15)+2,unit:'sheet',price:12.47,sku:'HardieBacker-14'},
+        {desc:'1/2" moisture-resistant drywall 4x8',qty:Math.ceil(wallSqft/32)+2,unit:'sheet',price:15.97,sku:'USG-MR'},
+        {desc:'Drywall screws coarse 1-5/8" 1 lb',qty:3,unit:'box',price:5.97,sku:'Grip-Rite'},
+        {desc:'Joint compound all-purpose 5 gal',qty:1,unit:'bucket',price:19.97,sku:'USG-JC'},
+        {desc:'Fiberglass drywall tape 2"x300\'',qty:1,unit:'roll',price:9.97,sku:'Saint-Gobain'},
+        {desc:'Interior primer 1 gal',qty:1,unit:'gal',price:24.97,sku:'Zinsser-BIN'},
+        {desc:'Bathroom paint semi-gloss 1 gal',qty:2,unit:'gal',price:29.97,sku:'Behr-Premium'},
+      ]},
+      {name:'FASTENERS, CAULK & SUPPLIES',items:[
+        {desc:'Silicone caulk clear 100% waterproof 10.3oz',qty:6,unit:'tube',price:7.97,sku:'GE-Silicone'},
+        {desc:'Screws deck/tile backer 1-1/4" 1lb',qty:2,unit:'box',price:8.97,sku:'Grip-Rite-Backer'},
+        {desc:'Grout sealer 1 pt',qty:1,unit:'bt',price:11.97,sku:'Aqua-Mix'},
+        {desc:'Mixing paddle drill bit 1/2"',qty:1,unit:'ea',price:14.97,sku:'QEP-Mix'},
+        {desc:'Notched trowel 1/4x3/8 sq',qty:1,unit:'ea',price:9.97,sku:'HDX-Trowel'},
+        {desc:'Grout float rubber',qty:1,unit:'ea',price:7.97,sku:'QEP-Float'},
+        {desc:'Tile sponge 2pk',qty:2,unit:'pk',price:5.97,sku:'HDX-Sponge'},
+        {desc:'Drop cloth canvas 9x12',qty:2,unit:'ea',price:14.97,sku:'HDX-Drop'},
+        {desc:'Blue tape 1-7/8" 60yd',qty:3,unit:'roll',price:7.97,sku:'3M-Blue'},
+      ]},
+    ];
+  } else if(type==='kitchen'){
+    const lf=parseFloat(String(a.cabinets||'18').match(/\d+/)?.[0]||18);
+    const counterSqft=Math.ceil(lf*2.2);
+    sections=[
+      {name:'DEMOLITION & PREP',items:[
+        {desc:'Contractor bags 42gal 20ct',qty:4,unit:'box',price:14.97,sku:'HDX-CG'},
+        {desc:'Pry bar 18"',qty:1,unit:'ea',price:19.97,sku:'Stanley-PB'},
+        {desc:'Plastic sheeting 10x25',qty:3,unit:'roll',price:11.97,sku:'HDX-PS'},
+        {desc:'N95 masks 10pk',qty:2,unit:'pk',price:16.97,sku:'3M-N95'},
+      ]},
+      {name:'CABINETS',items:[
+        {desc:'Upper wall cabinet 30"x12"x30" (white shaker)',qty:Math.ceil(lf/2),unit:'ea',price:149.00,sku:'Hampton-UC'},
+        {desc:'Base cabinet 30"x34-1/2"x24" (white shaker)',qty:Math.ceil(lf/2),unit:'ea',price:179.00,sku:'Hampton-BC'},
+        {desc:'Cabinet hardware pulls 5" brushed nickel 10pk',qty:Math.ceil(lf/4),unit:'pk',price:29.97,sku:'Liberty-Pull'},
+        {desc:'Cabinet screws 2.5" 100pk',qty:2,unit:'pk',price:8.97,sku:'GRK-Cabinet'},
+        {desc:'Cabinet shims composite 12pk',qty:2,unit:'pk',price:4.97,sku:'Nelson-Shim'},
+      ]},
+      {name:'COUNTERTOPS',items:[
+        {desc:`${a.counter||'Granite'} countertop slab 3cm (installed per sqft est)`,qty:counterSqft,unit:'sqft',price:65.00,sku:'Custom-Counter'},
+        {desc:'Undermount stainless sink 33" double bowl',qty:1,unit:'ea',price:249.00,sku:'Kraus-KHU'},
+        {desc:'Silicone adhesive counter 10.3oz',qty:3,unit:'tube',price:9.97,sku:'GE-Sil2'},
+      ]},
+      {name:'BACKSPLASH',items:[
+        {desc:'Subway tile 3"x6" white ceramic',qty:Math.ceil(lf*0.8*1.1/10.76),unit:'box',price:14.97,sku:'Merola-3x6'},
+        {desc:'Mosaic tile sheet (accent)',qty:2,unit:'sheet',price:12.97,sku:'MSI-Mosaic'},
+        {desc:'Mastic adhesive tile 1 gal',qty:1,unit:'gal',price:14.97,sku:'Omnigrip'},
+        {desc:'Unsanded grout white 10 lb',qty:1,unit:'bag',price:18.97,sku:'Mapei-NS'},
+      ]},
+      {name:'PLUMBING',items:[
+        {desc:'Single-handle kitchen faucet pull-down brushed nickel',qty:1,unit:'ea',price:199.00,sku:'Moen-5925'},
+        {desc:'Under-sink supply lines 3/8"x1/2" 20"',qty:2,unit:'ea',price:8.97,sku:'BrassCraft-SC'},
+        {desc:'P-trap kitchen 1-1/2" pvc',qty:1,unit:'ea',price:6.97,sku:'Oatey-PT'},
+        {desc:'Garbage disposal 1/2HP',qty:1,unit:'ea',price:149.00,sku:'InSinkErator-B'},
+        {desc:'Dishwasher drain connector kit',qty:1,unit:'ea',price:14.97,sku:'Everbilt-DDC'},
+      ]},
+      {name:'FLOORING',items:[
+        {desc:'LVT plank 6"x36" (kitchen area)',qty:Math.ceil(sqft*1.08/23.64),unit:'box',price:49.97,sku:'LifeProof-Rigid'},
+        {desc:'Underlayment foam roll',qty:Math.ceil(sqft/100),unit:'roll',price:19.97,sku:'QuietWalk'},
+        {desc:'Quarter round molding oak 8ft',qty:Math.ceil(sqft/24)+2,unit:'ea',price:4.97,sku:'HD-QR'},
+        {desc:'Finish nails 1-1/4" 1lb',qty:1,unit:'box',price:7.97,sku:'Grip-Rite-FN'},
+      ]},
+      {name:'DRYWALL, PAINT & SUPPLIES',items:[
+        {desc:'1/2" drywall 4x8',qty:Math.ceil(sqft/30)+4,unit:'sheet',price:13.97,sku:'USG-4x8'},
+        {desc:'Kitchen/bath paint semi-gloss 1 gal',qty:2,unit:'gal',price:32.97,sku:'Behr-KBP'},
+        {desc:'Primer 1 gal',qty:1,unit:'gal',price:24.97,sku:'Zinsser'},
+        {desc:'Paintbrush 2.5" angled',qty:2,unit:'ea',price:8.97,sku:'Purdy-25A'},
+        {desc:'Roller covers 9" 3pk',qty:2,unit:'pk',price:12.97,sku:'Wooster-RC'},
+        {desc:'Silicone caulk 10.3oz',qty:4,unit:'tube',price:7.97,sku:'GE-Sil'},
+        {desc:'Caulk gun',qty:1,unit:'ea',price:7.97,sku:'Dripless'},
+        {desc:'Blue tape 2pk 60yd',qty:3,unit:'pk',price:13.97,sku:'3M-Blue2'},
+      ]},
+    ];
+  } else if(type==='deck'){
+    const dsqft=parseFloat(String(a.sqft||'400').replace(/[^0-9.]/g,''))||400;
+    const lf=parseFloat(String(a.railing||'0').replace(/[^0-9.]/g,''))||Math.ceil(dsqft/10);
+    const hasRail=!String(a.railing||'').toLowerCase().includes('no');
+    sections=[
+      {name:'FRAMING & STRUCTURE',items:[
+        {desc:'2"x10"x16\' Pressure Treated lumber',qty:Math.ceil(dsqft/32),unit:'ea',price:29.97,sku:'PT-210x16'},
+        {desc:'2"x8"x16\' Pressure Treated joist',qty:Math.ceil(dsqft/24),unit:'ea',price:22.97,sku:'PT-28x16'},
+        {desc:'4"x4"x10\' PT post',qty:Math.ceil(dsqft/64)+2,unit:'ea',price:14.97,sku:'PT-44x10'},
+        {desc:'6"x6"x10\' PT post (main beam)',qty:Math.ceil(dsqft/100),unit:'ea',price:32.97,sku:'PT-66x10'},
+        {desc:'Joist hanger 2x10 50pk',qty:Math.ceil(dsqft/200)+1,unit:'pk',price:34.97,sku:'Simpson-LUS'},
+        {desc:'Structural connector plate 3"x3" 20pk',qty:2,unit:'pk',price:12.97,sku:'Simpson-Plate'},
+        {desc:'Post anchor 4x4 adjustable 4pk',qty:Math.ceil(dsqft/64/4)+1,unit:'pk',price:29.97,sku:'Simpson-ABA'},
+        {desc:'Lag screws 1/2"x5" 25pk',qty:2,unit:'pk',price:19.97,sku:'Hillman-Lag'},
+        {desc:'Structural screws 3" 1lb Ledger Lock',qty:2,unit:'lb',price:24.97,sku:'GRK-Ledger'},
+      ]},
+      {name:'DECKING BOARDS',items:[
+        {desc:'Trex Enhance Basics 1"x6"x16\' (pebble grey)',qty:Math.ceil(dsqft/8)+Math.ceil(dsqft*0.05),unit:'ea',price:21.97,sku:'Trex-Enhance'},
+        {desc:'Trex hideaway secret fasteners 100pk',qty:Math.ceil(dsqft/100)+1,unit:'pk',price:29.97,sku:'Trex-HF'},
+        {desc:'Composite decking screws 2-1/2" 1lb',qty:Math.ceil(dsqft/300)+2,unit:'lb',price:14.97,sku:'Grip-Rite-DS'},
+        {desc:'Deck spacer tool',qty:1,unit:'ea',price:9.97,sku:'Trex-Space'},
+      ]},
+      ...(hasRail?[{name:'RAILING SYSTEM',items:[
+        {desc:'Veranda vinyl railing top/bottom rail 8ft',qty:Math.ceil(lf/8)*2,unit:'ea',price:24.97,sku:'VER-Rail'},
+        {desc:'Vinyl baluster 36" white 10pk',qty:Math.ceil(lf/8)*5,unit:'pk',price:39.97,sku:'VER-Bal'},
+        {desc:'Post sleeve white 4"x4"x42"',qty:Math.ceil(lf/8)+2,unit:'ea',price:29.97,sku:'VER-Post'},
+        {desc:'Railing hardware kit screws',qty:Math.ceil(lf/40)+1,unit:'kit',price:19.97,sku:'Veranda-HW'},
+      ]}]:[]),
+      {name:'FASTENERS, FLASHING & SUPPLIES',items:[
+        {desc:'Joist tape weatherproofing 2-3/8" x 75\'',qty:Math.ceil(dsqft/600)+1,unit:'roll',price:29.97,sku:'Trex-Tape'},
+        {desc:'Z-flashing aluminum 2"x10\' roll',qty:2,unit:'ea',price:14.97,sku:'Amerimax-Z'},
+        {desc:'Concrete mix 60lb (footings)',qty:Math.ceil(dsqft/64)*2,unit:'bag',price:6.97,sku:'Quikrete-60'},
+        {desc:'Tube form 10"x4\' fiber (footings)',qty:Math.ceil(dsqft/64)+1,unit:'ea',price:14.97,sku:'Quik-Tube'},
+        {desc:'Post level magnetic',qty:1,unit:'ea',price:9.97,sku:'Empire-PL'},
+        {desc:'Chalk line 100ft',qty:1,unit:'ea',price:8.97,sku:'Stanley-CL'},
+        {desc:'Work gloves large 3pk',qty:1,unit:'pk',price:12.97,sku:'HDX-WG'},
+      ]},
+    ];
+  } else {
+    // Generic fallback
+    sections=[
+      {name:'MATERIALS',items:[
+        {desc:'General construction materials (see job brief)',qty:1,unit:'lot',price:2500,sku:'—'},
+        {desc:'Fasteners and hardware assortment',qty:1,unit:'lot',price:150,sku:'—'},
+        {desc:'Caulk, adhesive, primer, tape',qty:1,unit:'lot',price:95,sku:'—'},
+      ]},
+    ];
+  }
+  return sections;
+}
+
+// HD ANIMATION
+const HD_QUERIES={
+  bathroom:['bathroom tile 12x24 porcelain','Schluter KERDI waterproofing membrane','Kohler elongated toilet 1.28 gpf','Delta shower valve trim brushed nickel','48 inch bathroom vanity espresso','HardieBacker 1/4 cement board 3x5','Mapei sanded grout charcoal 25lb','Broan 110 CFM exhaust fan light','silicone caulk clear waterproof bathroom','tile leveling system clips 200pk'],
+  kitchen:['kitchen base cabinet 30 inch white shaker','granite countertop slab 3cm','Moen pull-down kitchen faucet','undermount stainless steel sink 33 inch','subway tile 3x6 white ceramic','InSinkErator garbage disposal 1/2hp','LifeProof rigid core LVT flooring','Behr kitchen bath paint semi gloss'],
+  deck:['Trex Enhance Basics decking 1x6 16ft','Veranda vinyl railing system 6ft','2x10x16 pressure treated lumber','Simpson joist hanger LUS210','concrete tube form 10 inch footing','Quikrete 60 lb concrete mix','Trex hideaway fasteners secret clip'],
+  exterior:['vinyl siding panel double 4 dutch lap','J-channel vinyl siding accessories','fascia trim vinyl 12ft','K-style aluminum gutter 10ft','roofing shingle architectural 3tab','house wrap Tyvek HomeWrap 9x100ft','aluminum drip edge 10ft white'],
+  default:['construction fasteners hardware assortment','lumber dimensional framing','drywall 1/2 inch 4x8 sheet','primer interior latex 1 gallon','paint semi gloss latex 1 gallon','caulk silicone clear waterproof'],
+};
+
+async function animateHD(){
+  const queries=(HD_QUERIES[STATE.jobType]||HD_QUERIES.default);
+  const bar=document.getElementById('hdBar');
+  const status=document.getElementById('hdStatus');
+  const qDiv=document.getElementById('hdQueries');
+  qDiv.innerHTML='';
+  bar.style.width='0%';
+
+  const statuses=['Connecting to homedepot.com...','Searching products...','Verifying current prices...','Building materials list...','Calculating quantities...','Applying 15% buffer...'];
+  for(let i=0;i<queries.length;i++){
+    await sleep(340);
+    if(i<statuses.length) status.textContent=statuses[Math.min(i,statuses.length-1)];
+    const line=document.createElement('div');
+    line.className='hd-query-line';
+    line.innerHTML=`<span class="q-icon">🔍</span>${queries[i]}`;
+    qDiv.appendChild(line);
+    await sleep(30);
+    line.classList.add('show');
+    bar.style.width=Math.min(((i+1)/queries.length)*100,95)+'%';
+    if(qDiv.children.length>5) qDiv.children[0].style.opacity='0.3';
+  }
+  await sleep(400);
+  bar.style.width='100%';
+  status.textContent='✓ Materials list complete!';
+  await sleep(500);
+
+  // Build and show materials
+  const sections=buildMaterialsData();
+  STATE.materials=sections;
+
+  // Calculate totals
+  let subtotal=0;
+  const tableEl=document.getElementById('matTable');
+  let html='<thead><tr><th>#</th><th>Item Description</th><th>Qty</th><th>Unit</th><th>Unit Price</th><th>Total</th><th>HD Link</th></tr></thead><tbody>';
+  let lineNum=1;
+  for(const sec of sections){
+    let secTotal=0;
+    html+=`<tr class="section-row"><td colspan="7">${sec.name}</td></tr>`;
+    for(const item of sec.items){
+      const lineTotal=item.qty*item.price;
+      secTotal+=lineTotal;
+      subtotal+=lineTotal;
+      html+=`<tr>
+        <td style="color:var(--muted)">${lineNum++}</td>
+        <td>${item.desc}</td>
+        <td style="text-align:center">${item.qty}</td>
+        <td style="color:var(--muted)">${item.unit}</td>
+        <td>$${item.price.toFixed(2)}</td>
+        <td style="font-weight:600">$${lineTotal.toFixed(2)}</td>
+        <td><a class="hd-link" href="https://www.homedepot.com/s/${encodeURIComponent(item.desc.split(' ').slice(0,4).join('+'))}" target="_blank">HD ↗</a></td>
+      </tr>`;
+    }
+    html+=`<tr class="subtotal-row"><td colspan="5" style="text-align:right;padding-right:20px">Section Subtotal</td><td style="font-weight:700">$${secTotal.toFixed(2)}</td><td></td></tr>`;
+  }
+  const buffer=subtotal*0.15;
+  const total=subtotal+buffer;
+  STATE.matTotal=subtotal;
+  STATE.matTotalBuffered=total;
+
+  html+=`<tr class="subtotal-row"><td colspan="5" style="text-align:right;padding-right:20px;border-top:2px solid var(--og)">Subtotal (Home Depot)</td><td style="border-top:2px solid var(--og);font-weight:700">$${subtotal.toFixed(2)}</td><td style="border-top:2px solid var(--og)"></td></tr>`;
+  html+=`<tr class="subtotal-row"><td colspan="5" style="text-align:right;padding-right:20px">+ 15% Material Buffer</td><td style="font-weight:700;color:var(--amber)">$${buffer.toFixed(2)}</td><td></td></tr>`;
+  html+=`<tr class="total-row"><td colspan="5" style="text-align:right;padding-right:20px">TOTAL MATERIALS COST</td><td>$${total.toFixed(2)}</td><td></td></tr>`;
+  html+='</tbody>';
+  tableEl.innerHTML=html;
+
+  // Summary stats
+  document.getElementById('matSummary').innerHTML=`
+    <div class="mat-stat"><div class="mat-stat-val">${lineNum-1}</div><div class="mat-stat-label">Line items</div></div>
+    <div class="mat-stat"><div class="mat-stat-val">$${subtotal.toFixed(2)}</div><div class="mat-stat-label">HD Subtotal</div></div>
+    <div class="mat-stat"><div class="mat-stat-val" style="color:var(--og)">$${total.toFixed(2)}</div><div class="mat-stat-label">Total with 15% buffer</div></div>`;
+
+  // Update price step
+  document.getElementById('matTotalDisplay').textContent='$'+total.toFixed(2);
+
+  document.getElementById('hdAnimation').style.display='none';
+  document.getElementById('matWrap').classList.add('show');
+  document.getElementById('stepToPrice').style.display='inline-block';
+}
+
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+
+// ===================== PRICE / METRICS =====================
+function fmt(n){return n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function parseDollar(s){return parseFloat(String(s).replace(/[^0-9.]/g,''))||0;}
+
+function updateMetrics(){
+  const raw=parseDollar(document.getElementById('contractPrice').value);
+  let discPct=0;
+  if(document.getElementById('discVet').checked) discPct+=7.5;
+  if(document.getElementById('discMulti').checked) discPct+=7.5;
+  if(document.getElementById('discSenior').checked) discPct+=5;
+  const price=raw*(1-discPct/100);
+  STATE.contractPrice=price;
+  STATE.discountPct=discPct;
+
+  const mat=STATE.matTotalBuffered||0;
+  const gross=price-mat;
+  const margin=price>0?gross/price*100:0;
+  const markup=mat>0?gross/mat*100:0;
+
+  document.getElementById('mGross').textContent=price>0?'$'+fmt(gross):'—';
+  document.getElementById('mMargin').textContent=price>0?margin.toFixed(1)+'%':'—';
+  document.getElementById('mMarkup').textContent=price>0?markup.toFixed(1)+'%':'—';
+
+  // Payment schedule
+  const dep=Math.min(3500,Math.round(price*0.1/100)*100);
+  const rem=price-dep;
+  const p1=Math.round(rem*0.50/100)*100;
+  const p2=Math.round(rem*0.25/100)*100;
+  const p3=Math.round(rem*0.15/100)*100;
+  const fin=price-dep-p1-p2-p3;
+  STATE.paySchedule=[
+    {label:'Deposit',pct:10,amt:dep,note:'Due upon signing'},
+    {label:'Payment 1 (50%)',pct:50,amt:p1,note:'Due at project start / material delivery'},
+    {label:'Payment 2 (25%)',pct:25,amt:p2,note:'Due at approx. 60% completion'},
+    {label:'Payment 3 (15%)',pct:15,amt:p3,note:'Due at approx. 90% completion'},
+    {label:'Final Payment',pct:'',amt:fin,note:'Due upon completion & walkthrough sign-off'},
+  ];
+
+  document.getElementById('payPreview').innerHTML=STATE.paySchedule.map(p=>
+    `<div class="pay-row">
+      <span class="pay-label">${p.label}${p.pct?` (${p.pct}%)`:''}</span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end">
+        <span class="pay-amt" style="color:var(--og)">$${fmt(p.amt)}</span>
+        <span style="font-size:10px;color:var(--muted)">${p.note}</span>
+      </div>
+    </div>`).join('');
+
+  if(discPct>0 && raw>0){
+    const saved=raw-price;
+    document.getElementById('payPreview').innerHTML+=`<div class="pay-row" style="border-top:1px dashed var(--border);margin-top:8px;padding-top:12px"><span class="pay-label" style="color:var(--green)">Discount Applied (${discPct}%)</span><span class="pay-amt" style="color:var(--green)">-$${fmt(saved)}</span></div>`;
+  }
+}
+
+// ===================== ESTIMATE BUILDER =====================
+const PHASE_MAP={
+  bathroom:['Phase 1 - Site Preparation & Protection','Phase 2 - Demolition','Phase 3 - Rough Plumbing','Phase 4 - Waterproofing & Cement Board','Phase 5 - Tile Installation (Floor & Walls)','Phase 6 - Drywall & Paint','Phase 7 - Fixture Installation','Phase 8 - Final Inspection & Punch List'],
+  kitchen:['Phase 1 - Site Preparation & Protection','Phase 2 - Demolition & Debris Removal','Phase 3 - Rough Plumbing & Electrical','Phase 4 - Cabinet Installation','Phase 5 - Countertop Templating & Installation','Phase 6 - Backsplash Tile','Phase 7 - Flooring','Phase 8 - Fixture & Appliance Installation','Phase 9 - Paint, Trim & Punch List'],
+  deck:['Phase 1 - Permit Pull & Site Layout','Phase 2 - Demo of Existing Deck','Phase 3 - Footings & Post Setting','Phase 4 - Beam & Ledger Installation','Phase 5 - Joist Framing','Phase 6 - Decking Board Installation','Phase 7 - Railing System','Phase 8 - Staircase Build','Phase 9 - Final Inspection & Touch-Up'],
+  exterior:['Phase 1 - Site Setup & Protection','Phase 2 - Removal of Existing Siding','Phase 3 - Sheathing & House Wrap','Phase 4 - Siding Installation','Phase 5 - Trim, J-Channel & Molding','Phase 6 - Gutter & Fascia Work','Phase 7 - Roofing Repairs','Phase 8 - Final Inspection & Cleanup'],
+  default:['Phase 1 - Site Preparation','Phase 2 - Demolition','Phase 3 - Rough Work','Phase 4 - Finishes','Phase 5 - Final Inspection'],
+};
+
+const SCOPE_ITEMS={
+  bathroom:{
+    'Phase 1 - Site Preparation & Protection':[
+      'Remove all personal items and accessories from the bathroom prior to start of work',
+      'Install protective barriers at doorways and hallways to contain dust, debris, and foot traffic',
+      'Cover all flooring and surfaces outside the immediate work zone with protective sheeting',
+      'Establish material staging area and confirm dumpster placement with homeowner',
+      'Shut off water supply to the bathroom and verify all supply lines are depressurized',
+      'Review final scope, material selections, and fixture layout with homeowner before commencing',
+      'Document existing conditions with photos prior to any demolition work',
+    ],
+    'Phase 2 - Demolition':[
+      'Disconnect and cap all water supply lines and drain connections at point of fixture removal',
+      'Remove toilet, vanity, faucet, mirror, and all plumbing fixtures carefully to avoid subfloor damage',
+      'Demo wall tile and existing substrate (drywall, greenboard, or plaster) down to wall framing as required',
+      'Remove floor tile, mortar bed, and existing substrate down to structural subfloor',
+      'Remove exhaust fan, light fixtures, and electrical cover plates; cap wiring safely',
+      'Inspect all exposed framing, subfloor, and joists for rot, mold, or structural compromise',
+      'Report and address any discovered concealed damage with homeowner before proceeding',
+      'Remove all debris from property via dumpster; leave work area broom-clean at end of each day',
+    ],
+    'Phase 3 - Rough Plumbing':[
+      'Inspect all existing supply lines, shut-offs, angle stops, and drain connections for condition',
+      'Replace any corroded, damaged, or undersized supply lines and shut-offs as encountered',
+      'Relocate supply and drain rough-in to accommodate new fixture layout where required by design',
+      'Set shower valve body at correct height and centerline per manufacturer rough-in specs',
+      'Install shower drain body and drain assembly integrated with waterproofing system',
+      'Rough in for vanity supply lines and P-trap at correct heights per new vanity specs',
+      'Set toilet flange at correct height above finished floor elevation to accommodate wax ring',
+      'Pressure test all supply lines under working pressure and verify no leaks before closing walls',
+    ],
+    'Phase 4 - Waterproofing & Cement Board':[
+      'Install cement backer board on all floor areas and wet-wall surfaces per manufacturer installation guidelines',
+      'Stagger all backer board joints and offset from subfloor seams; fasten at appropriate intervals',
+      'Tape and thin-set all backer board seams, transitions, and fastener dimples',
+      'Apply waterproofing membrane system to shower pan, walls, and all wet-area transitions',
+      'Flash and seal all inside corners, curbs, penetrations, and floor-to-wall transitions with membrane tape and compatible material',
+      'Integrate waterproofing at drain body per system requirements; test drain seating and elevation',
+      'Inspect all waterproofed surfaces for full coverage and allow complete cure time per product specs before any tile installation',
+      'Apply additional waterproofing treatment to any suspect areas identified during inspection at no additional charge',
+    ],
+    'Phase 5 - Tile Installation (Floor & Walls)':[
+      'Establish floor layout lines and dry-fit tile pattern prior to setting; confirm layout direction with homeowner',
+      'Back-butter all floor tiles and set in appropriate mortar bed for full-coverage bond; use tile leveling system throughout',
+      'Maintain consistent grout joint spacing; cut all tiles cleanly at walls, borders, and floor drain',
+      'Allow floor tile mortar to fully cure before commencing wall tile installation',
+      'Install wall tile in shower and all designated areas using appropriate setting material for vertical surfaces',
+      'Install any accent tile, decorative borders, niche tile, or mosaic sheets per agreed design layout',
+      'Cut all tiles cleanly at corners, niches, fixtures, and transitions; no chipped or cracked pieces in finished work',
+      'Apply grout throughout floor and wall tile areas using appropriate grout type per joint width',
+      'Clean and finish all grout joints to uniform depth; remove all grout haze before haze sets',
+      'Apply penetrating grout sealer to all grouted surfaces after minimum cure period',
+      'Caulk all changes of plane - floor-to-wall and wall-to-fixture transitions - with color-matched 100% silicone',
+    ],
+    'Phase 6 - Drywall & Paint':[
+      'Install moisture-resistant drywall on all non-wet wall and ceiling areas within bathroom footprint',
+      'Tape, bed, and feather all drywall joints to a smooth, paint-ready finish; minimum two coats of joint compound',
+      'Sand all finished surfaces; clean dust prior to primer application',
+      'Apply full-coverage prime coat to all new drywall and repaired surfaces',
+      'Apply minimum two finish coats of semi-gloss latex paint in client-selected color',
+      'Paint all ceiling surfaces within work area to a clean, uniform finish',
+      'Touch up all areas, trim, and surfaces affected by construction activity',
+    ],
+    'Phase 7 - Fixture Installation':[
+      'Set toilet on new wax ring with horn; secure with hold-down bolts; do not overtighten to avoid cracking base',
+      'Connect toilet supply line to shut-off; test fill valve, flapper, and flush operation',
+      'Install vanity cabinet; level and secure to wall studs; install vanity top or integral sink as specified',
+      'Install faucet with supply lines, P-trap, and drain pop-up assembly for vanity sink; check for leaks under pressure',
+      'Hang mirror or medicine cabinet at appropriate height per homeowner preference',
+      'Install shower valve trim kit, showerhead arm, showerhead, and tub spout as applicable to design',
+      'Wire and install exhaust fan per manufacturer specifications; vent to exterior - not into attic cavity',
+      'Install all towel bars, TP holder, robe hooks, and accessories at heights per homeowner preference',
+      'Caulk all fixture-to-tile, fixture-to-wall, and fixture-to-floor transitions with color-matched waterproof silicone',
+      'Run all fixtures under operating pressure and confirm no leaks at any supply, drain, or connection',
+    ],
+    'Phase 8 - Final Inspection & Punch List':[
+      'Perform full functional test of all plumbing fixtures, valves, drains, and electrical connections',
+      'Verify exhaust fan is drawing correctly and venting to exterior as required by code',
+      'Inspect all tile work for lippage, cracked grout joints, voids, or unsecured pieces',
+      'Inspect all caulk lines for uniformity, adhesion, and complete coverage at all transitions',
+      'Perform final walkthrough with homeowner; document any outstanding items in writing',
+      'Resolve all punch list items to homeowner satisfaction before requesting final payment',
+      'Remove all tools, excess materials, staging, and protective coverings from property',
+      'Perform final cleaning of all tile and fixture surfaces; leave bathroom move-in ready',
+    ],
+  },
+  kitchen:{
+    'Phase 1 - Site Preparation & Protection':[
+      'Remove all personal items, small appliances, and pantry contents from kitchen prior to start',
+      'Install protective barriers at all doorways to contain demolition dust and debris',
+      'Cover all flooring, countertops, and surfaces in adjacent rooms with protective sheeting',
+      'Establish material staging area and confirm dumpster or debris removal logistics with homeowner',
+      'Shut off water supply to kitchen at main or local shut-offs; depressurize lines',
+      'Disconnect gas appliances per safety protocols before any demolition work begins',
+      'Discuss and confirm temporary kitchen setup with homeowner to minimize disruption during construction',
+      'Review and confirm final cabinet layout, countertop template schedule, and material selections',
+    ],
+    'Phase 2 - Demolition & Debris Removal':[
+      'Disconnect and cap all water supply, drain, gas, and electrical connections at fixture locations',
+      'Remove all existing cabinets, taking care not to damage adjacent walls or flooring outside scope',
+      'Remove countertops, backsplash tile, and sink in one piece where possible to minimize dust',
+      'Demo flooring within kitchen footprint to substrate level as required for new flooring installation',
+      'Remove all existing appliances; coordinate with homeowner on any units being retained',
+      'Strip drywall in areas requiring plumbing or electrical relocation',
+      'Inspect all exposed wall framing, subfloor, and floor joists; report any damage or rot found',
+      'Remove all demolition debris from property; leave work area broom-clean daily',
+    ],
+    'Phase 3 - Rough Plumbing & Electrical':[
+      'Inspect all existing supply, drain, and electrical rough-in for condition and code compliance',
+      'Relocate sink supply lines and drain rough-in to match new cabinet layout where required',
+      'Rough in dishwasher supply, drain, and 20A electrical circuit where applicable',
+      'Run dedicated circuits for refrigerator, microwave, and small appliance outlets per code',
+      'Install GFCI-protected outlets at all countertop locations per current electrical code',
+      'Rough in range hood electrical and ductwork penetration as applicable',
+      'Install gas line stub-out for range or cooktop if converting from electric, as scoped',
+      'Rough in refrigerator water line if ice maker or water dispenser is included in scope',
+      'Cap and secure all rough-in points; cover all open electrical boxes before continuing',
+    ],
+    'Phase 4 - Cabinet Installation':[
+      'Locate all wall studs and establish level reference lines at upper and lower cabinet heights',
+      'Install upper wall cabinets first; hang on temporary ledger board to ensure level installation',
+      'Shim, level, and secure all upper cabinets to wall studs with appropriate fasteners',
+      'Install base cabinets working from a high-corner reference point; shim to level throughout',
+      'Screw adjacent cabinet boxes together at face frames for solid, uniform installation',
+      'Install any filler strips, panels, and spacers required to complete the cabinet layout',
+      'Install crown molding, light rail, and any decorative trim pieces per agreed design',
+      'Fit sink base and leave open for plumbing access during countertop and plumbing rough-in',
+      'Verify all drawer slides and door hinges are functioning correctly before proceeding',
+    ],
+    'Phase 5 - Countertop Templating & Installation':[
+      'Template countertops only after all base cabinets are fully installed, level, and secured',
+      'Coordinate fabrication schedule and delivery window with countertop supplier',
+      'Prepare base cabinets for countertop drop-in; install any required support blocking',
+      'Set and secure countertop to base cabinets with appropriate adhesive and fasteners',
+      'Cut sink opening to specifications and drop in or undermount sink as specified',
+      'Caulk perimeter of countertop at wall and all penetrations with color-matched silicone',
+      'Install any end caps, edge pieces, or seam treatments required for a finished appearance',
+    ],
+    'Phase 6 - Backsplash Tile':[
+      'Lay out tile pattern and confirm design layout with homeowner before setting any tile',
+      'Prepare wall surface; apply appropriate substrate or skim coat as needed for proper bond',
+      'Install backsplash tile using appropriate setting material for wall application',
+      'Cut tile cleanly at all outlets, switches, windows, and perimeter edges',
+      'Install any accent tile, decorative inserts, or mosaic sheets per agreed design',
+      'Apply grout per joint width requirements; clean and finish to uniform depth',
+      'Apply grout sealer after minimum cure period',
+      'Caulk all changes of plane - countertop-to-tile and wall-to-cabinet transitions - with color-matched silicone',
+    ],
+    'Phase 7 - Flooring':[
+      'Prepare existing subfloor: clean, flatten, and address any squeaks, soft spots, or high points',
+      'Install appropriate underlayment per flooring manufacturer requirements',
+      'Install new flooring in kitchen footprint per approved material and pattern',
+      'Maintain consistent expansion gap at all perimeter walls and fixed objects',
+      'Install transition strips at all doorways and flooring changes',
+      'Install quarter round or base shoe molding at all wall-to-floor transitions within kitchen',
+      'Nail or glue all molding; caulk and paint to match surrounding trim',
+    ],
+    'Phase 8 - Fixture & Appliance Installation':[
+      'Install faucet, supply lines, and drain assembly; connect to rough-in and check for leaks',
+      'Install garbage disposal and wire to dedicated switch circuit per manufacturer specs',
+      'Mount and secure dishwasher; connect supply, drain, and electrical; test cycle before closing',
+      'Set range or cooktop and connect to gas or electrical as applicable; test all burners and oven',
+      'Install and vent range hood to exterior; connect electrical and test fan and light functions',
+      'Connect refrigerator water line and ice maker supply if included in scope',
+      'Install all under-cabinet lighting, outlets, and cover plates',
+      'Test all electrical connections; verify GFCI outlets trip and reset correctly',
+      'Run all plumbing under pressure and confirm no leaks at any connection point',
+    ],
+    'Phase 9 - Paint, Trim & Punch List':[
+      'Paint all walls and ceilings within kitchen footprint in client-selected colors',
+      'Apply minimum two finish coats of paint; allow proper dry time between coats',
+      'Install or reinstall base molding at all wall-to-floor transitions',
+      'Caulk all trim, base, and crown transitions; paint to match adjacent surfaces',
+      'Touch up all areas affected by construction activity throughout the space',
+      'Adjust all cabinet doors and drawer fronts to uniform alignment and gap',
+      'Perform final walkthrough with homeowner; document and resolve all punch list items',
+      'Remove all tools, materials, staging, and protective coverings from property',
+      'Final cleaning of all cabinet faces, countertops, appliances, and tile surfaces',
+    ],
+  },
+  deck:{
+    'Phase 1 - Permit Pull & Site Layout':[
+      'Pull all required building permits prior to commencing any structural work',
+      'Establish deck perimeter layout using batter boards and string lines per approved design',
+      'Confirm ledger attachment location on house structure and verify structural capacity',
+      'Mark all footing locations per engineered layout or local code spacing requirements',
+      'Locate and mark all underground utilities before any excavation or drilling',
+      'Confirm final deck dimensions, railing layout, and stair location with homeowner before digging',
+    ],
+    'Phase 2 - Demo of Existing Deck':[
+      'Remove all existing deck boards, railings, and hardware; sort reusable material as directed',
+      'Remove existing framing, beams, and posts at or above grade',
+      'Extract or cut existing footings as required; verify footing depth and condition of any retained footings',
+      'Remove all demolition debris from property; leave site clear and ready for new construction',
+      'Inspect house ledger attachment point and existing rim joist for rot, deterioration, or fastener failure',
+      'Address any discovered rot or structural deficiency at ledger location before proceeding',
+    ],
+    'Phase 3 - Footings & Post Setting':[
+      'Excavate footing holes to required depth below frost line per local code (typically 42"-48" in this region)',
+      'Set fiber tube forms plumb and level at each footing location',
+      'Pour concrete footings; allow full cure time before loading with framing - minimum 24-48 hours',
+      'Set post base hardware into wet concrete at exact position using string line references',
+      'Install 4x4 or 6x6 PT posts; plumb in both directions and brace temporarily until beam is set',
+      'Cut all posts to correct height using a level reference line established from ledger height',
+      'Install post caps or beam seats per hardware specs to receive beam framing',
+    ],
+    'Phase 4 - Beam & Ledger Installation':[
+      'Install ledger board to house rim joist using code-compliant lag screws or through-bolts',
+      'Install proper flashing over ledger and behind siding to direct water away from house structure',
+      'Seal all ledger fastener penetrations with appropriate waterproof sealant',
+      'Build and set double or triple beam at correct height on post hardware',
+      'Verify beam is level across full span; adjust post heights as needed before fastening',
+      'Install all remaining structural hardware - joist hangers, post caps, and connectors - per manufacturer specs',
+      'Do not rely on toenailing alone for any structural connections - use approved connectors throughout',
+    ],
+    'Phase 5 - Joist Framing':[
+      'Install perimeter rim joists to establish the deck frame boundary',
+      'Install field joists at code-required spacing using joist hanger hardware at both ends',
+      'Block all joists at midspan or per code requirement to prevent rotation and lateral movement',
+      'Install blocking around any penetrations - posts, utility access, or stair openings',
+      'Apply joist tape to all PT framing top surfaces to protect from moisture and extend service life',
+      'Inspect all framing for level, square, and plumb before proceeding to decking',
+      'Verify all structural connections are fully fastened and no hardware is missing or omitted',
+    ],
+    'Phase 6 - Decking Board Installation':[
+      'Snap chalk lines to establish straight, parallel reference lines for first decking course',
+      'Install starter board at most visible location; confirm spacing and alignment before fastening',
+      'Install decking boards using hidden fastener system (Trex Hideaway or equivalent) for clean face',
+      'Maintain consistent gap between boards for drainage; adjust as needed for board width variation',
+      'Cut boards cleanly at perimeter; snap chalk line for uniform fascia line before cutting',
+      'Install fascia boards at perimeter to cover exposed framing for a finished appearance',
+      'Install any picture frame border or feature board courses as specified in design',
+      'Inspect all boards for splits, crowning, or defects before fastening; replace any substandard pieces',
+    ],
+    'Phase 7 - Railing System':[
+      'Lay out and mark post locations per code-required maximum spacing (typically 6 ft OC)',
+      'Cut post notches or install post sleeves per railing system manufacturer requirements',
+      'Set and secure all posts plumb in two directions before installing rails',
+      'Install top and bottom rails at correct heights per code (top rail minimum 36" or 42" depending on deck height)',
+      'Install balusters at correct spacing to comply with 4" sphere code requirement throughout',
+      'Fasten all railing components per manufacturer specs; do not use improper fasteners that void warranty',
+      'Check railing rigidity at all post locations; stiffen any loose posts before final fastening',
+      'Install post caps and all trim pieces for a finished, weather-tight appearance',
+    ],
+    'Phase 8 - Staircase Build':[
+      'Calculate stair rise and run to comply with code (max 7-3/4" rise, min 10" run per step)',
+      'Cut stair stringers from appropriate PT lumber; verify plumb and level before fastening',
+      'Secure stringers to deck framing at top and to concrete pad or hardware at bottom',
+      'Install treads per same decking material spec; fasten with hidden or concealed fasteners where possible',
+      'Install stair railing and balusters at compliant height and spacing per code',
+      'Verify stair railings are graspable and meet code requirements for continuous handrail',
+    ],
+    'Phase 9 - Final Inspection & Touch-Up':[
+      'Perform full structural walk-around; check all connections, fasteners, and hardware for proper installation',
+      'Inspect all decking surfaces for protruding fasteners, splinters, or uneven boards',
+      'Test railing rigidity at all post locations to confirm meets code shear requirements (200 lb lateral load)',
+      'Verify drainage direction away from house structure at all points',
+      'Schedule required building inspections and resolve any inspector-noted items before close-out',
+      'Perform final walkthrough with homeowner; document and resolve all punch list items',
+      'Remove all tools, materials, and staging from property; leave site clean',
+    ],
+  },
+  exterior:{
+    'Phase 1 - Site Setup & Protection':[
+      'Install protective landscaping barriers at foundation plantings and lawn areas below work zone',
+      'Establish material staging, equipment laydown, and dumpster locations with homeowner',
+      'Remove all exterior furniture, décor, and fixtures from work area before starting',
+      'Document existing siding, trim, and window conditions with photos before any removal',
+      'Review work sequence and sequencing with homeowner to minimize weather exposure on any given day',
+      'Confirm material colors, profiles, and trim selections with homeowner before ordering',
+    ],
+    'Phase 2 - Removal of Existing Siding':[
+      'Remove all existing siding panels working top-down to avoid damaging lower courses',
+      'Remove existing J-channel, corner posts, trim, and accessory pieces',
+      'Remove all existing window trim and sill nose pieces; store or dispose per homeowner direction',
+      'Inspect sheathing behind removed siding for rot, mold, moisture damage, or soft spots',
+      'Remove and replace any compromised sheathing panels encountered before proceeding',
+      'Remove all nails, staples, and fasteners from substrate; flatten any raised areas',
+      'Remove all demolished material from property promptly via dumpster',
+    ],
+    'Phase 3 - Sheathing & House Wrap':[
+      'Install replacement sheathing panels at all areas requiring replacement; fasten per code',
+      'Inspect all existing house wrap; repair or replace damaged sections with compatible material',
+      'Install new house wrap to all exposed sheathing areas - overlap seams 6" minimum and tape all joints',
+      'Flash all window and door openings with self-adhesive flashing tape before new trim installation',
+      'Seal all penetrations - hose bibs, electrical outlets, dryer vents - with appropriate flashing and sealant',
+      'Verify house wrap is fully integrated with window and door flanges before covering with siding',
+    ],
+    'Phase 4 - Siding Installation':[
+      'Install starter strip at foundation line, level across full perimeter of scope',
+      'Install all corner posts and inside corner trim; plumb in both directions before fastening',
+      'Install siding panels from bottom course up; overlap and lock each course per manufacturer specs',
+      'Maintain consistent exposure on each course; snap chalk lines at regular intervals to check alignment',
+      'Leave appropriate nail hem clearance (1/16" to 3/32") to allow for thermal expansion',
+      'Cut siding cleanly around all windows, doors, outlets, and penetrations; fit tightly to J-channel',
+      'Install undersill trim and cut panels to fit under all window sills; use utility trim for irregular cuts',
+      'Do not face-nail siding through the lock - all fastening through nail hem only',
+    ],
+    'Phase 5 - Trim, J-Channel & Molding':[
+      'Install window J-channel or F-channel on all four sides of each window in scope',
+      'Install window molding, drip cap, and sill nose as specified on each window',
+      'Install door casing and J-channel at all door openings within scope',
+      'Install all soffit and frieze board trim pieces; integrate with siding system at top',
+      'Caulk all siding-to-trim transitions with paintable exterior sealant',
+      'Touch up all cut ends and exposed wood areas with appropriate primer or end cap trim',
+    ],
+    'Phase 6 - Gutter & Fascia Work':[
+      'Remove existing gutters, hangers, and gutter spikes from fascia',
+      'Inspect and replace rotted or deteriorated fascia boards before reinstalling gutters',
+      'Install new aluminum gutters at correct pitch toward downspouts (1/4" drop per 10 ft)',
+      'Install gutter hangers on maximum 24" centers using hidden hanger system',
+      'Install downspouts at all established locations; extend splash blocks minimum 4 ft from foundation',
+      'Install gutter end caps and miters with sealant; test water flow before completing',
+    ],
+    'Phase 7 - Roofing Repairs':[
+      'Identify all damaged, curled, missing, or lifting shingle areas within repair scope',
+      'Remove compromised shingles and inspect decking below for rot or water damage',
+      'Replace any deteriorated decking prior to re-shingling',
+      'Install new ice-and-water shield at all repair areas within first 3 feet of eave and all valleys',
+      'Install replacement architectural shingles matching existing as closely as possible',
+      'Re-flash all penetrations, valleys, and transitions within repair zones',
+      'Seal all nail heads and exposed fasteners with roofing cement',
+      'Inspect completed repair areas from ladder before final approval',
+    ],
+    'Phase 8 - Final Inspection & Cleanup':[
+      'Walk entire perimeter and inspect all siding courses for alignment, locking, and watertight fit',
+      'Inspect all trim, J-channel, and molding for secure fastening and proper integration with siding',
+      'Check all caulked transitions for full coverage and adhesion',
+      'Clean all siding surfaces of chalk marks, adhesive residue, and construction debris',
+      'Remove all protective barriers and staging from property',
+      'Rake and blow out all construction debris, nails, and material scraps from lawns and planting areas',
+      'Final walkthrough with homeowner; document and resolve all outstanding punch list items',
+    ],
+  },
+};
+
+function buildEstimateText(){
+  const c=STATE.client||{first:'Homeowner',last:'',addr:'Project Address',city:'',zip:''};
+  const type=STATE.jobType||'bathroom';
+  const typeLabel=JOB_TYPES[type]?JOB_TYPES[type].label:'Home Improvement Project';
+  const phases=PHASE_MAP[type]||PHASE_MAP.default;
+  const scopeItems=SCOPE_ITEMS[type]||{};
+  const price=STATE.contractPrice;
+  const pay=STATE.paySchedule;
+  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const qNum=STATE.quoteNum++;
+
+  const overviews={
+    bathroom:`This project involves a complete ${typeLabel.toLowerCase()} at ${c.addr}, ${c.city}. The scope includes full demolition of the existing bathroom down to the studs, professional waterproofing installation, new tile throughout, all new plumbing fixtures, vanity, and accessories. The finished result will be a fully modernized, watertight, and professionally finished bathroom built to residential code standards.`,
+    kitchen:`This project involves a complete ${typeLabel.toLowerCase()} at ${c.addr}, ${c.city}. The scope includes full demo and removal of existing cabinets, countertops, and flooring, followed by installation of new cabinetry, countertops, backsplash tile, flooring, and all new plumbing fixtures. The result will be a fully functional, modernized kitchen built to the homeowner's specifications and ready for appliance installation.`,
+    deck:`This project involves the construction of a new deck at ${c.addr}, ${c.city}. The scope includes removal of any existing deck structure, proper footing installation, pressure-treated framing, composite decking boards, railing system, and all associated hardware. The finished deck will be structurally sound, weather-resistant, and built to local code standards.`,
+    exterior:`This project involves exterior renovation work at ${c.addr}, ${c.city}. The scope includes removal of existing siding, installation of new siding material with proper house wrap and flashing, trim and molding work, and any gutter or roofing repairs included in scope. The result will be a professionally finished exterior that improves curb appeal and weather protection.`,
+    default:`This project involves home improvement work at ${c.addr}, ${c.city}. All work will be performed by 607 Home Improvement in a professional manner per industry standards and local building codes. The scope outlined below represents the full agreement between both parties.`,
+  };
+
+  let scopeText='';
+  for(const phase of phases){
+    scopeText+=`\n${phase}\n`;
+    const items=scopeItems[phase]||['Work as described in project brief','All associated labor, materials handling, and cleanup'];
+    items.forEach(it=>scopeText+=`- ${it}\n`);
+  }
+
+  let payText='';
+  if(pay.length){
+    const maxLabel=Math.max(...pay.map(p=>p.label.length));
+    pay.forEach(p=>{
+      const padded=p.label.padEnd(maxLabel+2,'.');
+      payText+=`${padded}  $${fmt(p.amt).padStart(10)}     ${p.note}\n`;
+    });
+  }
+
+  const discLine=STATE.discountPct>0?`Discount Applied (${STATE.discountPct}%):    -$${fmt(STATE.contractPrice*(STATE.discountPct/(100-STATE.discountPct)))}\n`:'';
+
+  return `607 HOME IMPROVEMENT
+Professional Home Renovation & Repair Services
+Jacob Hogeg | (607) 555-0100 | 607homeimprovement@gmail.com
+
+SERVICE CONTRACT & SCOPE OF WORK
+${typeLabel.toUpperCase()}
+
+-----
+
+Customer Name:     ${c.first} ${c.last}
+Property Address:  ${c.addr}, ${c.city} ${c.zip}
+Contract Date:     ${today}
+Quote Number:      #${qNum}
+Contractor:        607 Home Improvement
+Contract Total:    $${fmt(price)}
+
+-----
+
+PROJECT OVERVIEW
+
+${overviews[type]||overviews.default}
+
+-----
+
+SCOPE OF WORK
+${scopeText}
+-----
+
+COST SUMMARY
+
+Total Contract Price:    $${fmt(price)}
+${discLine}
+-----
+
+PAYMENT SCHEDULE
+
+${payText}
+-----
+
+GENERAL CONDITIONS
+
+- All work performed in a professional manner per standard industry
+  practices and local building codes.
+- Contractor responsible for daily cleanup. Debris removed at
+  project completion.
+- Any work not listed in this scope is out of scope and subject
+  to a separate written change order.
+- Contractor carries general liability insurance. Proof available
+  upon request.
+- Permits, if required, are the homeowner's responsibility unless
+  agreed in writing.
+- Work schedule subject to weather and material availability.
+  Contractor will communicate delays promptly.
+- Workmanship warranty: 1 year from final completion for all labor.
+  Manufacturer warranties passed through to customer per their terms.
+
+-----
+
+DISCLAIMER
+
+This contract represents the full agreement between the customer and
+607 Home Improvement for the scope described above. Any modifications
+must be agreed in writing via a signed change order before work begins.
+Verbal agreements are not binding. 607 Home Improvement reserves the
+right to stop work if payment milestones are not met per the schedule
+above.
+
+-----
+
+AGREEMENT & SIGNATURES
+
+By signing below, both parties confirm they have read, understood,
+and agreed to all terms in this contract.
+
+
+CUSTOMER                            CONTRACTOR - 607 HOME IMPROVEMENT
+${c.first} ${c.last}${' '.repeat(Math.max(1,36-c.first.length-c.last.length))}Jacob Hogeg
+
+X _____________________________     X _____________________________
+
+Date: _________________________     Date: _________________________
+
+
+607 Home Improvement | Professional Home Renovation & Repair Services
+Jacob Hogeg | (607) 555-0100`;
+}
+
+// ===================== NAVIGATION =====================
+function goStep(n){
+  if(n>STATE.maxStep && n>STATE.currentStep+1) return;
+  document.querySelectorAll('.step-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('step'+n).classList.add('active');
+  document.querySelectorAll('.step-item').forEach((el,i)=>{
+    el.classList.remove('active','done');
+    if(i+1<n) el.classList.add('done');
+    if(i+1===n) el.classList.add('active');
+  });
+  STATE.currentStep=n;
+  if(n>STATE.maxStep) STATE.maxStep=n;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function tryGoStep(n){
+  if(n<=STATE.maxStep) goStep(n);
+}
+
+function goStep2(){
+  if(!STATE.client){showToast('Please select a client first');return;}
+  goStep(2);
+}
+
+function goStep3(){
+  const brief=document.getElementById('jobBrief').value.trim();
+  if(brief.length<10){showToast('Please describe the job first');return;}
+  STATE.jobBrief=brief;
+  STATE.jobType=detectJobType(brief);
+  renderQuestions();
+  goStep(3);
+}
+
+function goStep4(){
+  goStep(4);
+  setTimeout(animateHD,400);
+}
+
+function goStep6(){
+  if(!STATE.contractPrice||STATE.contractPrice<1){showToast('Please enter your contract price');return;}
+  const text=buildEstimateText();
+  document.getElementById('estimateOut').textContent=text;
+  // Persist quote to shared DB
+  const c=STATE.client||{first:'Unknown',last:'',addr:'',city:'',zip:''};
+  MasmerDB.saveQuote({
+    id: 'q_'+Date.now(),
+    quoteNum: STATE.quoteNum-1,
+    client: c.first+' '+c.last,
+    addr: c.addr+', '+c.city,
+    jobType: STATE.jobType,
+    amount: STATE.contractPrice,
+    matCost: STATE.matTotalBuffered,
+    date: new Date().toISOString().split('T')[0],
+    status: 'Draft',
+    text: text
+  });
+  goStep(6);
+}
+
+// ===================== UTILITIES =====================
+function copyEstimate(){
+  navigator.clipboard.writeText(document.getElementById('estimateOut').textContent);
+  showToast('Estimate copied!');
+}
+function copyMaterials(){
+  const rows=document.querySelectorAll('.mat-table tr');
+  let text='MATERIALS LIST - OFFICE USE ONLY\n\n';
+  rows.forEach(r=>{text+=Array.from(r.cells).map(c=>c.textContent.trim()).join('\t')+'\n';});
+  navigator.clipboard.writeText(text);
+  showToast('Materials list copied!');
+}
+function printMaterials(){window.print();}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+// ===================== INIT =====================
+renderClients(CLIENTS);
+MasmerDB.init();
+// After init, re-render with any saved clients merged in
+renderClients(CLIENTS);
+</script>
+</body>
+</html>

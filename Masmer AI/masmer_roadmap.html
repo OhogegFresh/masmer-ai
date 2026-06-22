@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Founder Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0D1117;
+  --surface: #111827;
+  --surface2: #1a2234;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.30);
+  --text: #F9FAFB;
+  --muted: #9CA3AF;
+  --dim: #4B5563;
+  --border: rgba(255,255,255,0.07);
+  --green: #10B981;
+  --green-glow: rgba(16,185,129,0.10);
+  --green-border: rgba(16,185,129,0.28);
+  --amber: #F59E0B;
+  --amber-glow: rgba(245,158,11,0.10);
+  --amber-border: rgba(245,158,11,0.28);
+  --blue: #3B82F6;
+  --blue-glow: rgba(59,130,246,0.10);
+  --blue-border: rgba(59,130,246,0.28);
+  --red: #EF4444;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* ── HEADER ── */
+.header { padding: 14px 36px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(13,17,23,0.97); backdrop-filter: blur(16px); z-index: 200; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark { width: 32px; height: 32px; background: var(--orange); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: white; }
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+.logo-text span { color: var(--orange); }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.progress-pill { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+.progress-bar-mini { width: 80px; height: 5px; background: var(--border); border-radius: 10px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--orange); border-radius: 10px; transition: width 0.5s ease; }
+.save-btn { background: var(--orange-glow); border: 1px solid var(--orange-border); color: var(--orange); padding: 6px 14px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.18s; }
+.save-btn:hover { background: rgba(249,115,22,0.2); }
+.saved-badge { font-size: 11px; color: var(--green); opacity: 0; transition: opacity 0.4s; }
+
+/* ── HERO SUMMARY ── */
+.hero { padding: 28px 36px 0; max-width: 1200px; margin: 0 auto; }
+.hero-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 12px; margin-bottom: 28px; }
+.hstat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.hstat-num { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.hstat-num.orange { color: var(--orange); }
+.hstat-num.green { color: var(--green); }
+.hstat-num.amber { color: var(--amber); }
+.hstat-num.blue { color: var(--blue); }
+.hstat-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+/* ── PHASE TABS ── */
+.phase-nav { display: flex; gap: 4px; padding: 0 36px; max-width: 1200px; margin: 0 auto 0; overflow-x: auto; padding-bottom: 1px; }
+.phase-nav::-webkit-scrollbar { display: none; }
+.ptab { padding: 9px 20px; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--muted); background: none; transition: all 0.18s; white-space: nowrap; position: relative; bottom: -1px; }
+.ptab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.ptab.active { color: var(--orange); background: var(--surface); border-color: var(--border); border-bottom-color: var(--surface); }
+.ptab-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: 6px; vertical-align: middle; margin-bottom: 1px; }
+.tab-border { border-bottom: 1px solid var(--border); padding: 0 36px; }
+
+/* ── MAIN LAYOUT ── */
+.main { display: grid; grid-template-columns: 1fr 320px; gap: 20px; padding: 24px 36px 60px; max-width: 1200px; margin: 0 auto; }
+.phase-panel { display: none; }
+.phase-panel.active { display: contents; }
+
+/* ── PHASE HEADER ── */
+.phase-header { grid-column: 1 / -1; background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 22px 28px; display: flex; align-items: center; justify-content: space-between; }
+.ph-left { display: flex; align-items: center; gap: 16px; }
+.ph-badge { font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; }
+.ph-title { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+.ph-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.ph-progress { text-align: right; }
+.ph-pct { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; }
+.ph-pct-label { font-size: 11px; color: var(--muted); }
+.ph-bar-wrap { width: 160px; height: 6px; background: var(--border); border-radius: 10px; overflow: hidden; margin-top: 6px; }
+.ph-bar { height: 100%; border-radius: 10px; transition: width 0.5s ease; }
+
+/* ── TASK LIST ── */
+.tasks-col { display: flex; flex-direction: column; gap: 10px; }
+
+.task-group { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.tg-head { padding: 14px 18px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); cursor: pointer; user-select: none; }
+.tg-head:hover { background: rgba(255,255,255,0.02); }
+.tg-icon { font-size: 16px; }
+.tg-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; flex: 1; }
+.tg-count { font-size: 11px; color: var(--muted); background: rgba(255,255,255,0.05); padding: 2px 8px; border-radius: 10px; }
+.tg-chevron { font-size: 10px; color: var(--dim); transition: transform 0.2s; }
+.tg-chevron.open { transform: rotate(90deg); }
+.tg-body { display: none; padding: 6px 0; }
+.tg-body.open { display: block; }
+
+.task-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 18px; transition: background 0.15s; cursor: pointer; }
+.task-item:hover { background: rgba(255,255,255,0.025); }
+.task-item.done .task-title { text-decoration: line-through; color: var(--dim); }
+.task-item.done .task-meta { color: var(--dim); opacity: 0.6; }
+.task-check { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--dim); flex-shrink: 0; margin-top: 2px; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+.task-item:hover .task-check { border-color: var(--orange); }
+.task-check.checked { background: var(--orange); border-color: var(--orange); }
+.task-check.checked::after { content: '✓'; font-size: 11px; color: white; font-weight: 700; }
+.task-body { flex: 1; min-width: 0; }
+.task-title { font-size: 13px; font-weight: 500; color: var(--text); line-height: 1.4; margin-bottom: 3px; }
+.task-meta { font-size: 11px; color: var(--muted); display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.task-tag { padding: 1px 7px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+.tag-meeting { background: var(--blue-glow); color: #93C5FD; border: 1px solid var(--blue-border); }
+.tag-design { background: rgba(167,139,250,0.1); color: #C4B5FD; border: 1px solid rgba(167,139,250,0.25); }
+.tag-legal { background: var(--amber-glow); color: #FCD34D; border: 1px solid var(--amber-border); }
+.tag-product { background: var(--orange-glow); color: #FDBA74; border: 1px solid var(--orange-border); }
+.tag-biz { background: var(--green-glow); color: #6EE7B7; border: 1px solid var(--green-border); }
+.tag-infra { background: rgba(236,72,153,0.1); color: #F9A8D4; border: 1px solid rgba(236,72,153,0.25); }
+
+/* ── SIDEBAR ── */
+.sidebar { display: flex; flex-direction: column; gap: 14px; }
+.scard { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+.scard-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 14px; }
+
+/* UPCOMING MEETINGS */
+.meeting-item { display: flex; gap: 12px; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.meeting-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.meeting-date { width: 40px; text-align: center; background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 8px; padding: 6px 4px; flex-shrink: 0; }
+.meeting-day { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; color: var(--orange); line-height: 1; }
+.meeting-mon { font-size: 9px; color: var(--orange); letter-spacing: 0.08em; text-transform: uppercase; }
+.meeting-info { flex: 1; }
+.meeting-who { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+.meeting-role { font-size: 11px; color: var(--muted); margin-bottom: 4px; }
+.meeting-agenda { font-size: 11px; color: var(--dim); line-height: 1.5; }
+.meeting-check-wrap { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+.meeting-done-btn { font-size: 10px; color: var(--muted); background: rgba(255,255,255,0.04); border: 1px solid var(--border); padding: 2px 8px; border-radius: 10px; cursor: pointer; transition: all 0.18s; }
+.meeting-done-btn:hover { color: var(--green); border-color: var(--green-border); }
+.meeting-done-btn.done { color: var(--green); border-color: var(--green-border); background: var(--green-glow); }
+
+/* KEY DECISIONS */
+.decision-item { margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.decision-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+.decision-q { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 4px; line-height: 1.4; }
+.decision-status { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 10px; display: inline-block; }
+.ds-open { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-border); }
+.ds-done { background: var(--green-glow); color: var(--green); border: 1px solid var(--green-border); }
+
+/* NOTES */
+.notes-area { width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 12px; line-height: 1.6; resize: vertical; min-height: 90px; outline: none; transition: border-color 0.18s; }
+.notes-area:focus { border-color: var(--orange-border); }
+.notes-area::placeholder { color: var(--dim); }
+
+/* TIMELINE STRIP */
+.timeline-row { display: flex; align-items: center; gap: 0; margin-bottom: 4px; }
+.tl-week { font-size: 10px; color: var(--dim); width: 54px; flex-shrink: 0; }
+.tl-bar-bg { flex: 1; height: 20px; background: rgba(255,255,255,0.03); border-radius: 5px; overflow: hidden; }
+.tl-bar-fill { height: 100%; border-radius: 5px; display: flex; align-items: center; padding-left: 8px; font-size: 9px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; }
+.tl-now { border-left: 2px solid var(--orange); }
+
+/* ── PHASE COLOR THEMES ── */
+.phase-0 .ph-badge { background: var(--blue-glow); color: #93C5FD; border: 1px solid var(--blue-border); }
+.phase-0 .ph-pct { color: var(--blue); }
+.phase-0 .ph-bar { background: var(--blue); }
+.phase-1 .ph-badge { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--orange-border); }
+.phase-1 .ph-pct { color: var(--orange); }
+.phase-1 .ph-bar { background: var(--orange); }
+.phase-2 .ph-badge { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-border); }
+.phase-2 .ph-pct { color: var(--amber); }
+.phase-2 .ph-bar { background: var(--amber); }
+.phase-3 .ph-badge { background: var(--green-glow); color: var(--green); border: 1px solid var(--green-border); }
+.phase-3 .ph-pct { color: var(--green); }
+.phase-3 .ph-bar { background: var(--green); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .main { grid-template-columns: 1fr; }
+  .hero-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .header { padding: 12px 16px; }
+  .hero, .phase-nav, .main, .tab-border { padding-left: 16px; padding-right: 16px; }
+  .hero-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Animations */
+@keyframes fadein { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+.phase-panel.active { animation: fadein 0.22s ease; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span> — Founder Roadmap</div>
+  </div>
+  <div class="header-right">
+    <div class="progress-pill">
+      <span id="globalPct">0%</span> complete
+      <div class="progress-bar-mini"><div class="progress-fill" id="globalBar" style="width:0%"></div></div>
+    </div>
+    <button class="save-btn" onclick="saveProgress()">Save Progress</button>
+    <span class="saved-badge" id="savedBadge">✓ Saved</span>
+  </div>
+</div>
+
+<!-- HERO STATS -->
+<div class="hero">
+  <div class="hero-grid">
+    <div class="hstat">
+      <div class="hstat-num orange" id="statDone">0</div>
+      <div class="hstat-label">Tasks completed</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num blue" id="statTotal">0</div>
+      <div class="hstat-label">Total tasks</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num amber" id="statMeet">6</div>
+      <div class="hstat-label">Meetings scheduled</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-num green" id="statPhase">Phase 0</div>
+      <div class="hstat-label">Current phase</div>
+    </div>
+  </div>
+</div>
+
+<!-- PHASE TABS -->
+<div class="phase-nav" id="phaseNav">
+  <button class="ptab active" onclick="showPhase(0, this)"><span class="ptab-dot" style="background:#3B82F6"></span>Phase 0 — Foundation</button>
+  <button class="ptab" onclick="showPhase(1, this)"><span class="ptab-dot" style="background:#F97316"></span>Phase 1 — Build MVP</button>
+  <button class="ptab" onclick="showPhase(2, this)"><span class="ptab-dot" style="background:#F59E0B"></span>Phase 2 — Beta Launch</button>
+  <button class="ptab" onclick="showPhase(3, this)"><span class="ptab-dot" style="background:#10B981"></span>Phase 3 — Monetize</button>
+</div>
+<div class="tab-border"></div>
+
+<!-- ══════════════════════════════════════════════ MAIN ══════════════════════════════════════════════ -->
+<div class="main" id="mainGrid">
+
+  <!-- ── PHASE 0 ── -->
+  <div class="phase-panel active phase-0" id="panel-0">
+
+    <div class="phase-header">
+      <div class="ph-left">
+        <div>
+          <div class="ph-badge">Phase 0 · Now → Week 4</div>
+          <div class="ph-title">Foundation & Team</div>
+          <div class="ph-sub">Lock in your team structure, legal basics, and align on product direction before building.</div>
+        </div>
+      </div>
+      <div class="ph-progress">
+        <div class="ph-pct" id="pct-0">0%</div>
+        <div class="ph-pct-label">phase complete</div>
+        <div class="ph-bar-wrap"><div class="ph-bar" id="bar-0" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="tasks-col">
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">👥</div>
+          <div class="tg-title">Co-Founder & Team Alignment</div>
+          <div class="tg-count" id="count-team">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t1" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">First meeting with Ayton (COO) — define his role and scope</div>
+              <div class="task-meta">
+                <span>Week 1</span>
+                <span class="task-tag tag-meeting">Meeting</span>
+                <span class="task-tag tag-biz">Business</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t2" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Discuss equity split with Ayton — use a vesting schedule (4yr / 1yr cliff recommended)</div>
+              <div class="task-meta">
+                <span>Week 1–2</span>
+                <span class="task-tag tag-legal">Legal</span>
+                <span class="task-tag tag-biz">Business</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t3" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Agree on working cadence — how often you sync, how decisions get made</div>
+              <div class="task-meta">
+                <span>Week 1</span>
+                <span class="task-tag tag-meeting">Meeting</span>
+                <span class="task-tag tag-biz">Business</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t4" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Write a 1-page "Founder Agreement" — roles, responsibilities, what happens if someone leaves</div>
+              <div class="task-meta">
+                <span>Week 2</span>
+                <span class="task-tag tag-legal">Legal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">🎨</div>
+          <div class="tg-title">UX/UI Designer Selection</div>
+          <div class="tg-count" id="count-design">0/5</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t5" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Meet Designer #1 — evaluate portfolio, contractor industry understanding, Figma skills</div>
+              <div class="task-meta">
+                <span>Scheduled</span>
+                <span class="task-tag tag-meeting">Meeting</span>
+                <span class="task-tag tag-design">Design</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t6" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Meet Designer #2 — evaluate portfolio, contractor industry understanding, Figma skills</div>
+              <div class="task-meta">
+                <span>Scheduled</span>
+                <span class="task-tag tag-meeting">Meeting</span>
+                <span class="task-tag tag-design">Design</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t7" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Meet Designer #3 — evaluate portfolio, contractor industry understanding, Figma skills</div>
+              <div class="task-meta">
+                <span>Scheduled</span>
+                <span class="task-tag tag-meeting">Meeting</span>
+                <span class="task-tag tag-design">Design</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t8" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Give 1 paid design test ($100–200): redesign the dashboard home screen using Masmer colors</div>
+              <div class="task-meta">
+                <span>Week 2</span>
+                <span class="task-tag tag-design">Design</span>
+                <span>After interviews</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t9" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Select designer and agree on contract terms (hourly vs. project-based, deliverables)</div>
+              <div class="task-meta">
+                <span>Week 2–3</span>
+                <span class="task-tag tag-legal">Legal</span>
+                <span class="task-tag tag-design">Design</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">⚖️</div>
+          <div class="tg-title">Legal & Business Structure</div>
+          <div class="tg-count" id="count-legal">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t10" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Form an LLC or C-Corp for Masmer AI (C-Corp is better if you plan to raise VC)</div>
+              <div class="task-meta">
+                <span>Week 2</span>
+                <span class="task-tag tag-legal">Legal</span>
+                <span>Delaware recommended</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t11" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Open a business bank account (separate from personal finances)</div>
+              <div class="task-meta">
+                <span>Week 2–3</span>
+                <span class="task-tag tag-legal">Legal</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t12" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Register masmerai.com (or masmer.ai) — lock down the domain and social handles</div>
+              <div class="task-meta">
+                <span>Week 1</span>
+                <span class="task-tag tag-biz">Business</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t13" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Set up NDA template for anyone seeing the product before launch</div>
+              <div class="task-meta">
+                <span>Week 3</span>
+                <span class="task-tag tag-legal">Legal</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">🗺️</div>
+          <div class="tg-title">Product Direction & Roadmap</div>
+          <div class="tg-count" id="count-prod0">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t14" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Define the 3 core features of MVP v1.0 — AI receptionist, lead CRM, estimate bot</div>
+              <div class="task-meta">
+                <span>Week 1</span>
+                <span class="task-tag tag-product">Product</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t15" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Write 5 contractor "user stories" — specific scenarios the app must solve out of the box</div>
+              <div class="task-meta">
+                <span>Week 2</span>
+                <span class="task-tag tag-product">Product</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t16" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Audit current Lovable/Supabase build — document what works, what's broken, what's missing</div>
+              <div class="task-meta">
+                <span>Week 1–2</span>
+                <span class="task-tag tag-product">Product</span>
+                <span class="task-tag tag-infra">Infra</span>
+              </div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t17" data-phase="0">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Identify 5–10 contractor beta testers you know personally (don't charge them yet)</div>
+              <div class="task-meta">
+                <span>Week 3–4</span>
+                <span class="task-tag tag-biz">Business</span>
+                <span>Friends, network, community</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /tasks-col -->
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+      <div class="scard">
+        <div class="scard-title">📅 Upcoming Meetings</div>
+        <div class="meeting-item">
+          <div class="meeting-date">
+            <div class="meeting-day">—</div>
+            <div class="meeting-mon">TBD</div>
+          </div>
+          <div class="meeting-info">
+            <div class="meeting-who">Ayton (COO)</div>
+            <div class="meeting-role">Co-Founder · First Sync</div>
+            <div class="meeting-agenda">Role definition · equity conversation · working cadence · 90-day goals</div>
+            <div class="meeting-check-wrap">
+              <span class="meeting-done-btn" onclick="markMeeting(this)">Mark done</span>
+            </div>
+          </div>
+        </div>
+        <div class="meeting-item">
+          <div class="meeting-date">
+            <div class="meeting-day">—</div>
+            <div class="meeting-mon">TBD</div>
+          </div>
+          <div class="meeting-info">
+            <div class="meeting-who">Designer #1</div>
+            <div class="meeting-role">UX/UI Interview</div>
+            <div class="meeting-agenda">Portfolio review · ask: "Have you designed for contractors or field workers?"</div>
+            <div class="meeting-check-wrap">
+              <span class="meeting-done-btn" onclick="markMeeting(this)">Mark done</span>
+            </div>
+          </div>
+        </div>
+        <div class="meeting-item">
+          <div class="meeting-date">
+            <div class="meeting-day">—</div>
+            <div class="meeting-mon">TBD</div>
+          </div>
+          <div class="meeting-info">
+            <div class="meeting-who">Designer #2</div>
+            <div class="meeting-role">UX/UI Interview</div>
+            <div class="meeting-agenda">Portfolio review · ask about mobile-first design experience</div>
+            <div class="meeting-check-wrap">
+              <span class="meeting-done-btn" onclick="markMeeting(this)">Mark done</span>
+            </div>
+          </div>
+        </div>
+        <div class="meeting-item">
+          <div class="meeting-date">
+            <div class="meeting-day">—</div>
+            <div class="meeting-mon">TBD</div>
+          </div>
+          <div class="meeting-info">
+            <div class="meeting-who">Designer #3</div>
+            <div class="meeting-role">UX/UI Interview</div>
+            <div class="meeting-agenda">Portfolio review · rate on: clarity, speed, contractor-friendliness</div>
+            <div class="meeting-check-wrap">
+              <span class="meeting-done-btn" onclick="markMeeting(this)">Mark done</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scard">
+        <div class="scard-title">🔑 Open Decisions</div>
+        <div class="decision-item">
+          <div class="decision-q">What equity % does Ayton get?</div>
+          <span class="decision-status ds-open">Open</span>
+        </div>
+        <div class="decision-item">
+          <div class="decision-q">LLC or C-Corp?</div>
+          <span class="decision-status ds-open">Open</span>
+        </div>
+        <div class="decision-item">
+          <div class="decision-q">Which designer to hire?</div>
+          <span class="decision-status ds-open">Open</span>
+        </div>
+        <div class="decision-item">
+          <div class="decision-q">Freelance or part-time for design?</div>
+          <span class="decision-status ds-open">Open</span>
+        </div>
+        <div class="decision-item">
+          <div class="decision-q">Pricing model finalized ($99/$199/$349)?</div>
+          <span class="decision-status ds-done">Decided ✓</span>
+        </div>
+      </div>
+
+      <div class="scard">
+        <div class="scard-title">📝 Phase Notes</div>
+        <textarea class="notes-area" id="notes-0" placeholder="Add notes, decisions, blockers..."></textarea>
+      </div>
+
+    </div>
+  </div><!-- /panel-0 -->
+
+  <!-- ── PHASE 1 ── -->
+  <div class="phase-panel phase-1" id="panel-1">
+
+    <div class="phase-header">
+      <div class="ph-left">
+        <div>
+          <div class="ph-badge">Phase 1 · Week 4 → Week 10</div>
+          <div class="ph-title">Build the MVP</div>
+          <div class="ph-sub">Get to a working product you can put in front of real contractors — not perfect, working.</div>
+        </div>
+      </div>
+      <div class="ph-progress">
+        <div class="ph-pct" id="pct-1">0%</div>
+        <div class="ph-pct-label">phase complete</div>
+        <div class="ph-bar-wrap"><div class="ph-bar" id="bar-1" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="tasks-col">
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">🎨</div>
+          <div class="tg-title">Design & UX</div>
+          <div class="tg-count" id="count-ux1">0/5</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t18" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Designer onboarded — brief them on Masmer brand, orange palette, contractor audience</div>
+              <div class="task-meta"><span>Week 4</span><span class="task-tag tag-design">Design</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t19" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Design new Dashboard home — key stats a contractor looks at every morning</div>
+              <div class="task-meta"><span>Week 4–5</span><span class="task-tag tag-design">Design</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t20" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Design Leads pipeline view (kanban + list toggle) — what happens when AI captures a call</div>
+              <div class="task-meta"><span>Week 5–6</span><span class="task-tag tag-design">Design</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t21" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Design Estimate bot flow — user inputs job details, AI generates scope + materials list</div>
+              <div class="task-meta"><span>Week 6</span><span class="task-tag tag-design">Design</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t22" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Design mobile view — contractors use phones on job sites. Mobile must be excellent.</div>
+              <div class="task-meta"><span>Week 6–7</span><span class="task-tag tag-design">Design</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">🔧</div>
+          <div class="tg-title">Core Product Development</div>
+          <div class="tg-count" id="count-dev1">0/6</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t23" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Fix dashboard "New Leads" stat — currently pulling from wrong table (see prior audit)</div>
+              <div class="task-meta"><span>Week 4</span><span class="task-tag tag-product">Product</span><span class="task-tag tag-infra">Infra</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t24" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Fix customer-to-project foreign key relationship (currently string-matched, always shows 0)</div>
+              <div class="task-meta"><span>Week 4</span><span class="task-tag tag-infra">Infra</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t25" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Wire VAPI webhook to Supabase Edge Function — so AI calls log automatically</div>
+              <div class="task-meta"><span>Week 5</span><span class="task-tag tag-infra">Infra</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t26" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Build kanban pipeline view for Leads (drag to move between stages)</div>
+              <div class="task-meta"><span>Week 6–7</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t27" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Add real-time subscriptions for Customers and Projects pages</div>
+              <div class="task-meta"><span>Week 7</span><span class="task-tag tag-infra">Infra</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t28" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Update landing page pricing copy from "free" to $99/$199/$349 paid tiers</div>
+              <div class="task-meta"><span>Week 4</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">🔌</div>
+          <div class="tg-title">VAPI & AI Integration</div>
+          <div class="tg-count" id="count-vapi">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t29" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Write AI receptionist script v1 — how it greets callers, qualifies leads, books appointments</div>
+              <div class="task-meta"><span>Week 5</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t30" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Test VAPI call end-to-end: call hits VAPI → lead created in Supabase → shows in dashboard</div>
+              <div class="task-meta"><span>Week 6</span><span class="task-tag tag-infra">Infra</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t31" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Build AI estimate prompt — takes job type + scope description, outputs line items + materials</div>
+              <div class="task-meta"><span>Week 7–8</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t32" data-phase="1">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">QA test all AI features with real contractor scenarios (kitchen reno, roof repair, bathroom)</div>
+              <div class="task-meta"><span>Week 8–9</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sidebar">
+      <div class="scard">
+        <div class="scard-title">⏱ Phase Timeline</div>
+        <div style="font-size:11px; color:var(--muted); margin-bottom:12px;">Weeks 4–10 at a glance</div>
+        <div class="timeline-row"><div class="tl-week">Week 4</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="background:#3B82F6; width:80%;">Onboard designer + bug fixes</div></div></div>
+        <div class="timeline-row"><div class="tl-week">Week 5</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="background:#8B5CF6; width:75%;">Dashboard + VAPI wire</div></div></div>
+        <div class="timeline-row"><div class="tl-week">Week 6</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="background:#F97316; width:90%;">Leads kanban + mobile</div></div></div>
+        <div class="timeline-row"><div class="tl-week">Week 7</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="background:#F59E0B; width:70%;">Estimate bot design</div></div></div>
+        <div class="timeline-row"><div class="tl-week">Week 8–9</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="background:#EF4444; width:85%;">QA + full testing</div></div></div>
+        <div class="timeline-row"><div class="tl-week">Week 10</div><div class="tl-bar-bg"><div class="tl-bar-fill" style="background:#10B981; width:60%;">Beta ready ✓</div></div></div>
+      </div>
+      <div class="scard">
+        <div class="scard-title">📝 Phase Notes</div>
+        <textarea class="notes-area" id="notes-1" placeholder="Design feedback, build blockers, decisions..."></textarea>
+      </div>
+    </div>
+
+  </div><!-- /panel-1 -->
+
+  <!-- ── PHASE 2 ── -->
+  <div class="phase-panel phase-2" id="panel-2">
+
+    <div class="phase-header">
+      <div class="ph-left">
+        <div>
+          <div class="ph-badge">Phase 2 · Week 10 → Week 18</div>
+          <div class="ph-title">Beta Launch (Free to Contractors)</div>
+          <div class="ph-sub">Give it to real contractors for free. Get feedback. Fix problems. Build proof before charging.</div>
+        </div>
+      </div>
+      <div class="ph-progress">
+        <div class="ph-pct" id="pct-2">0%</div>
+        <div class="ph-pct-label">phase complete</div>
+        <div class="ph-bar-wrap"><div class="ph-bar" id="bar-2" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="tasks-col">
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">🚀</div>
+          <div class="tg-title">Beta User Onboarding</div>
+          <div class="tg-count" id="count-beta">0/5</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t33" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Onboard 5 contractor beta users from your personal network (free access, 60 days)</div>
+              <div class="task-meta"><span>Week 10–11</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t34" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Do a live 30-min onboarding call with each beta user — walk them through every feature</div>
+              <div class="task-meta"><span>Week 11</span><span class="task-tag tag-meeting">Meeting</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t35" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Set up a private Slack or WhatsApp group with beta users for real-time feedback</div>
+              <div class="task-meta"><span>Week 10</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t36" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Weekly 15-min check-in call with each beta user for first 4 weeks</div>
+              <div class="task-meta"><span>Week 11–14</span><span class="task-tag tag-meeting">Meeting</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t37" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Expand to 15 beta users by Week 14 — ask each beta user to refer 2 contractor friends</div>
+              <div class="task-meta"><span>Week 14</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">📊</div>
+          <div class="tg-title">Feedback & Iteration</div>
+          <div class="tg-count" id="count-iter">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t38" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Send week-2 feedback survey — what's confusing, what's missing, what saves them time</div>
+              <div class="task-meta"><span>Week 12–13</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t39" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Sprint: fix top 3 complaints from beta feedback — move fast</div>
+              <div class="task-meta"><span>Week 13–14</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t40" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Ask 3 beta users for a written or video testimonial — this is your future sales ammo</div>
+              <div class="task-meta"><span>Week 15–16</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t41" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Document 3 "success stories" — specific jobs won or time saved using Masmer</div>
+              <div class="task-meta"><span>Week 16–17</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">💰</div>
+          <div class="tg-title">Pre-Launch Revenue Prep</div>
+          <div class="tg-count" id="count-rev2">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t42" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Integrate Stripe — set up billing for $99/$199/$349 monthly tiers + annual discounts</div>
+              <div class="task-meta"><span>Week 14–15</span><span class="task-tag tag-infra">Infra</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t43" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Build in-app upgrade/pricing page using the $99/$199/$349 tiers</div>
+              <div class="task-meta"><span>Week 15</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t44" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Ask 3 beta users: "Would you pay $99/mo for this?" — gauge willingness before launch</div>
+              <div class="task-meta"><span>Week 16</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t45" data-phase="2">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Create launch email sequence — "Your free access ends in 2 weeks, here's your upgrade offer"</div>
+              <div class="task-meta"><span>Week 17</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sidebar">
+      <div class="scard">
+        <div class="scard-title">🎯 Beta Success Metrics</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px;">
+            <div style="font-size:10px; color:var(--dim); margin-bottom:2px;">Target</div>
+            <div style="font-size:14px; font-weight:600; color:var(--text);">15 beta users by Week 14</div>
+          </div>
+          <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px;">
+            <div style="font-size:10px; color:var(--dim); margin-bottom:2px;">Target</div>
+            <div style="font-size:14px; font-weight:600; color:var(--text);">3 written testimonials</div>
+          </div>
+          <div style="padding:10px 12px; background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:8px;">
+            <div style="font-size:10px; color:var(--dim); margin-bottom:2px;">Target</div>
+            <div style="font-size:14px; font-weight:600; color:var(--text);">&gt;60% would pay $99/mo</div>
+          </div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-title">📝 Phase Notes</div>
+        <textarea class="notes-area" id="notes-2" placeholder="Beta feedback, blockers, wins..."></textarea>
+      </div>
+    </div>
+
+  </div><!-- /panel-2 -->
+
+  <!-- ── PHASE 3 ── -->
+  <div class="phase-panel phase-3" id="panel-3">
+
+    <div class="phase-header">
+      <div class="ph-left">
+        <div>
+          <div class="ph-badge">Phase 3 · Week 18 → Week 26+</div>
+          <div class="ph-title">Monetize & Grow</div>
+          <div class="ph-sub">Convert beta users to paying, launch publicly, build toward first $10K MRR.</div>
+        </div>
+      </div>
+      <div class="ph-progress">
+        <div class="ph-pct" id="pct-3">0%</div>
+        <div class="ph-pct-label">phase complete</div>
+        <div class="ph-bar-wrap"><div class="ph-bar" id="bar-3" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="tasks-col">
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">💳</div>
+          <div class="tg-title">First Paying Customers</div>
+          <div class="tg-count" id="count-pay">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t46" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">End free beta period — send upgrade offer to all beta users (offer 30% off first 3 months)</div>
+              <div class="task-meta"><span>Week 18</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t47" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">First $99 charge processed — celebrate this milestone (it proves the model)</div>
+              <div class="task-meta"><span>Week 18–19</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t48" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Target: 10 paying customers = $990–$3,490 MRR before any public launch</div>
+              <div class="task-meta"><span>Week 20–22</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t49" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Build a referral program — "Give a contractor $20/mo off, get $20/mo off" → word spreads fast in trades</div>
+              <div class="task-meta"><span>Week 21</span><span class="task-tag tag-product">Product</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">📣</div>
+          <div class="tg-title">Public Launch</div>
+          <div class="tg-count" id="count-launch">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t50" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Launch on Product Hunt — lead with "AI that answers contractor calls 24/7"</div>
+              <div class="task-meta"><span>Week 22</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t51" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Post in r/Contractor, contractor Facebook groups, NextDoor contractor communities</div>
+              <div class="task-meta"><span>Week 22–23</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t52" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Launch LinkedIn content series — Omer as the contractor who built the CRM contractors needed</div>
+              <div class="task-meta"><span>Week 22+</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t53" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Target: 50 paying customers / $5K–10K MRR before approaching investors</div>
+              <div class="task-meta"><span>Week 24–26</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="task-group">
+        <div class="tg-head" onclick="toggleGroup(this)">
+          <div class="tg-icon">💼</div>
+          <div class="tg-title">Investor Readiness</div>
+          <div class="tg-count" id="count-inv">0/4</div>
+          <div class="tg-chevron open">▶</div>
+        </div>
+        <div class="tg-body open">
+          <div class="task-item" onclick="toggleTask(this)" data-id="t54" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Track MRR, churn rate, CAC, and LTV from day one — investors want to see this data</div>
+              <div class="task-meta"><span>Week 18+</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t55" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Update pitch deck with real traction metrics (users, MRR, testimonials) before investor meetings</div>
+              <div class="task-meta"><span>Week 22+</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t56" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Build a target investor list — focus on proptech/contech/vertical SaaS focused funds</div>
+              <div class="task-meta"><span>Week 22–24</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+          <div class="task-item" onclick="toggleTask(this)" data-id="t57" data-phase="3">
+            <div class="task-check"></div>
+            <div class="task-body">
+              <div class="task-title">Start investor conversations — lead with traction, not just the idea</div>
+              <div class="task-meta"><span>Week 24–26</span><span class="task-tag tag-meeting">Meeting</span><span class="task-tag tag-biz">Business</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sidebar">
+      <div class="scard">
+        <div class="scard-title">📈 Revenue Milestones</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--muted);">First $99 payment</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--muted);">$1K MRR (10 customers)</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--muted);">$5K MRR — investor conversations start</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;">
+            <div style="width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0;"></div>
+            <div style="font-size:12px;color:var(--muted);">$10K MRR — raise pre-seed round</div>
+          </div>
+        </div>
+      </div>
+      <div class="scard">
+        <div class="scard-title">📝 Phase Notes</div>
+        <textarea class="notes-area" id="notes-3" placeholder="Revenue notes, investor contacts, growth wins..."></textarea>
+      </div>
+    </div>
+
+  </div><!-- /panel-3 -->
+
+</div><!-- /main -->
+
+<script>
+// ── DATA STRUCTURE ──
+const taskPhase = {};
+const phaseTaskIds = { 0: [], 1: [], 2: [], 3: [] };
+
+// Auto-detect all tasks on load
+function initTasks() {
+  document.querySelectorAll('.task-item').forEach(item => {
+    const id = item.dataset.id;
+    const phase = parseInt(item.dataset.phase);
+    taskPhase[id] = phase;
+    phaseTaskIds[phase].push(id);
+  });
+}
+
+// ── LOAD FROM LOCALSTORAGE ──
+function loadProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('masmer_roadmap') || '{}');
+    if (saved.tasks) {
+      Object.entries(saved.tasks).forEach(([id, done]) => {
+        if (done) {
+          const el = document.querySelector(`[data-id="${id}"]`);
+          if (el) { el.classList.add('done'); el.querySelector('.task-check').classList.add('checked'); }
+        }
+      });
+    }
+    if (saved.notes) {
+      Object.entries(saved.notes).forEach(([key, val]) => {
+        const el = document.getElementById(key);
+        if (el) el.value = val;
+      });
+    }
+    if (saved.meetings) {
+      const btns = document.querySelectorAll('.meeting-done-btn');
+      saved.meetings.forEach((done, i) => {
+        if (done && btns[i]) btns[i].classList.add('done'), btns[i].textContent = 'Done ✓';
+      });
+    }
+  } catch(e) {}
+}
+
+// ── SAVE ──
+function saveProgress() {
+  const tasks = {};
+  document.querySelectorAll('.task-item').forEach(item => {
+    tasks[item.dataset.id] = item.classList.contains('done');
+  });
+  const notes = {};
+  document.querySelectorAll('.notes-area').forEach(el => { notes[el.id] = el.value; });
+  const meetings = [];
+  document.querySelectorAll('.meeting-done-btn').forEach(btn => { meetings.push(btn.classList.contains('done')); });
+  localStorage.setItem('masmer_roadmap', JSON.stringify({ tasks, notes, meetings }));
+  const badge = document.getElementById('savedBadge');
+  badge.style.opacity = '1';
+  setTimeout(() => badge.style.opacity = '0', 2000);
+  updateAllStats();
+}
+
+// ── TOGGLE TASK ──
+function toggleTask(el) {
+  el.classList.toggle('done');
+  const check = el.querySelector('.task-check');
+  check.classList.toggle('checked');
+  updateAllStats();
+}
+
+// ── TOGGLE GROUP ──
+function toggleGroup(headEl) {
+  const body = headEl.nextElementSibling;
+  const chev = headEl.querySelector('.tg-chevron');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+}
+
+// ── MEETING MARK ──
+function markMeeting(btn) {
+  btn.classList.toggle('done');
+  btn.textContent = btn.classList.contains('done') ? 'Done ✓' : 'Mark done';
+}
+
+// ── STATS ──
+function updateAllStats() {
+  let totalDone = 0, totalAll = 0;
+  document.querySelectorAll('.task-item').forEach(t => {
+    totalAll++;
+    if (t.classList.contains('done')) totalDone++;
+  });
+  document.getElementById('statDone').textContent = totalDone;
+  document.getElementById('statTotal').textContent = totalAll;
+  const pct = totalAll > 0 ? Math.round((totalDone / totalAll) * 100) : 0;
+  document.getElementById('globalPct').textContent = pct + '%';
+  document.getElementById('globalBar').style.width = pct + '%';
+
+  // Per-phase
+  [0,1,2,3].forEach(p => {
+    const ids = phaseTaskIds[p];
+    const done = ids.filter(id => {
+      const el = document.querySelector(`[data-id="${id}"]`);
+      return el && el.classList.contains('done');
+    }).length;
+    const phasePct = ids.length > 0 ? Math.round((done / ids.length) * 100) : 0;
+    document.getElementById(`pct-${p}`).textContent = phasePct + '%';
+    document.getElementById(`bar-${p}`).style.width = phasePct + '%';
+  });
+
+  // Current phase label
+  const phaseNames = ['Phase 0', 'Phase 1', 'Phase 2', 'Phase 3'];
+  let currentPhase = 0;
+  for (let p = 0; p <= 3; p++) {
+    const ids = phaseTaskIds[p];
+    const done = ids.filter(id => document.querySelector(`[data-id="${id}"]`)?.classList.contains('done')).length;
+    if (done === ids.length && ids.length > 0) currentPhase = Math.min(p + 1, 3);
+  }
+  document.getElementById('statPhase').textContent = phaseNames[currentPhase];
+
+  // Group counts
+  updateGroupCounts();
+}
+
+function updateGroupCounts() {
+  const groups = [
+    { id: 'count-team', ids: ['t1','t2','t3','t4'] },
+    { id: 'count-design', ids: ['t5','t6','t7','t8','t9'] },
+    { id: 'count-legal', ids: ['t10','t11','t12','t13'] },
+    { id: 'count-prod0', ids: ['t14','t15','t16','t17'] },
+    { id: 'count-ux1', ids: ['t18','t19','t20','t21','t22'] },
+    { id: 'count-dev1', ids: ['t23','t24','t25','t26','t27','t28'] },
+    { id: 'count-vapi', ids: ['t29','t30','t31','t32'] },
+    { id: 'count-beta', ids: ['t33','t34','t35','t36','t37'] },
+    { id: 'count-iter', ids: ['t38','t39','t40','t41'] },
+    { id: 'count-rev2', ids: ['t42','t43','t44','t45'] },
+    { id: 'count-pay', ids: ['t46','t47','t48','t49'] },
+    { id: 'count-launch', ids: ['t50','t51','t52','t53'] },
+    { id: 'count-inv', ids: ['t54','t55','t56','t57'] },
+  ];
+  groups.forEach(g => {
+    const el = document.getElementById(g.id);
+    if (!el) return;
+    const done = g.ids.filter(id => document.querySelector(`[data-id="${id}"]`)?.classList.contains('done')).length;
+    el.textContent = `${done}/${g.ids.length}`;
+  });
+}
+
+// ── SHOW PHASE ──
+function showPhase(idx, btn) {
+  document.querySelectorAll('.phase-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`panel-${idx}`).classList.add('active');
+  btn.classList.add('active');
+  // Reset main grid to 2-col for all panels
+  const main = document.getElementById('mainGrid');
+  main.style.display = 'grid';
+}
+
+// ── INIT ──
+initTasks();
+loadProgress();
+updateAllStats();
+
+// Auto-save notes on change
+document.querySelectorAll('.notes-area').forEach(el => {
+  el.addEventListener('input', () => saveProgress());
+});
+</script>
+</body>
+</html>

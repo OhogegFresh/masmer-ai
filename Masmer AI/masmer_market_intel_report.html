@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Market Intelligence: Jobber, ServiceTitan, Hearth, Workiz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0D1117;
+  --card: #111827;
+  --card-hover: #1a2234;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.35);
+  --text: #F9FAFB;
+  --muted: #9CA3AF;
+  --dim: #4B5563;
+  --border: rgba(255,255,255,0.07);
+  --green: #10B981;
+  --green-glow: rgba(16,185,129,0.10);
+  --green-border: rgba(16,185,129,0.28);
+  --blue: #3B82F6;
+  --blue-glow: rgba(59,130,246,0.10);
+  --blue-border: rgba(59,130,246,0.28);
+  --amber: #F59E0B;
+  --amber-glow: rgba(245,158,11,0.10);
+  --amber-border: rgba(245,158,11,0.28);
+  --purple: #8B5CF6;
+  --purple-glow: rgba(139,92,246,0.10);
+  --purple-border: rgba(139,92,246,0.28);
+  --red: #EF4444;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; }
+
+.header {
+  padding: 16px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: rgba(13,17,23,0.96);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; background: var(--orange); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: white;
+}
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.3px; }
+.logo-text span { color: var(--orange); }
+.header-badge {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  color: var(--orange); padding: 4px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+}
+.header-link { font-size: 12px; color: var(--dim); }
+
+.content { padding: 32px 40px 60px; max-width: 1180px; margin: 0 auto; }
+
+.page-title { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 8px; }
+.page-sub { color: var(--muted); font-size: 13px; max-width: 720px; margin-bottom: 28px; }
+
+.tabs { display: flex; gap: 8px; margin-bottom: 0; flex-wrap: wrap; }
+.tab {
+  background: transparent; border: 1px solid var(--border); color: var(--muted);
+  padding: 10px 18px; border-radius: 10px 10px 0 0; font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.18s;
+  border-bottom: none;
+}
+.tab:hover { color: var(--text); background: var(--card-hover); }
+.tab.active { background: var(--card); color: var(--orange); border-color: var(--border); }
+.tab-bar { height: 1px; background: var(--border); margin-bottom: 28px; }
+
+.section { display: none; }
+.section.active { display: block; animation: fadein 0.25s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 22px 24px; transition: border-color 0.2s, transform 0.2s;
+}
+.stat-card:hover { border-color: var(--orange-border); transform: translateY(-2px); }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 2px; }
+.stat-source { font-size: 10px; color: var(--dim); }
+
+.section-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; margin: 36px 0 14px; }
+.section-title:first-child { margin-top: 0; }
+
+.comp-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 8px; }
+
+.comp-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px; cursor: pointer; transition: all 0.2s;
+}
+.comp-card:hover { border-color: var(--orange-border); transform: translateY(-2px); background: var(--card-hover); }
+.comp-card-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 10px; }
+.comp-name { font-family: 'Syne', sans-serif; font-size: 19px; font-weight: 800; letter-spacing: -0.3px; }
+.comp-tag { font-size: 11px; color: var(--dim); margin-top: 2px; }
+.comp-desc { font-size: 12.5px; color: var(--muted); line-height: 1.7; margin: 12px 0 16px; }
+.comp-mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+.mini-stat { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; }
+.mini-stat .v { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; color: var(--text); }
+.mini-stat .l { font-size: 9.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+.comp-cta { font-size: 11px; color: var(--orange); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; margin-left: 6px; }
+.badge-green { background: var(--green-glow); color: var(--green); border: 1px solid var(--green-border); }
+.badge-blue { background: var(--blue-glow); color: var(--blue); border: 1px solid var(--blue-border); }
+.badge-amber { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge-orange { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--orange-border); }
+.badge-red { background: rgba(239,68,68,0.10); color: var(--red); border: 1px solid rgba(239,68,68,0.28); }
+
+table.matrix { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 8px; }
+table.matrix th, table.matrix td { padding: 14px 16px; text-align: left; font-size: 12.5px; border-bottom: 1px solid var(--border); }
+table.matrix th { font-family: 'Syne', sans-serif; font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--dim); font-weight: 700; background: rgba(255,255,255,0.02); }
+table.matrix td { color: var(--muted); }
+table.matrix td.hl { color: var(--text); font-weight: 600; }
+table.matrix tr:last-child td { border-bottom: none; }
+table.matrix td.orange-cell { color: var(--orange); font-weight: 700; }
+
+.info-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 26px; margin-bottom: 16px; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 18px; color: var(--text); letter-spacing: -0.2px; }
+.narrative p { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 12px; }
+.narrative p:last-child { margin-bottom: 0; }
+.narrative strong { color: var(--text); font-weight: 600; }
+
+.explainer {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  border-radius: 10px; padding: 14px 18px;
+  font-size: 12px; color: #FED7AA; line-height: 1.7; margin-bottom: 20px;
+}
+.explainer strong { color: var(--orange); font-weight: 600; }
+
+.takeaway-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-bottom: 16px; }
+.takeaway-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; }
+.takeaway-card .ti { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.takeaway-card .ti-num { width: 22px; height: 22px; border-radius: 6px; background: var(--orange); color: white; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.takeaway-card h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; }
+.takeaway-card p { font-size: 12px; color: var(--muted); line-height: 1.7; }
+
+.source-note { font-size: 10.5px; color: var(--dim); margin-top: 6px; font-style: italic; }
+
+.orange-banner {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  border-radius: 16px; padding: 30px 36px; text-align: center; margin-top: 36px;
+}
+.orange-banner h2 { font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; letter-spacing: -0.4px; }
+.orange-banner h2 span { color: var(--orange); }
+.orange-banner p { color: var(--muted); font-size: 13px; max-width: 600px; margin: 0 auto; line-height: 1.75; }
+
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(5px); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #141A27; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; width: 680px; max-height: 85vh; overflow-y: auto; padding: 34px; transform: translateY(18px); transition: transform 0.22s; position: relative; }
+.overlay.open .modal { transform: translateY(0); }
+.modal-close { position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+.modal-name { font-family: 'Syne', sans-serif; font-size: 24px; font-weight: 800; letter-spacing: -0.4px; margin-bottom: 4px; }
+.modal-tag { font-size: 12px; color: var(--dim); margin-bottom: 22px; }
+.msec { margin-bottom: 22px; }
+.msec:last-child { margin-bottom: 0; }
+.msec-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--orange); margin-bottom: 10px; }
+.msec p { font-size: 13px; color: var(--muted); line-height: 1.8; }
+.mfact-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 4px; }
+.mfact { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+.mfact .v { font-family: 'Syne', sans-serif; font-size: 17px; font-weight: 800; color: var(--text); }
+.mfact .l { font-size: 9.5px; color: var(--dim); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px; }
+.m-list { display: flex; flex-direction: column; gap: 8px; }
+.m-item { display: flex; gap: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+.m-item .m-icon { flex-shrink: 0; font-weight: 700; }
+.win-row { display: flex; gap: 8px; font-size: 12.5px; color: var(--muted); line-height: 1.7; margin-bottom: 8px; }
+.win-row:last-child { margin-bottom: 0; }
+.win-arrow { color: var(--orange); flex-shrink: 0; font-weight: 700; }
+
+.footer {
+  border-top: 1px solid var(--border); padding: 24px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  color: var(--dim); font-size: 12px; max-width: 1180px; margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .comp-grid { grid-template-columns: 1fr; }
+  .takeaway-grid { grid-template-columns: 1fr; }
+  .comp-mini-stats { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .header { padding: 12px 16px; }
+  .content { padding-left: 16px; padding-right: 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .mfact-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div class="header-badge">Market Intelligence</div>
+  <div class="header-link">masmer.info</div>
+</div>
+
+<div class="content">
+  <div class="page-title">Who We're Really Up Against</div>
+  <div class="page-sub">A deep-dive on Jobber, ServiceTitan, Hearth, and Workiz — how each started, what they've raised, how they make money, and where Masmer fits. Built from public filings, funding trackers, and company statements as of June 2026.</div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('overview', this)">01 — Overview</button>
+    <button class="tab" onclick="showTab('companies', this)">02 — Company Profiles</button>
+    <button class="tab" onclick="showTab('matrix', this)">03 — Comparison Matrix</button>
+    <button class="tab" onclick="showTab('takeaways', this)">04 — What This Means for Masmer</button>
+  </div>
+  <div class="tab-bar"></div>
+
+  <!-- TAB 1: OVERVIEW -->
+  <div class="section active" id="overview">
+
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">$1.4B</div>
+        <div class="stat-label">ServiceTitan raised pre-IPO</div>
+        <div class="stat-source">8 rounds, then IPO'd Dec 2024 at ~$8.9B</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$167.5M</div>
+        <div class="stat-label">Jobber 2024 revenue</div>
+        <div class="stat-source">Up from $143.2M in 2023</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">100K+</div>
+        <div class="stat-label">Customers each — Jobber & Workiz</div>
+        <div class="stat-source">Very different revenue per account</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">$0</div>
+        <div class="stat-label">Masmer's free tier</div>
+        <div class="stat-source">Deliberate — paid-only signals value</div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <strong>Read this first:</strong> these four companies aren't really one category. ServiceTitan is an enterprise platform that only recently turned non-GAAP profitable, post-IPO, at ~$770M revenue. Jobber and Workiz are the real SMB comps — both founded by people who lived the problem, both still privately funded. Hearth is the cautionary tale: real money raised, weak revenue to show for it. Masmer's pitch needs to be measured against Jobber and Workiz's stage and shape, not ServiceTitan's.
+    </div>
+
+    <div class="section-title">The Four at a Glance</div>
+    <div class="comp-grid">
+      <div class="comp-card" onclick="openModal('jobber')">
+        <div class="comp-card-top">
+          <div>
+            <div class="comp-name">Jobber <span class="badge badge-green">Closest comp</span></div>
+            <div class="comp-tag">Founded 2011 · Edmonton, Canada</div>
+          </div>
+        </div>
+        <div class="comp-desc">Operations management for home service SMBs. Founder-led, content-heavy marketing, recently shipped its own AI receptionist and voice features.</div>
+        <div class="comp-mini-stats">
+          <div class="mini-stat"><div class="v">~$200M</div><div class="l">Raised</div></div>
+          <div class="mini-stat"><div class="v">$167.5M</div><div class="l">2024 Rev</div></div>
+          <div class="mini-stat"><div class="v">100K+</div><div class="l">Customers</div></div>
+        </div>
+        <div class="comp-cta">View full profile →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('servicetitan')">
+        <div class="comp-card-top">
+          <div>
+            <div class="comp-name">ServiceTitan <span class="badge badge-blue">Enterprise</span></div>
+            <div class="comp-tag">Founded 2007 · Glendale, CA · Public (NASDAQ: TTAN)</div>
+          </div>
+        </div>
+        <div class="comp-desc">The enterprise benchmark. Same "built by a contractor's kid" origin story, but scaled into a public company that took 17 years to reach adjusted profitability.</div>
+        <div class="comp-mini-stats">
+          <div class="mini-stat"><div class="v">$1.4B</div><div class="l">Raised pre-IPO</div></div>
+          <div class="mini-stat"><div class="v">$771.9M</div><div class="l">FY25 Rev</div></div>
+          <div class="mini-stat"><div class="v">~9,500</div><div class="l">Customers</div></div>
+        </div>
+        <div class="comp-cta">View full profile →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('hearth')">
+        <div class="comp-card-top">
+          <div>
+            <div class="comp-name">Hearth <span class="badge badge-red">Cautionary tale</span></div>
+            <div class="comp-tag">Founded 2016 · Austin, TX</div>
+          </div>
+        </div>
+        <div class="comp-desc">Fintech-first — financing, quoting, and invoicing for contractors. Raised real money but revenue estimates suggest it never converted that capital into proportional growth.</div>
+        <div class="comp-mini-stats">
+          <div class="mini-stat"><div class="v">~$62-110M</div><div class="l">Raised</div></div>
+          <div class="mini-stat"><div class="v">~$6.7M</div><div class="l">Est. Revenue</div></div>
+          <div class="mini-stat"><div class="v">20K+</div><div class="l">Pros on platform</div></div>
+        </div>
+        <div class="comp-cta">View full profile →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('workiz')">
+        <div class="comp-card-top">
+          <div>
+            <div class="comp-name">Workiz <span class="badge badge-green">Closest comp</span></div>
+            <div class="comp-tag">Founded 2015 · San Diego, CA</div>
+          </div>
+        </div>
+        <div class="comp-desc">Field service management built by former locksmiths who got tired of paper and spreadsheets. Phone-system-led product, same "operator builds the tool" story Masmer tells.</div>
+        <div class="comp-mini-stats">
+          <div class="mini-stat"><div class="v">$60M</div><div class="l">Raised</div></div>
+          <div class="mini-stat"><div class="v">$29.8M</div><div class="l">2024 Rev</div></div>
+          <div class="mini-stat"><div class="v">100K</div><div class="l">Customers</div></div>
+        </div>
+        <div class="comp-cta">View full profile →</div>
+      </div>
+    </div>
+    <div class="source-note">Click any card for the full profile, founding story, business model, and marketing approach.</div>
+  </div>
+
+  <!-- TAB 2: COMPANY PROFILES (full narrative, no modal needed to read) -->
+  <div class="section" id="companies">
+
+    <div class="section-title">Jobber</div>
+    <div class="info-card">
+      <h3>Origin & Funding</h3>
+      <div class="narrative">
+        <p>Founded in 2011 by <strong>Sam Pillar and Forrest Zeisler</strong> in Edmonton, Alberta. Pillar had worked as a freelance software developer and business analyst before starting the company. Jobber has stayed disciplined about fundraising — Pillar has publicly said the company avoided raising during the 2021 valuation bubble because it wasn't a business need, and frames every round around having "a true path to profitability and massive market opportunity" rather than chasing valuation.</p>
+        <p>Total funding sits between $191M and $237M depending on the tracker (Tracxn vs. CB Insights), raised across 6–7 rounds from investors including Point Nine, Summit Partners, OMERS, and General Atlantic. The most recent disclosed round was a $61M growth equity raise in March 2024.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Business & Revenue</h3>
+      <div class="narrative">
+        <p>2024 revenue reached <strong>$167.5M</strong>, up from $143.2M in 2023. As of May 2026, Jobber has surpassed <strong>100,000 customers</strong> and facilitated over $100 billion in services processed through the platform. The company doesn't disclose profitability publicly, but its funding discipline and Pillar's public comments suggest it's run with profitability as a real constraint, not just a talking point.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Marketing & Product Direction</h3>
+      <div class="narrative">
+        <p>Marketing is founder-led and deliberately human — Pillar has said their approach has "stayed the same since 2011, speaking to the very human side of running a home service business." Beyond brand storytelling, Jobber runs quarterly Home Service Economic Reports and a "Blue-Collar Report" addressing the trades labor shortage, positioning itself as an industry voice, not just a vendor.</p>
+        <p>Most relevant to Masmer: Jobber has already shipped an AI receptionist. Its AI Receptionist reached general availability in August 2025 and has handled over 200,000 conversations across participating businesses. It also launched "Jobber Voice" in September 2025, hands-free voice control for 100+ tasks inside the mobile app. Jobber is not waiting on AI features — it's already in market with the exact wedge Masmer is building around.</p>
+      </div>
+    </div>
+
+    <div class="section-title">ServiceTitan</div>
+    <div class="info-card">
+      <h3>Origin & Funding</h3>
+      <div class="narrative">
+        <p>Founded in 2007 by <strong>Ara Mahdessian and Vahe Kuzoyan</strong>, two Stanford-educated software engineers who built the first version to help their immigrant fathers' plumbing and contracting businesses. The company launched its cloud platform in 2012 and grew through Mucker Capital's seed funding before raising a total of roughly $1.4 billion across 8 rounds from Bessemer, ICONIQ Growth, Battery Ventures, TPG, and Index Ventures.</p>
+        <p>ServiceTitan IPO'd in December 2024, pricing at $71/share and raising approximately $625M, with shares opening at $101 and the company valuing near $8.9 billion on day one.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Business & Revenue</h3>
+      <div class="narrative">
+        <p>FY2025 revenue closed at <strong>$771.9M</strong>, up 26% year-over-year, with roughly 9,500 active customers (up 18%) and $68.5B in gross transaction volume processed through the platform. The company posted a GAAP net loss of $239.1M for the year but a non-GAAP net income of $16.5M — meaning it only became profitable on an adjusted basis after 17+ years and $1.4B+ in capital, and is still GAAP-unprofitable. As of June 2026, market cap sits around $7B on roughly $1B in trailing revenue.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Why This Matters for Masmer</h3>
+      <div class="narrative">
+        <p>ServiceTitan is the enterprise benchmark, not a direct SMB threat — its ~9,500 customers (versus Jobber's 100,000+) shows it serves far fewer, much larger accounts. This is useful for market-sizing slides but the wrong company to compare unit economics against. The contrast worth highlighting to investors: even a company this well-funded took nearly two decades to turn adjusted-profitable, which makes Masmer's smaller, leaner, paid-from-day-one model a deliberate contrast, not a compromise.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Hearth</div>
+    <div class="info-card">
+      <h3>Origin & Funding</h3>
+      <div class="narrative">
+        <p>Founded in 2016 in Austin, Texas, Hearth is fintech-first — its core product lets contractors offer customers monthly financing instead of lump-sum project costs, layered with quoting, invoicing, and client management tools. Total funding is reported inconsistently across sources: Forge cites ~$110M, PitchBook cites $61.8M, Tracxn cites $39.1M. Investors include 8VC, Founders Fund, Human Capital, and SuRo Capital. Its last disclosed round was a $23M Series B in May 2021.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Business & Revenue</h3>
+      <div class="narrative">
+        <p>Hearth claims over 20,000 home improvement professionals on its platform and more than $500M in jobs funded through its financing product. But one revenue-estimate provider puts annual revenue at just <strong>$6.7M</strong> against an estimated $21.5M valuation — a steep markdown relative to the capital raised. This is the clearest signal in the set that raising money and building a financing-led product doesn't automatically translate into proportional revenue growth.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Why This Matters for Masmer</h3>
+      <div class="narrative">
+        <p>Hearth is a useful caution, not a template. It's more a financing layer wrapped around light CRM features than a true operations platform — APRs on its loans range from 5% to nearly 36%, which puts a chunk of its margin and trust exposure inside consumer lending, not software. If anything, Hearth shows that "we help contractors get paid" alone isn't a defensible enough wedge without a stronger core CRM and AI layer behind it — which is exactly where Masmer's three-system loop differentiates.</p>
+      </div>
+    </div>
+
+    <div class="section-title">Workiz</div>
+    <div class="info-card">
+      <h3>Origin & Funding</h3>
+      <div class="narrative">
+        <p>Founded in 2015 by <strong>Saar Kohanovitch, Idan Kadosh, and Erez Marom</strong> — two of whom worked as locksmiths for over 15 years in San Diego and built Workiz after getting frustrated with pen, paper, and spreadsheets to run their own business. This is the most direct "built by an operator" parallel to Masmer's own positioning in this set.</p>
+        <p>Workiz raised $60M total across 4 rounds from Aleph, Lead Edge Capital, New Era Capital Partners, and Magenta Venture Partners — starting with a $5M Series A in 2019 and a $13M Series B in 2021.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Business & Revenue</h3>
+      <div class="narrative">
+        <p>By 2024, Workiz reported <strong>$29.8M in revenue</strong> with 100,000 customers and 141 employees. Pricing runs from $225/month for 3 users (Kickstart plan) up to $1,675+/month for 15 users with advanced features, and add-on modules cost an extra $200–$300/month each — real, premium-leaning pricing for an SMB tool, not a race-to-the-bottom freemium model.</p>
+      </div>
+    </div>
+    <div class="info-card">
+      <h3>Marketing & Product Direction</h3>
+      <div class="narrative">
+        <p>Workiz's signature feature is the Workiz Service Phone System — automated call recording, ad-source tracking, and call masking — built on the founders' insight that "all service calls start with a phone call." That's functionally the same problem Masmer's AI receptionist is solving, just without the AI layer. It's the most direct stage-and-shape comp for Masmer: similar founding story, similar revenue-per-customer (~$300/customer/year vs. Jobber's ~$1,675/customer/year — likely reflecting cheaper entry tiers and a smaller average account size), and a Series A that's a more realistic funding benchmark for Masmer's stage than Jobber or ServiceTitan.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TAB 3: COMPARISON MATRIX -->
+  <div class="section" id="matrix">
+    <div class="section-title">Side-by-Side</div>
+    <table class="matrix">
+      <tr>
+        <th>Company</th>
+        <th>Founded</th>
+        <th>Total Raised</th>
+        <th>Latest Revenue</th>
+        <th>Customers</th>
+        <th>Profitability Signal</th>
+        <th>Pricing Model</th>
+      </tr>
+      <tr>
+        <td class="hl">Jobber</td>
+        <td>2011</td>
+        <td>~$191–237M</td>
+        <td>$167.5M (2024)</td>
+        <td>100,000+</td>
+        <td>Undisclosed; funding-disciplined</td>
+        <td>Tiered, freemium-adjacent entry</td>
+      </tr>
+      <tr>
+        <td class="hl">ServiceTitan</td>
+        <td>2007</td>
+        <td class="orange-cell">$1.4B (pre-IPO)</td>
+        <td>$771.9M (FY25)</td>
+        <td>~9,500</td>
+        <td>Non-GAAP profitable; GAAP loss ($239.1M)</td>
+        <td>Enterprise, high-touch sales</td>
+      </tr>
+      <tr>
+        <td class="hl">Hearth</td>
+        <td>2016</td>
+        <td>~$39–110M (disputed)</td>
+        <td>~$6.7M (estimate)</td>
+        <td>20,000+ pros</td>
+        <td>No clear profitability signal</td>
+        <td>Financing-led, lending margin</td>
+      </tr>
+      <tr>
+        <td class="hl">Workiz</td>
+        <td>2015</td>
+        <td>$60M</td>
+        <td>$29.8M (2024)</td>
+        <td>100,000</td>
+        <td>Undisclosed</td>
+        <td>$225–$1,675+/mo, paid add-ons</td>
+      </tr>
+      <tr>
+        <td class="hl" style="color:var(--orange);">Masmer AI</td>
+        <td>2025/26</td>
+        <td>Pre-seed</td>
+        <td>Pre-revenue</td>
+        <td>0 (building)</td>
+        <td>N/A — paid tiers from day one</td>
+        <td>$99 / $199 / $349/mo, no free tier</td>
+      </tr>
+    </table>
+    <div class="source-note">Funding figures vary across public trackers (Tracxn, CB Insights, PitchBook, Forge) — ranges reflect that disagreement rather than imprecision on our part.</div>
+  </div>
+
+  <!-- TAB 4: TAKEAWAYS -->
+  <div class="section" id="takeaways">
+    <div class="section-title">What This Actually Means for Masmer</div>
+
+    <div class="takeaway-grid">
+      <div class="takeaway-card">
+        <div class="ti"><div class="ti-num">1</div><h4>AI receptionists are not a blue ocean anymore</h4></div>
+        <p>Jobber's AI Receptionist hit general availability in August 2025 with 200,000+ conversations handled, and Workiz already owns the "phone call is where every job starts" insight with its Service Phone System. Masmer's wedge needs to be sharper than feature parity — likely pricing, simplicity, or vertical depth, not "we also have an AI receptionist."</p>
+      </div>
+      <div class="takeaway-card">
+        <div class="ti"><div class="ti-num">2</div><h4>Workiz is the realistic funding benchmark, not Jobber or ServiceTitan</h4></div>
+        <p>Workiz's $5M Series A on an early working product with real revenue is a far more comparable stage to Masmer's pre-seed raise than ServiceTitan's $1.4B trajectory or Jobber's decade-plus of disciplined growth. Use Workiz's early numbers in investor conversations, not the giants.</p>
+      </div>
+      <div class="takeaway-card">
+        <div class="ti"><div class="ti-num">3</div><h4>"Built by a contractor" is a crowded narrative, not a unique one</h4></div>
+        <p>ServiceTitan, Workiz, and arguably Jobber all tell some version of "founder lived the problem." This positioning earns credibility but doesn't differentiate against this set — it differentiates against generic enterprise tools. The pitch needs a second layer beyond origin story.</p>
+      </div>
+      <div class="takeaway-card">
+        <div class="ti"><div class="ti-num">4</div><h4>Paid-only pricing matches the market's actual behavior, not just investor signaling</h4></div>
+        <p>Workiz charges $225–$1,675+/month plus paid add-ons and still has 100,000 customers. Contractors already pay real money for tools that save them time. Masmer's $99–$349 tiers sit comfortably inside what this market has proven it will pay — this isn't just a story for investors, it's supported by a live comp.</p>
+      </div>
+      <div class="takeaway-card">
+        <div class="ti"><div class="ti-num">5</div><h4>Profitability takes a long time at this revenue model, even for the best-funded player</h4></div>
+        <p>ServiceTitan needed 17+ years and $1.4B to become non-GAAP profitable, and is still GAAP-unprofitable. This is a useful data point for investor conversations about realistic timelines — and a reason to keep burn low and lean on the "paid from day one" model rather than assuming scale alone fixes margins.</p>
+      </div>
+      <div class="takeaway-card">
+        <div class="ti"><div class="ti-num">6</div><h4>Capital raised doesn't guarantee revenue — Hearth proves it</h4></div>
+        <p>Hearth raised tens of millions but one estimate puts its revenue at just $6.7M. Capital efficiency and clear product-market fit matter more than total raised. Worth referencing if an investor pushes Masmer to raise more than the round actually needs.</p>
+      </div>
+    </div>
+
+    <div class="orange-banner">
+      <h2>The gap to fill isn't AI receptionists. <span>It's the loop.</span></h2>
+      <p>Every comp here has at least one strong piece — Jobber's brand and AI rollout, ServiceTitan's enterprise depth, Hearth's financing, Workiz's phone system. None of them tie receptionist, CRM, and AI estimating into one connected loop built specifically for the contractor who can't afford four separate tools. That's still Masmer's opening.</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="logo">
+    <div class="logo-mark" style="width:24px;height:24px;font-size:12px;border-radius:6px;">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div>Market Intelligence Report — for internal use</div>
+</div>
+
+<div class="overlay" id="overlay" onclick="closeOnBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const data = {
+  jobber: {
+    name: 'Jobber',
+    tag: 'Founded 2011 · Edmonton, Canada · Sam Pillar & Forrest Zeisler',
+    facts: [['~$191–237M','Total Raised'],['$167.5M','2024 Revenue'],['100,000+','Customers']],
+    about: 'Founded by Sam Pillar, a former freelance developer, and Forrest Zeisler. Jobber has been disciplined about fundraising, with Pillar publicly stating the company skipped raising during the 2021 valuation bubble because it had no real need to. Revenue grew from $143.2M in 2023 to $167.5M in 2024, with over 100,000 service professionals on the platform as of 2026 and over $100B in services invoiced through it.',
+    pros: ['Founder-led brand built on genuine human storytelling since 2011', 'AI Receptionist already at general availability (Aug 2025) with 200K+ conversations handled', '"Jobber Voice" hands-free mobile control shipped Sept 2025', 'Strong content engine — quarterly economic reports build industry authority', 'Disciplined fundraising tied to real profitability path, not hype'],
+    cons: ['No public profitability disclosure — opacity makes it hard to benchmark margins', 'Scale (100K+ customers) likely means lower-touch, lower-ARPU accounts than Masmer\'s target tiers', 'Broad horizontal positioning across 50+ trades dilutes vertical depth'],
+    wins: ['Masmer can go deeper into fewer trades than Jobber\'s 50+ industry spread, with more tailored AI estimating per vertical', 'Masmer\'s three-system loop (receptionist → CRM → estimate bot) is more integrated than Jobber\'s feature-by-feature rollout', 'Paid-only tiers from day one position Masmer as a premium, intentional choice rather than a free tool with paid upsells']
+  },
+  servicetitan: {
+    name: 'ServiceTitan',
+    tag: 'Founded 2007 · Glendale, CA · Public (NASDAQ: TTAN) · Ara Mahdessian & Vahe Kuzoyan',
+    facts: [['$1.4B','Raised pre-IPO'],['$771.9M','FY25 Revenue'],['~9,500','Customers']],
+    about: 'Built by two Stanford-educated engineers whose fathers ran contracting and plumbing businesses. Launched in 2012, raised $1.4B across 8 rounds from Bessemer, ICONIQ, Battery, TPG, and Index Ventures, then IPO\'d December 2024 at $71/share, opening at $101 and reaching a market cap near $8.9B. FY25 revenue hit $771.9M, up 26% YoY, with ~9,500 active customers and $68.5B in gross transaction volume.',
+    pros: ['Deepest enterprise feature set in the category — true end-to-end platform', 'Public company credibility and capital access', 'Non-GAAP profitable as of FY25, validating the business model at scale', '$68.5B in gross transaction volume shows massive platform trust'],
+    cons: ['Still GAAP-unprofitable after 17+ years and $1.4B+ raised — a long, expensive road to maturity', 'Only ~9,500 customers despite the scale of funding — serves large accounts, not the broad SMB base', 'Enterprise complexity and pricing puts it out of reach for small contractors — exactly Masmer\'s target buyer'],
+    wins: ['Masmer is built for the contractor ServiceTitan ignores — the 1–10 person crew, not the enterprise franchise', 'Masmer reaches profitability math at a fraction of ServiceTitan\'s capital requirements, by design', 'ServiceTitan\'s 17-year, $1.4B path to profitability is a strong argument for Masmer\'s lean, paid-from-day-one model']
+  },
+  hearth: {
+    name: 'Hearth',
+    tag: 'Founded 2016 · Austin, TX',
+    facts: [['~$39–110M','Total Raised'],['~$6.7M','Est. Revenue'],['20,000+','Pros on Platform']],
+    about: 'A fintech-first platform offering contractors customer financing alongside quoting, invoicing, and client management. Funding totals are reported inconsistently across trackers — Forge cites ~$110M, PitchBook $61.8M, Tracxn $39.1M — with investors including 8VC, Founders Fund, and Human Capital. Last disclosed round was a $23M Series B in 2021. One estimate puts annual revenue at just $6.7M against capital raised in the tens of millions.',
+    pros: ['Financing product solves a real pain point — monthly payments instead of lump-sum project costs', '20,000+ contractors and $500M+ in jobs funded shows real usage', 'Backed by credible investors (Founders Fund, 8VC)'],
+    cons: ['Revenue estimates suggest weak conversion of capital raised into proportional growth', 'Lending-led model means real exposure to credit and APR risk (5%–36% range), not pure software margins', 'Thin CRM/operations layer compared to Jobber, Workiz, or ServiceTitan — more fintech than true business platform'],
+    wins: ['Masmer\'s core is operations and AI, not consumer lending — cleaner margins, no credit risk exposure', 'Masmer\'s three-system loop offers more day-to-day utility than a financing-first product', 'Hearth is a cautionary data point for investors who push Masmer to raise more than the round needs — capital efficiency matters more than total raised']
+  },
+  workiz: {
+    name: 'Workiz',
+    tag: 'Founded 2015 · San Diego, CA · Saar Kohanovitch, Idan Kadosh & Erez Marom',
+    facts: [['$60M','Total Raised'],['$29.8M','2024 Revenue'],['100,000','Customers']],
+    about: 'Founded by two former locksmiths with 15+ years of field experience and a software-engineer co-founder, after getting frustrated managing their own business with pen, paper, and spreadsheets — the most direct operator-led parallel to Masmer\'s own story. Raised $60M across 4 rounds (Series A: $5M in 2019, Series B: $13M in 2021) from Aleph, Lead Edge Capital, and New Era Capital. 2024 revenue reached $29.8M on 100,000 customers and 141 employees.',
+    pros: ['Strongest "built by an operator" parallel to Masmer in this set', 'Workiz Service Phone System (call recording, ad-source tracking, call masking) directly addresses the missed-call problem Masmer\'s receptionist solves', 'Premium, real pricing ($225–$1,675+/mo plus paid add-ons) proves SMB contractors will pay for value', 'Most realistic funding-stage comp for Masmer — Series A on early revenue, not late-stage mega-rounds'],
+    cons: ['No AI layer — phone system handles calls but doesn\'t converse, qualify, or estimate like an AI receptionist would', 'Add-on pricing model ($200–300/mo per module) can frustrate users who feel nickel-and-dimed', 'Lower revenue-per-customer (~$300/yr) than Jobber, suggesting a high volume of small, low-ARPU accounts'],
+    wins: ['Masmer\'s AI receptionist goes further than Workiz\'s call system — it converses, qualifies, and feeds the CRM automatically', 'Masmer\'s all-in-one tiered pricing avoids the add-on fatigue Workiz users report', 'Workiz\'s funding stage and trajectory is the most realistic benchmark to cite when discussing Masmer\'s own raise']
+  }
+};
+
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function openModal(id) {
+  const c = data[id];
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-name">${c.name}</div>
+    <div class="modal-tag">${c.tag}</div>
+    <div class="mfact-grid" style="margin-bottom:24px;">
+      ${c.facts.map(f=>`<div class="mfact"><div class="v">${f[0]}</div><div class="l">${f[1]}</div></div>`).join('')}
+    </div>
+    <div class="msec">
+      <div class="msec-title">Overview</div>
+      <p>${c.about}</p>
+    </div>
+    <div class="msec">
+      <div class="msec-title">Strengths</div>
+      <div class="m-list">${c.pros.map(p=>`<div class="m-item"><span class="m-icon" style="color:var(--green);">+</span><span>${p}</span></div>`).join('')}</div>
+    </div>
+    <div class="msec">
+      <div class="msec-title">Weaknesses</div>
+      <div class="m-list">${c.cons.map(x=>`<div class="m-item"><span class="m-icon" style="color:var(--red);">−</span><span>${x}</span></div>`).join('')}</div>
+    </div>
+    <div class="msec">
+      <div class="msec-title">→ How Masmer Wins</div>
+      ${c.wins.map(w=>`<div class="win-row"><span class="win-arrow">→</span><span>${w}</span></div>`).join('')}
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function closeOnBg(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

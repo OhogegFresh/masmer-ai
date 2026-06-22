@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Meeting Notes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0D1117;
+  --card: #111827;
+  --card-hover: #1a2234;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.35);
+  --text: #F9FAFB;
+  --muted: #9CA3AF;
+  --dim: #4B5563;
+  --border: rgba(255,255,255,0.07);
+  --green: #10B981;
+  --green-glow: rgba(16,185,129,0.10);
+  --green-border: rgba(16,185,129,0.28);
+  --blue: #3B82F6;
+  --blue-glow: rgba(59,130,246,0.10);
+  --blue-border: rgba(59,130,246,0.28);
+  --amber: #F59E0B;
+  --amber-glow: rgba(245,158,11,0.10);
+  --amber-border: rgba(245,158,11,0.28);
+  --purple: #8B5CF6;
+  --purple-glow: rgba(139,92,246,0.10);
+  --purple-border: rgba(139,92,246,0.28);
+  --red: #EF4444;
+  --red-glow: rgba(239,68,68,0.10);
+  --red-border: rgba(239,68,68,0.28);
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; min-height: 100vh; }
+
+/* HEADER */
+.header { padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(13,17,23,0.96); backdrop-filter: blur(12px); z-index: 100; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark { width: 34px; height: 34px; background: var(--orange); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: white; }
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.3px; }
+.logo-text span { color: var(--orange); }
+.header-badge { background: var(--orange-glow); border: 1px solid var(--orange-border); color: var(--orange); padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; }
+.header-right { display: flex; align-items: center; gap: 12px; }
+.save-btn { background: var(--orange-glow); border: 1px solid var(--orange-border); color: var(--orange); padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background 0.18s; font-family: 'DM Sans', sans-serif; }
+.save-btn:hover { background: rgba(249,115,22,0.2); }
+.saved-msg { font-size: 11px; color: var(--green); opacity: 0; transition: opacity 0.4s; }
+
+/* CATEGORY TABS */
+.tabs-wrap { padding: 24px 40px 0; }
+.tabs { display: flex; gap: 4px; }
+.tab { padding: 10px 22px; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); background: none; transition: all 0.18s; position: relative; bottom: -1px; display: flex; align-items: center; gap: 7px; white-space: nowrap; }
+.tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.tab.active { color: var(--orange); background: var(--card); border-color: var(--border); border-bottom-color: var(--card); }
+.tab-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.tab-bar { border-bottom: 1px solid var(--border); margin: 0 40px; }
+.tab-count { font-size: 10px; background: rgba(255,255,255,0.07); padding: 1px 6px; border-radius: 10px; color: var(--dim); }
+.tab.active .tab-count { background: var(--orange-glow); color: var(--orange); }
+
+/* CONTENT */
+.content { padding: 28px 40px 60px; max-width: 1080px; margin: 0 auto; }
+.section { display: none; animation: fadein 0.22s ease; }
+.section.active { display: block; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* SECTION TOOLBAR */
+.section-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.section-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; letter-spacing: -0.3px; }
+.add-btn { background: var(--orange); color: white; border: none; padding: 9px 18px; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.18s; display: flex; align-items: center; gap: 7px; }
+.add-btn:hover { opacity: 0.88; }
+
+/* NOTE CARDS */
+.notes-list { display: flex; flex-direction: column; gap: 14px; }
+.note-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
+.note-card:hover { border-color: rgba(255,255,255,0.12); }
+.note-card.pinned { border-color: var(--orange-border); }
+
+.note-header { padding: 16px 20px; display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; }
+.note-header:hover { background: rgba(255,255,255,0.02); }
+.note-icon { font-size: 16px; flex-shrink: 0; }
+.note-meta { flex: 1; min-width: 0; }
+.note-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.note-title { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; color: var(--text); }
+.note-date { font-size: 11px; color: var(--dim); }
+.note-tags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 3px; }
+.tag { font-size: 10px; font-weight: 600; padding: 2px 8px; border-radius: 20px; }
+.tag-ux { background: var(--purple-glow); color: #C4B5FD; border: 1px solid var(--purple-border); }
+.tag-investor { background: var(--blue-glow); color: #93C5FD; border: 1px solid var(--blue-border); }
+.tag-founder { background: var(--green-glow); color: #6EE7B7; border: 1px solid var(--green-border); }
+.tag-product { background: var(--orange-glow); color: #FDBA74; border: 1px solid var(--orange-border); }
+.tag-legal { background: var(--amber-glow); color: #FCD34D; border: 1px solid var(--amber-border); }
+.tag-infra { background: var(--red-glow); color: #FCA5A5; border: 1px solid var(--red-border); }
+.tag-general { background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
+
+.note-actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.note-pin-btn, .note-delete-btn { font-size: 11px; padding: 3px 9px; border-radius: 6px; cursor: pointer; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--dim); font-family: 'DM Sans', sans-serif; transition: all 0.15s; }
+.note-pin-btn:hover { border-color: var(--orange-border); color: var(--orange); }
+.note-delete-btn:hover { border-color: var(--red-border); color: #FCA5A5; }
+.note-pin-btn.active { background: var(--orange-glow); border-color: var(--orange-border); color: var(--orange); }
+.note-chevron { font-size: 10px; color: var(--dim); transition: transform 0.2s; margin-left: 4px; }
+.note-chevron.open { transform: rotate(90deg); }
+
+.note-body { display: none; border-top: 1px solid var(--border); padding: 20px; }
+.note-body.open { display: block; }
+
+/* NOTE EDITOR */
+.note-editor-grid { display: grid; grid-template-columns: 1fr 280px; gap: 16px; }
+.editor-main { display: flex; flex-direction: column; gap: 12px; }
+.editor-field label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 5px; }
+.editor-field textarea {
+  width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 8px; padding: 12px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; line-height: 1.7;
+  resize: vertical; outline: none; transition: border-color 0.18s;
+}
+.editor-field textarea:focus { border-color: var(--orange-border); }
+.editor-field textarea::placeholder { color: var(--dim); }
+.editor-sidebar { display: flex; flex-direction: column; gap: 12px; }
+
+/* ACTION ITEMS */
+.action-items { background: var(--card-hover); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.ai-title { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
+.action-item { display: flex; align-items: flex-start; gap: 8px; padding: 7px 0; border-bottom: 1px solid var(--border); }
+.action-item:last-child { border-bottom: none; padding-bottom: 0; }
+.action-check { width: 16px; height: 16px; border-radius: 4px; border: 1.5px solid var(--dim); flex-shrink: 0; margin-top: 2px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; }
+.action-check.done { background: var(--green); border-color: var(--green); }
+.action-check.done::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+.action-text { font-size: 12px; color: var(--muted); line-height: 1.5; flex: 1; }
+.action-text.done { text-decoration: line-through; color: var(--dim); }
+.action-input { width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 6px; padding: 7px 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 12px; outline: none; margin-top: 8px; }
+.action-input:focus { border-color: var(--orange-border); }
+.add-action-btn { font-size: 11px; color: var(--orange); background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; padding: 4px 0; margin-top: 4px; }
+.add-action-btn:hover { text-decoration: underline; }
+
+/* DECISIONS */
+.decisions-box { background: var(--card-hover); border: 1px solid var(--border); border-radius: 10px; padding: 14px; }
+.decision-item { padding: 7px 0; border-bottom: 1px solid var(--border); }
+.decision-item:last-child { border-bottom: none; padding-bottom: 0; }
+.decision-q { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 3px; }
+.decision-status { font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 10px; display: inline-block; cursor: pointer; }
+.ds-open { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-border); }
+.ds-done { background: var(--green-glow); color: var(--green); border: 1px solid var(--green-border); }
+
+/* EMPTY STATE */
+.empty-state { text-align: center; padding: 60px 40px; color: var(--dim); }
+.empty-icon { font-size: 40px; margin-bottom: 16px; opacity: 0.5; }
+.empty-title { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 700; color: var(--muted); margin-bottom: 6px; }
+.empty-sub { font-size: 13px; }
+
+/* NEW NOTE MODAL */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #141A27; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; width: 600px; max-height: 88vh; overflow-y: auto; padding: 32px; transform: translateY(16px); transition: transform 0.22s; position: relative; scrollbar-width: thin; scrollbar-color: var(--dim) transparent; }
+.overlay.open .modal { transform: translateY(0); }
+.modal::-webkit-scrollbar { width: 4px; }
+.modal::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 10px; }
+.modal-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+.modal-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 6px; }
+.modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 22px; }
+.modal-field { margin-bottom: 16px; }
+.modal-field label { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dim); display: block; margin-bottom: 6px; }
+.modal-field input[type="text"], .modal-field input[type="date"] {
+  width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+  transition: border-color 0.18s;
+}
+.modal-field input:focus { border-color: var(--orange-border); }
+.modal-field select {
+  width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+  appearance: none; cursor: pointer;
+}
+.modal-field select option { background: #141A27; }
+.tag-picker { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag-toggle { padding: 4px 12px; border-radius: 20px; border: 1px solid var(--border); background: rgba(255,255,255,0.03); color: var(--muted); font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: 'DM Sans', sans-serif; }
+.tag-toggle.selected-ux { background: var(--purple-glow); color: #C4B5FD; border-color: var(--purple-border); }
+.tag-toggle.selected-investor { background: var(--blue-glow); color: #93C5FD; border-color: var(--blue-border); }
+.tag-toggle.selected-founder { background: var(--green-glow); color: #6EE7B7; border-color: var(--green-border); }
+.tag-toggle.selected-product { background: var(--orange-glow); color: #FDBA74; border-color: var(--orange-border); }
+.tag-toggle.selected-legal { background: var(--amber-glow); color: #FCD34D; border-color: var(--amber-border); }
+.tag-toggle.selected-infra { background: var(--red-glow); color: #FCA5A5; border-color: var(--red-border); }
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+.btn-cancel { background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); padding: 9px 20px; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 13px; cursor: pointer; }
+.btn-cancel:hover { color: var(--text); }
+.btn-create { background: var(--orange); border: none; color: white; padding: 9px 22px; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.18s; }
+.btn-create:hover { opacity: 0.88; }
+
+/* OVERVIEW STATS */
+.overview-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 26px; }
+.ov-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+.ov-num { font-family: 'Syne', sans-serif; font-size: 28px; font-weight: 800; line-height: 1; margin-bottom: 4px; }
+.ov-lbl { font-size: 11px; color: var(--muted); }
+
+/* RESPONSIVE */
+@media (max-width: 860px) {
+  .note-editor-grid { grid-template-columns: 1fr; }
+  .editor-sidebar { order: -1; }
+  .overview-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .header { padding: 12px 16px; }
+  .tabs-wrap, .tab-bar, .content { padding-left: 16px; padding-right: 16px; }
+  .tabs { overflow-x: auto; padding-bottom: 2px; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .overview-grid { grid-template-columns: 1fr 1fr; }
+  .modal { width: calc(100vw - 32px); padding: 24px 18px; }
+}
+
+/* FOOTER */
+.footer { border-top: 1px solid var(--border); padding: 22px 40px; display: flex; align-items: center; justify-content: space-between; color: var(--dim); font-size: 12px; max-width: 1080px; margin: 0 auto; }
+.footer .logo-text { font-size: 13px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div class="header-badge">Meeting Notes</div>
+  <div class="header-right">
+    <button class="save-btn" onclick="saveAll()">Save All</button>
+    <span class="saved-msg" id="savedMsg">✓ Saved</span>
+  </div>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('all', this)">
+      <span class="tab-dot" style="background:var(--orange)"></span>All Notes <span class="tab-count" id="cnt-all">0</span>
+    </button>
+    <button class="tab" onclick="showTab('uxui', this)">
+      <span class="tab-dot" style="background:var(--purple)"></span>UX/UI Designer <span class="tab-count" id="cnt-uxui">0</span>
+    </button>
+    <button class="tab" onclick="showTab('investor', this)">
+      <span class="tab-dot" style="background:var(--blue)"></span>Investor <span class="tab-count" id="cnt-investor">0</span>
+    </button>
+    <button class="tab" onclick="showTab('eitan', this)">
+      <span class="tab-dot" style="background:var(--green)"></span>Eitan <span class="tab-count" id="cnt-eitan">0</span>
+    </button>
+    <button class="tab" onclick="showTab('ayton', this)">
+      <span class="tab-dot" style="background:var(--amber)"></span>Ayton (COO) <span class="tab-count" id="cnt-ayton">0</span>
+    </button>
+    <button class="tab" onclick="showTab('other', this)">
+      <span class="tab-dot" style="background:var(--dim)"></span>Other <span class="tab-count" id="cnt-other">0</span>
+    </button>
+  </div>
+</div>
+<div class="tab-bar"></div>
+
+<div class="content">
+
+  <!-- ALL TAB -->
+  <div class="section active" id="sec-all">
+    <div class="overview-grid">
+      <div class="ov-card"><div class="ov-num" style="color:var(--orange)" id="stat-total">0</div><div class="ov-lbl">Total meetings logged</div></div>
+      <div class="ov-card"><div class="ov-num" style="color:var(--amber)" id="stat-open-actions">0</div><div class="ov-lbl">Open action items</div></div>
+      <div class="ov-card"><div class="ov-num" style="color:var(--green)" id="stat-done-actions">0</div><div class="ov-lbl">Actions completed</div></div>
+      <div class="ov-card"><div class="ov-num" style="color:var(--blue)" id="stat-open-decisions">0</div><div class="ov-lbl">Open decisions</div></div>
+    </div>
+    <div class="section-toolbar">
+      <div class="section-title">All Meeting Notes</div>
+      <button class="add-btn" onclick="openModal()">+ Add Meeting Note</button>
+    </div>
+    <div class="notes-list" id="list-all"></div>
+  </div>
+
+  <!-- UXUI TAB -->
+  <div class="section" id="sec-uxui">
+    <div class="section-toolbar">
+      <div class="section-title">UX/UI Designer</div>
+      <button class="add-btn" onclick="openModal('uxui')">+ Add Note</button>
+    </div>
+    <div class="notes-list" id="list-uxui"></div>
+  </div>
+
+  <!-- INVESTOR TAB -->
+  <div class="section" id="sec-investor">
+    <div class="section-toolbar">
+      <div class="section-title">Investor Meetings</div>
+      <button class="add-btn" onclick="openModal('investor')">+ Add Note</button>
+    </div>
+    <div class="notes-list" id="list-investor"></div>
+  </div>
+
+  <!-- EITAN TAB -->
+  <div class="section" id="sec-eitan">
+    <div class="section-toolbar">
+      <div class="section-title">Eitan</div>
+      <button class="add-btn" onclick="openModal('eitan')">+ Add Note</button>
+    </div>
+    <div class="notes-list" id="list-eitan"></div>
+  </div>
+
+  <!-- AYTON TAB -->
+  <div class="section" id="sec-ayton">
+    <div class="section-toolbar">
+      <div class="section-title">Ayton (COO)</div>
+      <button class="add-btn" onclick="openModal('ayton')">+ Add Note</button>
+    </div>
+    <div class="notes-list" id="list-ayton"></div>
+  </div>
+
+  <!-- OTHER TAB -->
+  <div class="section" id="sec-other">
+    <div class="section-toolbar">
+      <div class="section-title">Other Meetings</div>
+      <button class="add-btn" onclick="openModal('other')">+ Add Note</button>
+    </div>
+    <div class="notes-list" id="list-other"></div>
+  </div>
+
+</div>
+
+<!-- ADD MEETING MODAL -->
+<div class="overlay" id="overlay" onclick="closeOnBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-title">New Meeting Note</div>
+    <div class="modal-sub">Fill in what happened. Action items and decisions can be added after saving.</div>
+
+    <div class="modal-field">
+      <label>Meeting title</label>
+      <input type="text" id="m-title" placeholder="e.g. Designer #1 Interview, Investor Intro Call…">
+    </div>
+    <div class="modal-field">
+      <label>Category</label>
+      <select id="m-category">
+        <option value="uxui">UX/UI Designer</option>
+        <option value="investor">Investor</option>
+        <option value="eitan">Eitan</option>
+        <option value="ayton">Ayton (COO)</option>
+        <option value="other">Other</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Date</label>
+      <input type="date" id="m-date">
+    </div>
+    <div class="modal-field">
+      <label>Tags (select all that apply)</label>
+      <div class="tag-picker">
+        <button type="button" class="tag-toggle" data-tag="ux" onclick="toggleTag(this)">UX/Design</button>
+        <button type="button" class="tag-toggle" data-tag="investor" onclick="toggleTag(this)">Investor</button>
+        <button type="button" class="tag-toggle" data-tag="founder" onclick="toggleTag(this)">Founder/Team</button>
+        <button type="button" class="tag-toggle" data-tag="product" onclick="toggleTag(this)">Product</button>
+        <button type="button" class="tag-toggle" data-tag="legal" onclick="toggleTag(this)">Legal/Equity</button>
+        <button type="button" class="tag-toggle" data-tag="infra" onclick="toggleTag(this)">Infra/Tech</button>
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Notes / summary</label>
+      <textarea id="m-notes" rows="5" placeholder="Key discussion points, context, what was decided…" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:vertical;outline:none;transition:border-color 0.18s;"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Action items (one per line)</label>
+      <textarea id="m-actions" rows="3" placeholder="Omer to send portfolio follow-up&#10;Schedule next call&#10;Review estimate doc" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:vertical;outline:none;transition:border-color 0.18s;"></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Open decisions (one per line)</label>
+      <textarea id="m-decisions" rows="2" placeholder="Which designer to hire&#10;Final equity split" style="width:100%;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;resize:vertical;outline:none;transition:border-color 0.18s;"></textarea>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-create" onclick="createNote()">Save Meeting Note</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="logo">
+    <div class="logo-mark" style="width:24px;height:24px;font-size:12px;border-radius:6px;">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div>Meeting Notes — for internal use</div>
+</div>
+
+<script>
+// ── STATE ──
+let notes = [];
+let editingId = null;
+let defaultCategory = null;
+
+const CATEGORY_CONFIG = {
+  uxui:     { label: 'UX/UI Designer', icon: '🎨', color: 'var(--purple)' },
+  investor: { label: 'Investor',        icon: '💼', color: 'var(--blue)' },
+  eitan:    { label: 'Eitan',           icon: '🤝', color: 'var(--green)' },
+  ayton:    { label: 'Ayton (COO)',     icon: '👥', color: 'var(--amber)' },
+  other:    { label: 'Other',           icon: '📋', color: 'var(--dim)' },
+};
+
+const TAG_LABELS = {
+  ux: 'UX/Design', investor: 'Investor', founder: 'Founder/Team',
+  product: 'Product', legal: 'Legal/Equity', infra: 'Infra/Tech'
+};
+
+// ── LOAD / SAVE ──
+function loadData() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('masmer_meetings') || '[]');
+    notes = saved;
+  } catch(e) { notes = []; }
+}
+
+function saveAll() {
+  // Save action item states from DOM back into notes
+  notes.forEach(note => {
+    note.actions = note.actions.map((a, i) => {
+      const check = document.querySelector(`[data-note="${note.id}"][data-action="${i}"]`);
+      return { text: a.text, done: check ? check.classList.contains('done') : a.done };
+    });
+    note.decisions = note.decisions.map((d, i) => {
+      const status = document.querySelector(`[data-note-dec="${note.id}"][data-dec="${i}"]`);
+      return { q: d.q, done: status ? status.dataset.done === 'true' : d.done };
+    });
+    // Save inline note text
+    const ta = document.getElementById(`ta-${note.id}`);
+    if (ta) note.notes = ta.value;
+  });
+  localStorage.setItem('masmer_meetings', JSON.stringify(notes));
+  const msg = document.getElementById('savedMsg');
+  msg.style.opacity = '1';
+  setTimeout(() => msg.style.opacity = '0', 2000);
+  render();
+}
+
+// ── RENDER ──
+function fmtDate(d) {
+  if (!d) return '';
+  const [y, m, day] = d.split('-');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[parseInt(m)-1]} ${parseInt(day)}, ${y}`;
+}
+
+function tagHtml(tag) {
+  return `<span class="tag tag-${tag}">${TAG_LABELS[tag]}</span>`;
+}
+
+function noteCardHtml(note) {
+  const cfg = CATEGORY_CONFIG[note.category] || CATEGORY_CONFIG.other;
+  const tags = (note.tags || []).map(tagHtml).join('');
+  const openActions = (note.actions || []).filter(a => !a.done).length;
+  const openDecs = (note.decisions || []).filter(d => !d.done).length;
+
+  const actionRows = (note.actions || []).map((a, i) => `
+    <div class="action-item">
+      <div class="action-check ${a.done ? 'done' : ''}" data-note="${note.id}" data-action="${i}" onclick="toggleAction('${note.id}', ${i}, this)"></div>
+      <div class="action-text ${a.done ? 'done' : ''}" id="at-${note.id}-${i}">${a.text}</div>
+    </div>
+  `).join('');
+
+  const decRows = (note.decisions || []).map((d, i) => `
+    <div class="decision-item">
+      <div class="decision-q">${d.q}</div>
+      <span class="decision-status ${d.done ? 'ds-done' : 'ds-open'}" data-note-dec="${note.id}" data-dec="${i}" data-done="${d.done}" onclick="toggleDecision('${note.id}', ${i}, this)">${d.done ? 'Decided ✓' : 'Open'}</span>
+    </div>
+  `).join('');
+
+  const pinLabel = note.pinned ? '📌 Pinned' : 'Pin';
+
+  return `
+    <div class="note-card ${note.pinned ? 'pinned' : ''}" id="nc-${note.id}">
+      <div class="note-header" onclick="toggleNote('${note.id}')">
+        <div class="note-icon">${cfg.icon}</div>
+        <div class="note-meta">
+          <div class="note-title-row">
+            <div class="note-title">${note.title || '(Untitled)'}</div>
+            <div class="note-date">${fmtDate(note.date)}</div>
+            ${openActions > 0 ? `<span style="font-size:10px;background:var(--amber-glow);color:var(--amber);border:1px solid var(--amber-border);padding:1px 7px;border-radius:10px;">${openActions} action${openActions>1?'s':''} open</span>` : ''}
+            ${openDecs > 0 ? `<span style="font-size:10px;background:var(--blue-glow);color:var(--blue);border:1px solid var(--blue-border);padding:1px 7px;border-radius:10px;">${openDecs} decision${openDecs>1?'s':''}</span>` : ''}
+          </div>
+          <div class="note-tags">
+            <span class="tag" style="background:rgba(255,255,255,0.05);color:var(--muted);border:1px solid var(--border);">${cfg.label}</span>
+            ${tags}
+          </div>
+        </div>
+        <div class="note-actions" onclick="e=>e.stopPropagation()">
+          <button class="note-pin-btn ${note.pinned ? 'active' : ''}" onclick="event.stopPropagation();pinNote('${note.id}')">${pinLabel}</button>
+          <button class="note-delete-btn" onclick="event.stopPropagation();deleteNote('${note.id}')">Delete</button>
+        </div>
+        <div class="note-chevron" id="chev-${note.id}">▶</div>
+      </div>
+      <div class="note-body" id="body-${note.id}">
+        <div class="note-editor-grid">
+          <div class="editor-main">
+            <div class="editor-field">
+              <label>Notes & Summary</label>
+              <textarea id="ta-${note.id}" rows="6" placeholder="Meeting notes, key discussion points…" oninput="draftNote('${note.id}', this.value)">${note.notes || ''}</textarea>
+            </div>
+          </div>
+          <div class="editor-sidebar">
+            ${note.actions && note.actions.length > 0 ? `
+            <div class="action-items">
+              <div class="ai-title">⚡ Action Items</div>
+              ${actionRows}
+            </div>` : ''}
+            ${note.decisions && note.decisions.length > 0 ? `
+            <div class="decisions-box">
+              <div class="ai-title">🔑 Open Decisions</div>
+              ${decRows}
+            </div>` : ''}
+            ${(!note.actions || !note.actions.length) && (!note.decisions || !note.decisions.length) ? `
+            <div style="background:var(--card-hover);border:1px solid var(--border);border-radius:10px;padding:16px;font-size:12px;color:var(--dim);line-height:1.7;">
+              No action items or decisions recorded for this meeting. Click <strong style="color:var(--muted)">Save All</strong> to persist notes.
+            </div>` : ''}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function emptyHtml(label) {
+  return `<div class="empty-state"><div class="empty-icon">📋</div><div class="empty-title">No ${label} notes yet</div><div class="empty-sub">Hit the button above to log your first meeting.</div></div>`;
+}
+
+function render() {
+  const sorted = [...notes].sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1;
+    if (!a.pinned && b.pinned) return 1;
+    return (b.date || '') > (a.date || '') ? 1 : -1;
+  });
+
+  const categories = ['uxui', 'investor', 'eitan', 'ayton', 'other'];
+
+  // All tab
+  const allList = document.getElementById('list-all');
+  if (sorted.length === 0) allList.innerHTML = emptyHtml('meeting');
+  else allList.innerHTML = sorted.map(noteCardHtml).join('');
+
+  // Category tabs
+  categories.forEach(cat => {
+    const filtered = sorted.filter(n => n.category === cat);
+    const list = document.getElementById(`list-${cat}`);
+    if (!list) return;
+    if (filtered.length === 0) list.innerHTML = emptyHtml(CATEGORY_CONFIG[cat].label);
+    else list.innerHTML = filtered.map(noteCardHtml).join('');
+    document.getElementById(`cnt-${cat}`).textContent = filtered.length;
+  });
+  document.getElementById('cnt-all').textContent = notes.length;
+
+  // Stats
+  document.getElementById('stat-total').textContent = notes.length;
+  const allActions = notes.flatMap(n => n.actions || []);
+  const allDecs = notes.flatMap(n => n.decisions || []);
+  document.getElementById('stat-open-actions').textContent = allActions.filter(a => !a.done).length;
+  document.getElementById('stat-done-actions').textContent = allActions.filter(a => a.done).length;
+  document.getElementById('stat-open-decisions').textContent = allDecs.filter(d => !d.done).length;
+}
+
+// ── INTERACTIONS ──
+function toggleNote(id) {
+  const body = document.getElementById(`body-${id}`);
+  const chev = document.getElementById(`chev-${id}`);
+  if (!body) return;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  chev && chev.classList.toggle('open');
+}
+
+function toggleAction(noteId, idx, el) {
+  el.classList.toggle('done');
+  const textEl = document.getElementById(`at-${noteId}-${idx}`);
+  if (textEl) textEl.classList.toggle('done');
+  // Update in-memory
+  const note = notes.find(n => n.id === noteId);
+  if (note && note.actions[idx]) note.actions[idx].done = el.classList.contains('done');
+  updateStats();
+}
+
+function toggleDecision(noteId, idx, el) {
+  const isDone = el.dataset.done === 'true';
+  el.dataset.done = !isDone;
+  el.className = `decision-status ${!isDone ? 'ds-done' : 'ds-open'}`;
+  el.textContent = !isDone ? 'Decided ✓' : 'Open';
+  const note = notes.find(n => n.id === noteId);
+  if (note && note.decisions[idx]) note.decisions[idx].done = !isDone;
+  updateStats();
+}
+
+function draftNote(noteId, val) {
+  const note = notes.find(n => n.id === noteId);
+  if (note) note.notes = val;
+}
+
+function updateStats() {
+  const allActions = notes.flatMap(n => n.actions || []);
+  const allDecs = notes.flatMap(n => n.decisions || []);
+  document.getElementById('stat-open-actions').textContent = allActions.filter(a => !a.done).length;
+  document.getElementById('stat-done-actions').textContent = allActions.filter(a => a.done).length;
+  document.getElementById('stat-open-decisions').textContent = allDecs.filter(d => !d.done).length;
+}
+
+function pinNote(id) {
+  const note = notes.find(n => n.id === id);
+  if (note) note.pinned = !note.pinned;
+  saveAll();
+}
+
+function deleteNote(id) {
+  if (!confirm('Delete this meeting note? This cannot be undone.')) return;
+  notes = notes.filter(n => n.id !== id);
+  saveAll();
+}
+
+// ── MODAL ──
+let selectedTags = [];
+
+function openModal(cat) {
+  defaultCategory = cat || null;
+  selectedTags = [];
+  document.getElementById('m-title').value = '';
+  document.getElementById('m-notes').value = '';
+  document.getElementById('m-actions').value = '';
+  document.getElementById('m-decisions').value = '';
+  document.getElementById('m-date').value = new Date().toISOString().split('T')[0];
+  if (cat) document.getElementById('m-category').value = cat;
+  document.querySelectorAll('.tag-toggle').forEach(t => {
+    t.className = 'tag-toggle';
+  });
+  document.getElementById('overlay').classList.add('open');
+  setTimeout(() => document.getElementById('m-title').focus(), 100);
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function closeOnBg(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+function toggleTag(btn) {
+  const tag = btn.dataset.tag;
+  const sel = `selected-${tag}`;
+  if (btn.classList.contains(sel)) {
+    btn.classList.remove(sel);
+    selectedTags = selectedTags.filter(t => t !== tag);
+  } else {
+    btn.classList.add(sel);
+    selectedTags.push(tag);
+  }
+}
+
+function createNote() {
+  const title = document.getElementById('m-title').value.trim();
+  if (!title) { document.getElementById('m-title').style.borderColor = 'var(--red)'; setTimeout(() => document.getElementById('m-title').style.borderColor = '', 1500); return; }
+  const category = document.getElementById('m-category').value;
+  const date = document.getElementById('m-date').value;
+  const noteText = document.getElementById('m-notes').value.trim();
+  const actionsRaw = document.getElementById('m-actions').value.trim();
+  const decsRaw = document.getElementById('m-decisions').value.trim();
+
+  const actions = actionsRaw ? actionsRaw.split('\n').filter(l => l.trim()).map(l => ({ text: l.trim(), done: false })) : [];
+  const decisions = decsRaw ? decsRaw.split('\n').filter(l => l.trim()).map(l => ({ q: l.trim(), done: false })) : [];
+
+  const note = {
+    id: Date.now().toString(),
+    title,
+    category,
+    date,
+    tags: [...selectedTags],
+    notes: noteText,
+    actions,
+    decisions,
+    pinned: false,
+    createdAt: new Date().toISOString()
+  };
+
+  notes.unshift(note);
+  closeModal();
+  saveAll();
+
+  // Switch to the right tab
+  const tabMap = {
+    uxui: 1, investor: 2, eitan: 3, ayton: 4, other: 5
+  };
+}
+
+// ── TABS ──
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`sec-${id}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ── KEYBOARD ──
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ── INIT ──
+loadData();
+
+// Seed with example notes if first launch
+if (notes.length === 0) {
+  notes = [
+    {
+      id: '1',
+      title: 'Designer #1 Interview',
+      category: 'uxui',
+      date: new Date().toISOString().split('T')[0],
+      tags: ['ux', 'founder'],
+      notes: 'Strong portfolio. 4 years freelance, mostly SaaS. Has NOT designed for field workers or contractors before — admitted this upfront. Clean, minimal aesthetic. Good Figma skills demonstrated. Asked smart questions about the user persona (who is the contractor, what device do they use). Rate: $75/hr. Availability: starting in 2 weeks.',
+      actions: [
+        { text: 'Send portfolio follow-up request and timeline', done: false },
+        { text: 'Schedule paid test task ($150 — redesign dashboard home screen)', done: false },
+      ],
+      decisions: [
+        { q: 'Is lack of contractor industry experience a dealbreaker?', done: false }
+      ],
+      pinned: false,
+      createdAt: new Date().toISOString()
+    },
+    {
+      id: '2',
+      title: 'Ayton — First Founder Sync',
+      category: 'ayton',
+      date: new Date().toISOString().split('T')[0],
+      tags: ['founder', 'legal'],
+      notes: 'Covered role definition (COO — owns ops, hiring, partnerships), discussed 4yr/1yr cliff vesting for equity split. Need to finalize % before we bring in any investors. Also aligned on working cadence: weekly Tuesday syncs + async Slack otherwise. Both committed to not charging beta users until we have at least 3 testimonials.',
+      actions: [
+        { text: 'Draft 1-page Founder Agreement', done: false },
+        { text: 'Schedule equity split decision meeting', done: false },
+      ],
+      decisions: [
+        { q: 'Final equity split Omer/Ayton', done: false },
+        { q: 'LLC or C-Corp (C-Corp recommended for VC)', done: false },
+      ],
+      pinned: true,
+      createdAt: new Date().toISOString()
+    },
+  ];
+}
+
+render();
+</script>
+</body>
+</html>

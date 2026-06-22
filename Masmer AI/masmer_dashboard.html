@@ -1,0 +1,1568 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Admin Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ── GLOBAL APP NAV ── */
+.g-nav{position:relative;height:44px;background:#03070E;border-bottom:1px solid rgba(249,115,22,.18);display:flex;align-items:center;padding:0 20px;gap:0;z-index:99999;flex-shrink:0;}
+.g-logo{display:flex;align-items:center;gap:8px;margin-right:28px;flex-shrink:0;}
+.g-mark{width:24px;height:24px;background:linear-gradient(135deg,#F97316,#C2560D);border-radius:6px;display:flex;align-items:center;justify-content:center;font-family:'Syne',sans-serif;font-weight:800;font-size:12px;color:#fff;}
+.g-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:#EEF3FF;}
+.g-name em{color:#F97316;font-style:normal;}
+.g-apps{display:flex;gap:2px;}
+.g-app{display:flex;align-items:center;gap:6px;padding:5px 13px;border-radius:7px;text-decoration:none;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;color:#7A90B2;transition:all .15s;}
+.g-app:hover{background:rgba(255,255,255,.06);color:#EEF3FF;}
+.g-app.active{background:rgba(249,115,22,.1);color:#F97316;font-weight:600;}
+.g-icon{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.g-sep{width:1px;height:20px;background:rgba(255,255,255,.07);margin:0 8px;}
+.g-sync{margin-left:auto;font-size:10px;color:#3A506A;font-weight:500;transition:color .4s;}
+
+/* ── TOKENS ── */
+:root {
+  --bg:       #080F1C;
+  --bg1:      #0C1526;
+  --bg2:      #111E33;
+  --bg3:      #172540;
+  --bg4:      #1D2E4A;
+
+  --hi:       #EEF3FF;
+  --md:       #7A90B2;
+  --lo:       #3A506A;
+
+  --b0:       rgba(255,255,255,.042);
+  --b1:       rgba(255,255,255,.08);
+  --b2:       rgba(255,255,255,.15);
+
+  --og:       #F97316;
+  --og2:      #C2560D;
+  --og-bg:    rgba(249,115,22,.08);
+  --og-bdr:   rgba(249,115,22,.22);
+  --og-glow:  rgba(249,115,22,.18);
+  --grad-og:  linear-gradient(135deg,#F97316,#C2560D);
+
+  --green:    #10B981;
+  --green-bg: rgba(16,185,129,.08);
+  --green-b:  rgba(16,185,129,.22);
+  --blue:     #3B82F6;
+  --blue-bg:  rgba(59,130,246,.08);
+  --blue-b:   rgba(59,130,246,.22);
+  --red:      #EF4444;
+  --red-bg:   rgba(239,68,68,.08);
+  --red-b:    rgba(239,68,68,.22);
+  --amber:    #F59E0B;
+  --purple:   #8B5CF6;
+
+  --sh-card:  0 1px 0 rgba(255,255,255,.04) inset, 0 2px 16px rgba(0,0,0,.38);
+  --sh-float: 0 8px 48px rgba(0,0,0,.55), 0 1px 0 rgba(255,255,255,.06) inset;
+  --sh-og:    0 4px 24px rgba(249,115,22,.28);
+
+  --sidebar-w: 220px;
+  --topbar-h:  56px;
+}
+[data-theme="light"] {
+  --bg:#F2EEE9; --bg1:#FFFFFF; --bg2:#EDE9E4; --bg3:#E5E0DA; --bg4:#DAD4CE;
+  --hi:#18130F; --md:#726860; --lo:#B3A89E;
+  --b0:rgba(0,0,0,.045); --b1:rgba(0,0,0,.085); --b2:rgba(0,0,0,.16);
+  --sh-card:0 1px 3px rgba(0,0,0,.08),0 0 0 1px rgba(0,0,0,.04);
+  --sh-float:0 8px 40px rgba(0,0,0,.14),0 0 0 1px rgba(0,0,0,.06);
+}
+
+/* ── BASE ── */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:15px;-webkit-font-smoothing:antialiased;}
+body{background:var(--bg);color:var(--hi);font-family:'DM Sans',sans-serif;line-height:1.5;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+.app-shell{display:flex;flex:1;overflow:hidden;}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;font-weight:800;letter-spacing:-.04em;line-height:1;}
+a{color:inherit;text-decoration:none;}
+button{cursor:pointer;font-family:'DM Sans',sans-serif;}
+input,textarea,select{font-family:'DM Sans',sans-serif;}
+::selection{background:rgba(249,115,22,.22);}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width:var(--sidebar-w); height:100%; flex-shrink:0;
+  background:var(--bg1); border-right:1px solid var(--b0);
+  display:flex; flex-direction:column;
+  position:relative; z-index:100;
+}
+.sidebar-logo {
+  padding:18px 18px 16px; display:flex; align-items:center; gap:9px;
+  border-bottom:1px solid var(--b0);
+}
+.logo-mark {
+  width:30px; height:30px; border-radius:8px;
+  background:var(--grad-og); display:flex; align-items:center;
+  justify-content:center; font-family:'Syne',sans-serif; font-weight:800;
+  font-size:14px; color:#fff; flex-shrink:0; box-shadow:0 2px 8px var(--og-glow);
+}
+.logo-text { font-family:'Syne',sans-serif; font-weight:800; font-size:15px; letter-spacing:-.04em; }
+.logo-text em { color:var(--og); font-style:normal; }
+
+.sidebar-section { padding:10px 10px 4px; }
+.sidebar-section-label {
+  font-size:9.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--lo); padding:0 8px; margin-bottom:4px;
+}
+.nav-item {
+  display:flex; align-items:center; gap:9px;
+  padding:8px 10px; border-radius:9px; margin-bottom:1px;
+  font-size:13px; font-weight:500; color:var(--md);
+  background:none; border:none; width:100%; text-align:left;
+  transition:background .15s, color .15s;
+  position:relative;
+}
+.nav-item:hover { background:var(--bg2); color:var(--hi); }
+.nav-item.active { background:var(--og-bg); color:var(--og); }
+.nav-item.active .nav-icon { color:var(--og); }
+.nav-icon { width:16px; height:16px; flex-shrink:0; stroke:currentColor; fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; }
+.nav-badge {
+  margin-left:auto; font-size:9.5px; font-weight:800;
+  background:var(--og); color:#fff; padding:1px 6px; border-radius:999px; min-width:18px; text-align:center;
+}
+.nav-badge.green { background:var(--green); }
+
+.sidebar-bottom {
+  margin-top:auto; padding:12px 10px;
+  border-top:1px solid var(--b0);
+}
+.user-block {
+  display:flex; align-items:center; gap:9px;
+  padding:8px 10px; border-radius:9px;
+  transition:background .15s; cursor:pointer;
+}
+.user-block:hover { background:var(--bg2); }
+.user-avatar {
+  width:30px; height:30px; border-radius:8px;
+  background:var(--grad-og); display:flex; align-items:center;
+  justify-content:center; font-family:'Syne',sans-serif;
+  font-weight:800; font-size:12px; color:#fff; flex-shrink:0;
+}
+.user-name { font-size:12.5px; font-weight:600; color:var(--hi); }
+.user-role { font-size:10.5px; color:var(--lo); }
+
+/* ── MAIN ── */
+.main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+
+/* ── TOPBAR ── */
+.topbar {
+  height:var(--topbar-h); display:flex; align-items:center;
+  padding:0 28px; border-bottom:1px solid var(--b0);
+  background:var(--bg1); gap:12px; flex-shrink:0;
+}
+.topbar-title { font-family:'Syne',sans-serif; font-weight:800; font-size:17px; letter-spacing:-.04em; }
+.topbar-subtitle { font-size:12px; color:var(--lo); margin-left:2px; }
+.topbar-right { margin-left:auto; display:flex; align-items:center; gap:8px; }
+.topbar-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:7px 14px; border-radius:8px; font-size:12.5px; font-weight:600;
+  border:none; background:var(--bg2); color:var(--md);
+  transition:background .15s, color .15s;
+}
+.topbar-btn:hover { background:var(--bg3); color:var(--hi); }
+.topbar-btn.primary { background:var(--grad-og); color:#fff; box-shadow:0 2px 10px var(--og-glow); }
+.topbar-btn.primary:hover { box-shadow:var(--sh-og); transform:translateY(-1px); }
+.topbar-btn svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+.theme-pill {
+  width:36px; height:20px; border-radius:999px; border:1px solid var(--b1);
+  background:var(--bg2); cursor:pointer; position:relative; transition:background .3s;
+}
+.theme-pill::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:14px; height:14px; border-radius:50%;
+  background:var(--md); transition:transform .3s cubic-bezier(.34,1.56,.64,1), background .3s;
+}
+[data-theme="light"] .theme-pill::after { transform:translateX(16px); background:var(--og); }
+
+/* ── CONTENT ── */
+.content { flex:1; overflow-y:auto; padding:28px; }
+
+/* ── TAB PANELS ── */
+.tab-panel { display:none; }
+.tab-panel.active { display:block; animation:fadein .2s ease; }
+@keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+
+/* ── CARDS ── */
+.card {
+  background:var(--bg1); border:1px solid var(--b0);
+  border-radius:16px; box-shadow:var(--sh-card);
+}
+.card-pad { padding:20px 22px; }
+
+/* ── GRID HELPERS ── */
+.grid-4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; }
+.grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; }
+.grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.grid-13 { display:grid; grid-template-columns:1fr 340px; gap:14px; }
+.grid-31 { display:grid; grid-template-columns:340px 1fr; gap:14px; }
+
+/* ── STAT CARDS ── */
+.stat-card {
+  background:var(--bg1); border:1px solid var(--b0); border-radius:14px;
+  padding:20px 20px 18px; box-shadow:var(--sh-card);
+  cursor:pointer; transition:border-color .2s, transform .2s;
+  position:relative; overflow:hidden;
+}
+.stat-card:hover { border-color:var(--og-bdr); transform:translateY(-2px); }
+.stat-card::after {
+  content:''; position:absolute; inset:0; border-radius:14px;
+  background:linear-gradient(135deg,var(--og-bg),transparent);
+  opacity:0; transition:opacity .2s;
+}
+.stat-card:hover::after { opacity:1; }
+.stat-label { font-size:10.5px; font-weight:700; color:var(--lo); letter-spacing:.06em; text-transform:uppercase; margin-bottom:10px; position:relative; z-index:1; }
+.stat-val { font-family:'Syne',sans-serif; font-size:36px; font-weight:800; letter-spacing:-.05em; line-height:1; color:var(--og); margin-bottom:6px; position:relative; z-index:1; }
+.stat-delta { font-size:11.5px; position:relative; z-index:1; }
+.stat-delta.up { color:var(--green); }
+.stat-delta.dn { color:var(--red); }
+.stat-icon { position:absolute; right:18px; top:18px; opacity:.12; z-index:0; }
+.stat-icon svg { width:36px; height:36px; stroke:var(--og); fill:none; stroke-width:1.5; }
+
+/* ── SECTION HEADS ── */
+.sec-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+.sec-title { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; letter-spacing:-.03em; }
+.sec-action { font-size:12px; font-weight:600; color:var(--og); cursor:pointer; transition:opacity .15s; }
+.sec-action:hover { opacity:.7; }
+
+/* ── ACTIVITY FEED ── */
+.activity-item {
+  display:flex; gap:11px; padding:12px 0; align-items:flex-start;
+  border-bottom:1px solid var(--b0);
+}
+.activity-item:last-child { border-bottom:none; }
+.act-dot {
+  width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:5px;
+}
+.act-text { font-size:12.5px; color:var(--md); line-height:1.55; flex:1; }
+.act-text strong { color:var(--hi); font-weight:600; }
+.act-time { font-size:10.5px; color:var(--lo); white-space:nowrap; margin-top:1px; }
+
+/* ── PIPELINE MINI ── */
+.pipeline-row {
+  display:flex; align-items:center; gap:10px; padding:10px 0;
+  border-bottom:1px solid var(--b0); cursor:pointer; transition:background .15s;
+}
+.pipeline-row:last-child { border-bottom:none; }
+.pipeline-row:hover { background:rgba(255,255,255,.02); border-radius:8px; padding-left:6px; }
+.pr-avatar {
+  width:30px; height:30px; border-radius:8px; flex-shrink:0;
+  background:var(--bg3); border:1px solid var(--b1);
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-size:11px; font-weight:800; color:var(--md);
+}
+.pr-name { font-size:13px; font-weight:600; color:var(--hi); }
+.pr-job { font-size:11px; color:var(--lo); }
+.pr-val { margin-left:auto; font-family:'Syne',sans-serif; font-size:13px; font-weight:800; color:var(--og); }
+.pr-stage {
+  font-size:9.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase;
+  padding:2px 8px; border-radius:999px;
+}
+.stage-new  { background:var(--blue-bg); color:var(--blue); border:1px solid var(--blue-b); }
+.stage-est  { background:var(--og-bg); color:var(--og); border:1px solid var(--og-bdr); }
+.stage-won  { background:var(--green-bg); color:var(--green); border:1px solid var(--green-b); }
+.stage-prog { background:var(--purple-bg,rgba(139,92,246,.08)); color:var(--purple); border:1px solid rgba(139,92,246,.22); }
+
+/* ── JOBS IN PROGRESS ── */
+.job-card {
+  background:var(--bg2); border:1px solid var(--b0); border-radius:12px;
+  padding:14px; cursor:pointer; transition:border-color .2s, transform .2s;
+}
+.job-card:hover { border-color:var(--og-bdr); transform:translateY(-2px); }
+.jc-head { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:10px; }
+.jc-name { font-family:'Syne',sans-serif; font-size:13.5px; font-weight:800; color:var(--hi); }
+.jc-val { font-family:'Syne',sans-serif; font-size:13px; font-weight:800; color:var(--og); }
+.jc-addr { font-size:11px; color:var(--lo); margin-bottom:10px; }
+.progress-bar { height:4px; background:var(--bg3); border-radius:2px; overflow:hidden; }
+.progress-fill { height:100%; border-radius:2px; background:var(--grad-og); transition:width .5s ease; }
+.jc-footer { display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+.jc-phase { font-size:10.5px; color:var(--md); }
+.jc-crew { display:flex; gap:-4px; }
+.crew-dot {
+  width:20px; height:20px; border-radius:50%;
+  border:2px solid var(--bg1); margin-left:-5px;
+  background:var(--bg4); display:flex; align-items:center; justify-content:center;
+  font-size:8px; font-weight:800; font-family:'Syne',sans-serif; color:var(--md);
+}
+
+/* ── SCHEDULE PREVIEW ── */
+.sched-slot {
+  display:flex; gap:10px; align-items:center;
+  padding:9px 12px; border-radius:10px; margin-bottom:7px;
+  border:1px solid transparent; cursor:pointer; transition:border-color .15s;
+}
+.sched-slot:hover { border-color:var(--b1); }
+.sched-bar { width:3px; height:34px; border-radius:2px; flex-shrink:0; }
+.sched-time { font-size:10.5px; font-weight:700; color:var(--lo); min-width:44px; }
+.sched-info { flex:1; }
+.sched-name { font-size:12.5px; font-weight:700; color:var(--hi); }
+.sched-job  { font-size:11px; color:var(--lo); }
+.sched-tag {
+  font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:999px; white-space:nowrap;
+}
+
+/* ── QUICK ACTIONS ── */
+.qa-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:9px; }
+.qa-btn {
+  background:var(--bg2); border:1px solid var(--b0); border-radius:12px;
+  padding:14px 12px; display:flex; flex-direction:column; align-items:center; gap:8px;
+  cursor:pointer; transition:border-color .18s, background .18s, transform .18s; border:none;
+}
+.qa-btn:hover { border-color:var(--og-bdr) !important; background:var(--og-bg); transform:translateY(-2px); }
+.qa-btn:hover .qa-icon { color:var(--og); }
+.qa-icon { width:22px; height:22px; stroke:var(--md); fill:none; stroke-width:1.75; stroke-linecap:round; stroke-linejoin:round; transition:color .18s; }
+.qa-label { font-size:11px; font-weight:600; color:var(--md); text-align:center; line-height:1.3; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; background:rgba(0,0,0,.65);
+  display:none; align-items:center; justify-content:center;
+  z-index:1000; backdrop-filter:blur(4px);
+}
+.modal-overlay.open { display:flex; animation:fadein .2s ease; }
+.modal {
+  background:var(--bg1); border:1px solid var(--b1);
+  border-radius:20px; padding:28px; max-width:520px; width:90%;
+  box-shadow:var(--sh-float); position:relative;
+}
+.modal-close {
+  position:absolute; top:16px; right:16px;
+  width:28px; height:28px; border-radius:8px;
+  background:var(--bg2); border:none; color:var(--md);
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:16px; transition:background .15s;
+}
+.modal-close:hover { background:var(--bg3); color:var(--hi); }
+.modal-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; letter-spacing:-.04em; margin-bottom:4px; }
+.modal-sub { font-size:12.5px; color:var(--lo); margin-bottom:20px; }
+
+/* ── FORMS ── */
+.form-group { margin-bottom:14px; }
+.form-label { font-size:11px; font-weight:700; color:var(--lo); letter-spacing:.05em; text-transform:uppercase; margin-bottom:5px; display:block; }
+.form-input {
+  width:100%; background:var(--bg2); border:1px solid var(--b1);
+  border-radius:9px; padding:10px 13px; font-size:13.5px; color:var(--hi);
+  outline:none; transition:border-color .18s;
+}
+.form-input:focus { border-color:var(--og-bdr); }
+.form-input::placeholder { color:var(--lo); }
+.form-row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.form-textarea { min-height:80px; resize:vertical; }
+.form-actions { display:flex; gap:9px; justify-content:flex-end; margin-top:20px; }
+.btn-cancel {
+  padding:9px 18px; border-radius:9px; background:var(--bg2);
+  border:1px solid var(--b1); color:var(--md); font-size:13px; font-weight:600;
+  transition:all .15s;
+}
+.btn-cancel:hover { color:var(--hi); border-color:var(--b2); }
+.btn-save {
+  padding:9px 20px; border-radius:9px; background:var(--grad-og);
+  border:none; color:#fff; font-size:13px; font-weight:700;
+  box-shadow:0 2px 10px var(--og-glow); transition:all .15s;
+}
+.btn-save:hover { box-shadow:var(--sh-og); transform:translateY(-1px); }
+
+/* ── SCHEDULE TAB ── */
+.cal-header { display:flex; align-items:center; gap:10px; margin-bottom:20px; }
+.cal-nav { display:flex; gap:4px; }
+.cal-nav-btn {
+  width:30px; height:30px; border-radius:8px; background:var(--bg2);
+  border:1px solid var(--b1); color:var(--md); display:flex; align-items:center;
+  justify-content:center; cursor:pointer; transition:all .15s; font-size:14px;
+}
+.cal-nav-btn:hover { background:var(--bg3); color:var(--hi); }
+.cal-month { font-family:'Syne',sans-serif; font-size:16px; font-weight:800; letter-spacing:-.04em; }
+.cal-view-tabs { display:flex; gap:3px; margin-left:auto; background:var(--bg2); border:1px solid var(--b0); border-radius:9px; padding:3px; }
+.cal-tab { font-size:11.5px; font-weight:600; color:var(--md); background:none; border:none; padding:5px 12px; border-radius:6px; cursor:pointer; transition:all .15s; }
+.cal-tab.on { background:var(--bg3); color:var(--hi); }
+
+.cal-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:0; border:1px solid var(--b0); border-radius:14px; overflow:hidden; }
+.cal-day-head { padding:8px; text-align:center; font-size:10px; font-weight:700; color:var(--lo); letter-spacing:.07em; text-transform:uppercase; background:var(--bg2); border-bottom:1px solid var(--b0); }
+.cal-day {
+  min-height:90px; padding:7px; border-right:1px solid var(--b0); border-bottom:1px solid var(--b0);
+  cursor:pointer; transition:background .15s; background:var(--bg1);
+}
+.cal-day:hover { background:var(--bg2); }
+.cal-day:nth-child(7n) { border-right:none; }
+.cal-day.today { background:var(--og-bg); }
+.cal-day.other-month { opacity:.35; }
+.cal-date { font-size:11.5px; font-weight:700; color:var(--md); margin-bottom:4px; }
+.cal-day.today .cal-date { color:var(--og); }
+.cal-event {
+  font-size:9.5px; font-weight:700; padding:2px 5px; border-radius:4px;
+  margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  cursor:pointer;
+}
+
+/* ── CLIENTS TAB ── */
+.client-table { width:100%; border-collapse:collapse; }
+.client-table th {
+  text-align:left; padding:9px 14px; font-size:10px; font-weight:700;
+  color:var(--lo); letter-spacing:.07em; text-transform:uppercase;
+  border-bottom:1px solid var(--b0); background:var(--bg2);
+}
+.client-table th:first-child { border-radius:10px 0 0 0; }
+.client-table th:last-child { border-radius:0 10px 0 0; }
+.client-table td { padding:11px 14px; border-bottom:1px solid var(--b0); font-size:13px; color:var(--md); }
+.client-table tr:last-child td { border-bottom:none; }
+.client-table tr:hover td { background:var(--bg2); }
+.client-name { font-weight:600; color:var(--hi); }
+.client-tag { font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:999px; }
+
+/* ── ELIKO TAB ── */
+.eliko-split { display:grid; grid-template-columns:420px 1fr; gap:20px; height:calc(100vh - var(--topbar-h) - 56px); }
+.eliko-left { display:flex; flex-direction:column; gap:14px; overflow-y:auto; }
+.eliko-right { background:var(--bg1); border:1px solid var(--b0); border-radius:16px; overflow:hidden; display:flex; flex-direction:column; }
+
+.eliko-prompt-card { background:var(--bg1); border:1px solid var(--b0); border-radius:16px; padding:20px; }
+.eliko-label { font-size:10.5px; font-weight:700; color:var(--lo); letter-spacing:.07em; text-transform:uppercase; margin-bottom:8px; display:block; }
+.eliko-textarea {
+  width:100%; background:var(--bg2); border:1px solid var(--b1); border-radius:10px;
+  padding:12px 14px; font-size:14px; color:var(--hi); outline:none; resize:none;
+  min-height:120px; transition:border-color .18s; line-height:1.6;
+}
+.eliko-textarea:focus { border-color:var(--og-bdr); }
+.eliko-textarea::placeholder { color:var(--lo); }
+.eliko-options { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:10px; }
+.eliko-opt-label { font-size:10.5px; font-weight:700; color:var(--lo); letter-spacing:.06em; text-transform:uppercase; margin-bottom:4px; display:block; }
+.eliko-select {
+  width:100%; background:var(--bg2); border:1px solid var(--b1); border-radius:8px;
+  padding:8px 11px; font-size:13px; color:var(--hi); outline:none;
+}
+.eliko-generate-btn {
+  width:100%; padding:13px; border-radius:11px; background:var(--grad-og);
+  border:none; color:#fff; font-size:14px; font-weight:800; font-family:'Syne',sans-serif;
+  letter-spacing:-.02em; box-shadow:0 3px 16px var(--og-glow);
+  transition:transform .16s, box-shadow .16s; margin-top:2px;
+}
+.eliko-generate-btn:hover { transform:translateY(-2px); box-shadow:var(--sh-og); }
+
+.eliko-output-header {
+  padding:16px 20px; border-bottom:1px solid var(--b0);
+  display:flex; align-items:center; justify-content:space-between;
+  background:var(--bg2); flex-shrink:0;
+}
+.eliko-output-title { font-family:'Syne',sans-serif; font-size:15px; font-weight:800; letter-spacing:-.04em; }
+.eliko-actions { display:flex; gap:7px; }
+.eliko-action-btn {
+  padding:7px 14px; border-radius:8px; font-size:12px; font-weight:700;
+  border:1px solid var(--b1); background:var(--bg3); color:var(--md);
+  transition:all .15s;
+}
+.eliko-action-btn:hover { border-color:var(--og-bdr); color:var(--og); background:var(--og-bg); }
+.eliko-action-btn.primary { background:var(--grad-og); color:#fff; border-color:transparent; box-shadow:0 2px 10px var(--og-glow); }
+.eliko-action-btn.primary:hover { box-shadow:var(--sh-og); }
+
+.eliko-output-body { flex:1; overflow-y:auto; padding:20px; }
+.estimate-line {
+  display:flex; align-items:center; gap:10px;
+  padding:10px 13px; background:var(--bg2); border:1px solid var(--b0);
+  border-radius:10px; margin-bottom:7px;
+}
+.el-num { font-size:10.5px; font-weight:700; color:var(--lo); width:18px; }
+.el-desc { flex:1; font-size:13.5px; color:var(--hi); }
+.el-qty { font-size:12px; color:var(--lo); width:50px; text-align:center; }
+.el-unit { font-size:12px; color:var(--lo); width:36px; }
+.el-total { font-family:'Syne',sans-serif; font-size:13.5px; font-weight:800; color:var(--og); width:72px; text-align:right; }
+.estimate-total-row {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 13px; border-top:1px solid var(--b1); margin-top:4px;
+}
+.et-label { font-size:13px; color:var(--md); }
+.et-val { font-family:'Syne',sans-serif; font-size:28px; font-weight:800; color:var(--og); letter-spacing:-.05em; }
+
+.eliko-empty {
+  flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  text-align:center; padding:40px;
+}
+.eliko-empty-icon { font-size:48px; margin-bottom:14px; opacity:.5; }
+.eliko-empty-title { font-family:'Syne',sans-serif; font-size:18px; font-weight:800; color:var(--md); margin-bottom:6px; }
+.eliko-empty-sub { font-size:13px; color:var(--lo); line-height:1.6; max-width:280px; }
+
+/* Eliko thinking animation */
+.eliko-thinking {
+  display:none; flex-direction:column; align-items:center; justify-content:center;
+  gap:16px; padding:60px 40px; text-align:center;
+}
+.eliko-thinking.show { display:flex; }
+.thinking-ring {
+  width:52px; height:52px; border-radius:50%;
+  border:3px solid var(--og-bg); border-top-color:var(--og);
+  animation:spin 1s linear infinite;
+}
+@keyframes spin { to { transform:rotate(360deg); } }
+.thinking-label { font-size:13.5px; color:var(--md); }
+.thinking-steps { display:flex; flex-direction:column; gap:5px; text-align:left; width:100%; max-width:280px; }
+.thinking-step {
+  font-size:11.5px; color:var(--lo); display:flex; align-items:center; gap:8px;
+  transition:color .3s;
+}
+.thinking-step.done { color:var(--green); }
+.thinking-step.active { color:var(--hi); }
+.thinking-step-dot {
+  width:6px; height:6px; border-radius:50%; background:var(--lo);
+  flex-shrink:0; transition:background .3s;
+}
+.thinking-step.done .thinking-step-dot { background:var(--green); }
+.thinking-step.active .thinking-step-dot { background:var(--og); animation:livepulse 1s ease-in-out infinite; }
+@keyframes livepulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+/* ── FINANCIALS ── */
+.fin-chart-area {
+  background:var(--bg2); border-radius:10px; height:160px; margin-bottom:14px;
+  display:flex; align-items:flex-end; gap:8px; padding:16px 16px 12px; overflow:hidden;
+}
+.fin-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:5px; }
+.fin-bar { border-radius:5px 5px 0 0; transition:height .6s ease; cursor:pointer; }
+.fin-bar-label { font-size:9.5px; color:var(--lo); white-space:nowrap; }
+
+/* ── CALLS TAB ── */
+.call-row {
+  display:flex; gap:12px; align-items:flex-start; padding:13px 0;
+  border-bottom:1px solid var(--b0); cursor:pointer; transition:background .15s;
+}
+.call-row:last-child { border-bottom:none; }
+.call-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:6px; }
+.call-info { flex:1; }
+.call-name { font-size:13px; font-weight:600; color:var(--hi); }
+.call-detail { font-size:11.5px; color:var(--lo); margin-top:2px; }
+.call-meta { text-align:right; }
+.call-dur { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--md); }
+.call-time { font-size:10.5px; color:var(--lo); margin-top:2px; }
+.call-tag { font-size:9.5px; font-weight:800; padding:2px 8px; border-radius:999px; margin-top:4px; display:inline-block; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--b1); border-radius:3px; }
+::-webkit-scrollbar-thumb:hover { background:var(--b2); }
+</style>
+</head>
+<body>
+
+<!-- ═══ GLOBAL APP NAV ═══ -->
+<nav class="g-nav">
+  <div class="g-logo"><div class="g-mark">M</div><span class="g-name">Masmer <em>AI</em></span></div>
+  <div class="g-apps">
+    <a class="g-app active" href="masmer_dashboard.html">
+      <svg class="g-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Dashboard
+    </a>
+    <a class="g-app" href="masmer_field.html">
+      <svg class="g-icon" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Field Portal
+    </a>
+    <div class="g-sep"></div>
+    <a class="g-app" href="masmer_eliko_estimator.html">
+      <svg class="g-icon" viewBox="0 0 24 24" style="stroke:#F97316"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <span style="color:#F97316">Eliko</span>
+    </a>
+  </div>
+  <div class="g-sync" id="gSync">● Connected</div>
+</nav>
+
+<div class="app-shell">
+
+<!-- ═══ SIDEBAR ═══ -->
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <em>AI</em></div>
+  </div>
+
+  <div style="overflow-y:auto;flex:1;padding:8px 10px;">
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Overview</div>
+      <button class="nav-item active" onclick="switchTab('dashboard',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" onclick="switchTab('schedule',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Schedule
+        <span class="nav-badge green">8</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Business</div>
+      <button class="nav-item" onclick="switchTab('pipeline',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Pipeline
+        <span class="nav-badge">5</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('clients',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Clients
+      </button>
+      <button class="nav-item" onclick="switchTab('projects',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M2 20h20M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg>
+        Projects
+      </button>
+      <button class="nav-item" onclick="switchTab('quotes',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Quotes
+        <span class="nav-badge">3</span>
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">AI Tools</div>
+      <button class="nav-item" onclick="switchTab('eliko',this)" style="position:relative;">
+        <svg class="nav-icon" viewBox="0 0 24 24" style="stroke:var(--og);"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        <span style="color:var(--og);font-weight:700;">Eliko</span>
+        <span style="margin-left:auto;font-size:9px;font-weight:800;background:var(--grad-og);color:#fff;padding:1px 6px;border-radius:4px;letter-spacing:.04em;">AI</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('calls',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.07 6.07l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Calls
+        <span class="nav-badge">12</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('route',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+        Route Optimizer
+      </button>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-section-label">Finance</div>
+      <button class="nav-item" onclick="switchTab('financials',this)">
+        <svg class="nav-icon" viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Financials
+      </button>
+      <button class="nav-item" onclick="openDrive()">
+        <svg class="nav-icon" viewBox="0 0 24 24"><path d="M22.56 16.78L15.44 4.22A3.5 3.5 0 0 0 9.06 4L1.44 16.78a3.5 3.5 0 0 0 3.03 5.22h15.06a3.5 3.5 0 0 0 3.03-5.22z"/></svg>
+        Drive / Tracker
+      </button>
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-block">
+      <div class="user-avatar">O</div>
+      <div>
+        <div class="user-name">Omer</div>
+        <div class="user-role">Admin · Owner</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ═══ -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar" id="topbar">
+    <div>
+      <div class="topbar-title" id="topbarTitle">Dashboard</div>
+      <div class="topbar-subtitle" id="topbarSub">Sunday, June 21, 2026</div>
+    </div>
+    <div class="topbar-right">
+      <button class="topbar-btn" onclick="openModal('newLead')">
+        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        Add Lead
+      </button>
+      <button class="topbar-btn" onclick="switchTab('eliko',document.querySelector('[onclick*=eliko]'))">
+        <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        New Estimate
+      </button>
+      <button class="topbar-btn primary" onclick="openModal('newJob')">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Job
+      </button>
+      <button class="theme-pill" onclick="toggleTheme()" title="Toggle theme"></button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="content" id="content">
+
+    <!-- ═══ DASHBOARD TAB ═══ -->
+    <div class="tab-panel active" id="tab-dashboard">
+      <!-- Stat Cards -->
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="stat-card" onclick="openModal('revenue')">
+          <div class="stat-label">Monthly Revenue</div>
+          <div class="stat-val">$64,200</div>
+          <div class="stat-delta up">↑ 18% vs last month</div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+        </div>
+        <div class="stat-card" onclick="openModal('expenses')">
+          <div class="stat-label">Total Expenses</div>
+          <div class="stat-val">$21,840</div>
+          <div class="stat-delta dn">↑ 4% vs last month</div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+        </div>
+        <div class="stat-card" onclick="openModal('profit')">
+          <div class="stat-label">Net Profit</div>
+          <div class="stat-val">$42,360</div>
+          <div class="stat-delta up">↑ 26% vs last month</div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
+        </div>
+        <div class="stat-card" onclick="openModal('pipeline')">
+          <div class="stat-label">Open Pipeline</div>
+          <div class="stat-val">$128K</div>
+          <div class="stat-delta up">7 active leads</div>
+          <div class="stat-icon"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="card card-pad" style="margin-bottom:16px;">
+        <div class="sec-head"><div class="sec-title">Quick Actions</div></div>
+        <div class="qa-grid">
+          <button class="qa-btn" style="border:1px solid var(--b0);" onclick="switchTab('eliko',document.querySelectorAll('.nav-item')[7])">
+            <svg class="qa-icon" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <div class="qa-label">New Estimate</div>
+          </button>
+          <button class="qa-btn" style="border:1px solid var(--b0);" onclick="openModal('newLead')">
+            <svg class="qa-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            <div class="qa-label">Add Lead</div>
+          </button>
+          <button class="qa-btn" style="border:1px solid var(--b0);" onclick="openModal('newJob')">
+            <svg class="qa-icon" viewBox="0 0 24 24"><path d="M2 20h20M4 20V10l8-6 8 6v10"/><path d="M9 20v-6h6v6"/></svg>
+            <div class="qa-label">New Job</div>
+          </button>
+          <button class="qa-btn" style="border:1px solid var(--b0);" onclick="switchTab('schedule',document.querySelectorAll('.nav-item')[1])">
+            <svg class="qa-icon" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            <div class="qa-label">View Schedule</div>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid-13" style="margin-bottom:16px;">
+        <!-- Jobs In Progress -->
+        <div class="card card-pad">
+          <div class="sec-head">
+            <div class="sec-title">Jobs in Progress</div>
+            <div class="sec-action" onclick="switchTab('projects',document.querySelectorAll('.nav-item')[4])">View all →</div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="job-card">
+              <div class="jc-head">
+                <div><div class="jc-name">Salvatore Residence</div><div class="jc-addr">Brooklyn, NY · Bathroom Remodel</div></div>
+                <div class="jc-val">$10,500</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:65%"></div></div>
+              <div class="jc-footer">
+                <div class="jc-phase">Phase 2 of 3 · Tile work</div>
+                <div class="jc-crew">
+                  <div class="crew-dot">JR</div>
+                  <div class="crew-dot">AM</div>
+                </div>
+              </div>
+            </div>
+            <div class="job-card">
+              <div class="jc-head">
+                <div><div class="jc-name">Kim Basement</div><div class="jc-addr">Queens, NY · Basement Finish</div></div>
+                <div class="jc-val">$15,400</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:30%"></div></div>
+              <div class="jc-footer">
+                <div class="jc-phase">Phase 1 of 4 · Framing</div>
+                <div class="jc-crew">
+                  <div class="crew-dot">TM</div>
+                </div>
+              </div>
+            </div>
+            <div class="job-card">
+              <div class="jc-head">
+                <div><div class="jc-name">Chen Kitchen</div><div class="jc-addr">Manhattan, NY · Full Kitchen</div></div>
+                <div class="jc-val">$24,800</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width:10%"></div></div>
+              <div class="jc-footer">
+                <div class="jc-phase">Phase 1 of 5 · Demo</div>
+                <div class="jc-crew">
+                  <div class="crew-dot">JR</div>
+                  <div class="crew-dot">AM</div>
+                  <div class="crew-dot">PK</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <!-- Today's Schedule -->
+          <div class="card card-pad">
+            <div class="sec-head">
+              <div class="sec-title">Today's Schedule</div>
+              <div class="sec-action" onclick="switchTab('schedule',document.querySelectorAll('.nav-item')[1])">Full calendar →</div>
+            </div>
+            <div class="sched-slot" onclick="openModal('jobDetail')"><div class="sched-bar" style="background:#F97316;"></div><div class="sched-time">8:00am</div><div class="sched-info"><div class="sched-name">Chen Kitchen — Demo Day 1</div><div class="sched-job">Manhattan · Sarah Chen</div></div><span class="sched-tag" style="background:var(--purple-bg,rgba(139,92,246,.08));color:var(--purple);border:1px solid rgba(139,92,246,.2);">Active</span></div>
+            <div class="sched-slot" onclick="openModal('jobDetail')"><div class="sched-bar" style="background:#10B981;"></div><div class="sched-time">10:00am</div><div class="sched-info"><div class="sched-name">Estimate — Mike Salvatore</div><div class="sched-job">Brooklyn · Bathroom remodel</div></div><span class="sched-tag" style="background:var(--og-bg);color:var(--og);border:1px solid var(--og-bdr);">Estimate</span></div>
+            <div class="sched-slot" onclick="openModal('jobDetail')"><div class="sched-bar" style="background:#3B82F6;"></div><div class="sched-time">2:00pm</div><div class="sched-info"><div class="sched-name">Kim Basement — Framing</div><div class="sched-job">Queens · David Kim</div></div><span class="sched-tag" style="background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-b);">Job</span></div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="card card-pad">
+            <div class="sec-head">
+              <div class="sec-title">Live Activity</div>
+              <div class="sec-action">Clear</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot" style="background:var(--og);"></div>
+              <div class="act-text"><strong>Masmer AI</strong> answered a call from <strong>Mike Salvatore</strong> and booked an estimate for Tue Jul 8</div>
+              <div class="act-time">4m ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot" style="background:var(--green);"></div>
+              <div class="act-text"><strong>Eliko</strong> generated a $10,500 estimate for Salvatore bathroom remodel</div>
+              <div class="act-time">12m ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot" style="background:var(--blue);"></div>
+              <div class="act-text"><strong>James Rivera</strong> accepted the kitchen backsplash quote — $6,200</div>
+              <div class="act-time">1h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot" style="background:var(--purple);"></div>
+              <div class="act-text"><strong>Chen Kitchen</strong> moved to Phase 1 — Demo started</div>
+              <div class="act-time">2h ago</div>
+            </div>
+            <div class="activity-item">
+              <div class="act-dot" style="background:var(--amber);"></div>
+              <div class="act-text"><strong>Masmer AI</strong> answered 3 calls this morning, 0 missed</div>
+              <div class="act-time">3h ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pipeline Snapshot -->
+      <div class="card card-pad">
+        <div class="sec-head">
+          <div class="sec-title">Pipeline Snapshot</div>
+          <div class="sec-action" onclick="switchTab('pipeline',document.querySelectorAll('.nav-item')[2])">Full pipeline →</div>
+        </div>
+        <div class="pipeline-row" onclick="openModal('clientDetail')">
+          <div class="pr-avatar">MS</div>
+          <div><div class="pr-name">Mike Salvatore</div><div class="pr-job">Bathroom remodel · Brooklyn</div></div>
+          <span class="pr-stage stage-new">New</span>
+          <div class="pr-val">$10,500</div>
+        </div>
+        <div class="pipeline-row" onclick="openModal('clientDetail')">
+          <div class="pr-avatar">JR</div>
+          <div><div class="pr-name">James Rivera</div><div class="pr-job">Kitchen backsplash · Bronx</div></div>
+          <span class="pr-stage stage-won">Won</span>
+          <div class="pr-val">$6,200</div>
+        </div>
+        <div class="pipeline-row" onclick="openModal('clientDetail')">
+          <div class="pr-avatar">SC</div>
+          <div><div class="pr-name">Sarah Chen</div><div class="pr-job">Full kitchen · Manhattan</div></div>
+          <span class="pr-stage stage-prog">In Progress</span>
+          <div class="pr-val">$24,800</div>
+        </div>
+        <div class="pipeline-row" onclick="openModal('clientDetail')">
+          <div class="pr-avatar">TM</div>
+          <div><div class="pr-name">Tony Morales</div><div class="pr-job">Deck construction · Staten Island</div></div>
+          <span class="pr-stage stage-est">Estimate Sent</span>
+          <div class="pr-val">$8,900</div>
+        </div>
+        <div class="pipeline-row" onclick="openModal('clientDetail')">
+          <div class="pr-avatar">DK</div>
+          <div><div class="pr-name">David Kim</div><div class="pr-job">Basement finishing · Queens</div></div>
+          <span class="pr-stage stage-prog">In Progress</span>
+          <div class="pr-val">$15,400</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ SCHEDULE TAB ═══ -->
+    <div class="tab-panel" id="tab-schedule">
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="cal-nav-btn">‹</button>
+          <button class="cal-nav-btn">›</button>
+        </div>
+        <div class="cal-month">July 2026</div>
+        <div class="cal-view-tabs">
+          <button class="cal-tab on">Month</button>
+          <button class="cal-tab">Week</button>
+          <button class="cal-tab">Day</button>
+        </div>
+        <button class="topbar-btn primary" style="margin-left:12px;" onclick="openModal('newJob')">
+          <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Event
+        </button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+
+    <!-- ═══ PIPELINE TAB ═══ -->
+    <div class="tab-panel" id="tab-pipeline">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;align-items:start;">
+        <div>
+          <div class="sec-head"><div class="sec-title" style="font-size:12px;color:var(--lo);">NEW LEADS</div><div style="font-size:11px;color:var(--lo);">2</div></div>
+          <div id="col-new"></div>
+        </div>
+        <div>
+          <div class="sec-head"><div class="sec-title" style="font-size:12px;color:var(--lo);">ESTIMATING</div><div style="font-size:11px;color:var(--lo);">2</div></div>
+          <div id="col-est"></div>
+        </div>
+        <div>
+          <div class="sec-head"><div class="sec-title" style="font-size:12px;color:var(--lo);">WON</div><div style="font-size:11px;color:var(--lo);">2</div></div>
+          <div id="col-won"></div>
+        </div>
+        <div>
+          <div class="sec-head"><div class="sec-title" style="font-size:12px;color:var(--lo);">IN PROGRESS</div><div style="font-size:11px;color:var(--lo);">3</div></div>
+          <div id="col-prog"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CLIENTS TAB ═══ -->
+    <div class="tab-panel" id="tab-clients">
+      <div class="card" style="margin-bottom:16px;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--b0);display:flex;gap:10px;align-items:center;">
+          <input class="form-input" placeholder="🔍  Search clients..." style="max-width:280px;padding:8px 13px;">
+          <button class="topbar-btn primary" style="margin-left:auto;" onclick="openModal('newLead')">+ Add Client</button>
+        </div>
+        <table class="client-table">
+          <thead>
+            <tr>
+              <th>Name</th><th>Phone</th><th>Type</th><th>Last Job</th><th>Total Value</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="clientBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ PROJECTS TAB ═══ -->
+    <div class="tab-panel" id="tab-projects">
+      <div class="grid-3" id="projectsGrid"></div>
+    </div>
+
+    <!-- ═══ QUOTES TAB ═══ -->
+    <div class="tab-panel" id="tab-quotes">
+      <div class="card">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--b0);display:flex;gap:10px;align-items:center;">
+          <div class="sec-title">All Quotes & Estimates</div>
+          <button class="topbar-btn primary" style="margin-left:auto;" onclick="switchTab('eliko',document.querySelectorAll('.nav-item')[7])">+ New Estimate</button>
+        </div>
+        <table class="client-table">
+          <thead><tr><th>Client</th><th>Job</th><th>Amount</th><th>Sent</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody id="quotesBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══ ELIKO TAB ═══ -->
+    <div class="tab-panel" id="tab-eliko">
+      <div class="eliko-split">
+        <!-- Left: Input -->
+        <div class="eliko-left">
+          <div class="eliko-prompt-card">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;">
+              <svg style="width:20px;height:20px;stroke:var(--og);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <span style="font-family:'Syne',sans-serif;font-weight:800;font-size:16px;letter-spacing:-.04em;color:var(--og);">Eliko</span>
+              <span style="font-size:10px;font-weight:800;background:var(--grad-og);color:#fff;padding:2px 8px;border-radius:4px;letter-spacing:.06em;">AI ESTIMATOR</span>
+            </div>
+            <label class="eliko-label">Describe the Job</label>
+            <textarea class="eliko-textarea" id="elikoPrompt" placeholder="E.g. Full bathroom gut renovation, 80 sq ft. Remove all existing tile, replace subfloor, new shower with tile walls and floor, new vanity and toilet, all plumbing..."></textarea>
+            <div class="eliko-options">
+              <div>
+                <span class="eliko-opt-label">Trade Type</span>
+                <select class="eliko-select" id="elikoTrade">
+                  <option>General Renovation</option>
+                  <option>Bathroom Remodel</option>
+                  <option>Kitchen Remodel</option>
+                  <option>Basement Finishing</option>
+                  <option>Flooring</option>
+                  <option>Painting</option>
+                  <option>Roofing</option>
+                  <option>Deck / Exterior</option>
+                  <option>HVAC</option>
+                  <option>Electrical</option>
+                  <option>Plumbing</option>
+                </select>
+              </div>
+              <div>
+                <span class="eliko-opt-label">Market</span>
+                <select class="eliko-select" id="elikoMarket">
+                  <option>New York, NY</option>
+                  <option>Brooklyn, NY</option>
+                  <option>Queens, NY</option>
+                  <option>Bronx, NY</option>
+                  <option>Staten Island, NY</option>
+                  <option>New Jersey</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <div class="eliko-prompt-card">
+            <label class="eliko-label">Client (optional)</label>
+            <input class="form-input" placeholder="Search or add client name..." style="margin-bottom:10px;">
+            <label class="eliko-label">Notes / Special Conditions</label>
+            <textarea class="eliko-textarea" placeholder="Any access issues, material preferences, client budget expectations..." style="min-height:64px;"></textarea>
+          </div>
+
+          <button class="eliko-generate-btn" onclick="runEliko()">
+            ✦ Generate Estimate
+          </button>
+        </div>
+
+        <!-- Right: Output -->
+        <div class="eliko-right">
+          <div class="eliko-output-header">
+            <div class="eliko-output-title" id="elikoOutputTitle">Estimate Output</div>
+            <div class="eliko-actions" id="elikoActions" style="display:none;">
+              <button class="eliko-action-btn" onclick="openModal('materials')">🛒 HD Materials List</button>
+              <button class="eliko-action-btn" onclick="openModal('payment')">💳 Payment Schedule</button>
+              <button class="eliko-action-btn primary">📄 Export PDF</button>
+            </div>
+          </div>
+          <div class="eliko-output-body" id="elikoOutput">
+            <div class="eliko-thinking" id="elikoThinking">
+              <div class="thinking-ring"></div>
+              <div class="thinking-label">Eliko is building your estimate…</div>
+              <div class="thinking-steps" id="thinkingSteps">
+                <div class="thinking-step" id="ts0"><div class="thinking-step-dot"></div>Analyzing job description</div>
+                <div class="thinking-step" id="ts1"><div class="thinking-step-dot"></div>Calculating labor hours</div>
+                <div class="thinking-step" id="ts2"><div class="thinking-step-dot"></div>Sourcing material costs</div>
+                <div class="thinking-step" id="ts3"><div class="thinking-step-dot"></div>Applying NYC market rates</div>
+                <div class="thinking-step" id="ts4"><div class="thinking-step-dot"></div>Building Home Depot cart</div>
+                <div class="thinking-step" id="ts5"><div class="thinking-step-dot"></div>Generating payment schedule</div>
+              </div>
+            </div>
+            <div id="elikoResult" style="display:none;">
+              <div style="margin-bottom:16px;">
+                <div style="font-size:10.5px;font-weight:700;color:var(--lo);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">Labor</div>
+                <div class="estimate-line"><div class="el-num">1</div><div class="el-desc">Demo & removal</div><div class="el-qty">2</div><div class="el-unit">days</div><div class="el-total">$1,200</div></div>
+                <div class="estimate-line"><div class="el-num">2</div><div class="el-desc">Tile installation — floor</div><div class="el-qty">1.5</div><div class="el-unit">days</div><div class="el-total">$900</div></div>
+                <div class="estimate-line"><div class="el-num">3</div><div class="el-desc">Tile installation — walls</div><div class="el-qty">2</div><div class="el-unit">days</div><div class="el-total">$1,200</div></div>
+                <div class="estimate-line"><div class="el-num">4</div><div class="el-desc">Plumbing rough-in & fixtures</div><div class="el-qty">1</div><div class="el-unit">days</div><div class="el-total">$1,400</div></div>
+                <div class="estimate-line"><div class="el-num">5</div><div class="el-desc">Vanity, toilet & accessories</div><div class="el-qty">0.5</div><div class="el-unit">days</div><div class="el-total">$600</div></div>
+                <div class="estimate-line"><div class="el-num">6</div><div class="el-desc">Paint & final cleanup</div><div class="el-qty">0.5</div><div class="el-unit">days</div><div class="el-total">$500</div></div>
+              </div>
+              <div style="margin-bottom:16px;">
+                <div style="font-size:10.5px;font-weight:700;color:var(--lo);letter-spacing:.07em;text-transform:uppercase;margin-bottom:10px;">Materials</div>
+                <div class="estimate-line"><div class="el-num">7</div><div class="el-desc">Porcelain floor tile (80 sq ft)</div><div class="el-qty">90</div><div class="el-unit">sq ft</div><div class="el-total">$580</div></div>
+                <div class="estimate-line"><div class="el-num">8</div><div class="el-desc">Subway wall tile</div><div class="el-qty">120</div><div class="el-unit">sq ft</div><div class="el-total">$720</div></div>
+                <div class="estimate-line"><div class="el-num">9</div><div class="el-desc">Schluter strip, grout, thinset</div><div class="el-qty">1</div><div class="el-unit">lot</div><div class="el-total">$240</div></div>
+                <div class="estimate-line"><div class="el-num">10</div><div class="el-desc">Vanity 36" with sink</div><div class="el-qty">1</div><div class="el-unit">unit</div><div class="el-total">$680</div></div>
+                <div class="estimate-line"><div class="el-num">11</div><div class="el-desc">Toilet + wax ring</div><div class="el-qty">1</div><div class="el-unit">unit</div><div class="el-total">$340</div></div>
+                <div class="estimate-line"><div class="el-num">12</div><div class="el-desc">Shower valve + trim kit</div><div class="el-qty">1</div><div class="el-unit">unit</div><div class="el-total">$420</div></div>
+                <div class="estimate-line"><div class="el-num">13</div><div class="el-desc">Misc. supplies</div><div class="el-qty">1</div><div class="el-unit">lot</div><div class="el-total">$220</div></div>
+              </div>
+              <div class="estimate-total-row">
+                <div>
+                  <div class="et-label">Total Estimate</div>
+                  <div style="font-size:11px;color:var(--lo);margin-top:2px;">Includes labor + materials · NYC market rates</div>
+                </div>
+                <div class="et-val">$9,000</div>
+              </div>
+            </div>
+            <div class="eliko-empty" id="elikoEmpty">
+              <div class="eliko-empty-icon">✦</div>
+              <div class="eliko-empty-title">Eliko is ready</div>
+              <div class="eliko-empty-sub">Describe any construction job on the left and Eliko will generate a full estimate with materials, labor, and a Home Depot cart in seconds.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ CALLS TAB ═══ -->
+    <div class="tab-panel" id="tab-calls">
+      <div class="grid-2" style="margin-bottom:14px;">
+        <div class="stat-card"><div class="stat-label">Calls Answered Today</div><div class="stat-val">12</div><div class="stat-delta up">↑ 0 missed</div></div>
+        <div class="stat-card"><div class="stat-label">Leads Generated Today</div><div class="stat-val">4</div><div class="stat-delta up">↑ $36,200 in pipeline</div></div>
+      </div>
+      <div class="card card-pad">
+        <div class="sec-head"><div class="sec-title">Call Log</div></div>
+        <div id="callLog"></div>
+      </div>
+    </div>
+
+    <!-- ═══ FINANCIALS TAB ═══ -->
+    <div class="tab-panel" id="tab-financials">
+      <div class="grid-4" style="margin-bottom:16px;">
+        <div class="stat-card"><div class="stat-label">Revenue YTD</div><div class="stat-val">$312K</div><div class="stat-delta up">↑ 22% vs last year</div></div>
+        <div class="stat-card"><div class="stat-label">Expenses YTD</div><div class="stat-val">$98K</div><div class="stat-delta dn">Materials & labor</div></div>
+        <div class="stat-card"><div class="stat-label">Profit YTD</div><div class="stat-val">$214K</div><div class="stat-delta up">68% margin</div></div>
+        <div class="stat-card"><div class="stat-label">Avg Job Value</div><div class="stat-val">$13.8K</div><div class="stat-delta up">↑ $2.1K vs Q1</div></div>
+      </div>
+      <div class="grid-2">
+        <div class="card card-pad">
+          <div class="sec-head"><div class="sec-title">Monthly Revenue</div></div>
+          <div class="fin-chart-area" id="revenueChart"></div>
+        </div>
+        <div class="card card-pad">
+          <div class="sec-head"><div class="sec-title">Monthly Profit</div></div>
+          <div class="fin-chart-area" id="profitChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ ROUTE TAB ═══ -->
+    <div class="tab-panel" id="tab-route">
+      <div class="card card-pad" style="text-align:center;padding:60px;">
+        <div style="font-size:48px;margin-bottom:14px;">🗺️</div>
+        <div style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;margin-bottom:8px;">Route Optimizer</div>
+        <div style="font-size:14px;color:var(--lo);margin-bottom:20px;">Coming soon — connect Google Maps API in Settings to enable optimized crew routing.</div>
+        <button class="topbar-btn primary" style="margin:0 auto;">Connect Maps API</button>
+      </div>
+    </div>
+
+  </div><!-- end content -->
+</div><!-- end main -->
+
+<!-- ═══ MODALS ═══ -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modalBox">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════ SHARED DATA STORE ═══════════════════ */
+const DB = {
+  leads: [
+    {id:1,name:'Mike Salvatore',phone:'(718) 555-0142',job:'Bathroom Remodel',location:'Brooklyn, NY',value:10500,stage:'new',date:'Jun 21'},
+    {id:2,name:'James Rivera',phone:'(718) 555-0199',job:'Kitchen Backsplash',location:'Bronx, NY',value:6200,stage:'won',date:'Jun 19'},
+    {id:3,name:'Sarah Chen',phone:'(212) 555-0311',job:'Full Kitchen Remodel',location:'Manhattan, NY',value:24800,stage:'progress',date:'Jun 10'},
+    {id:4,name:'Tony Morales',phone:'(718) 555-0421',job:'Deck Construction',location:'Staten Island, NY',value:8900,stage:'est',date:'Jun 18'},
+    {id:5,name:'David Kim',phone:'(718) 555-0512',job:'Basement Finishing',location:'Queens, NY',value:15400,stage:'progress',date:'Jun 5'},
+    {id:6,name:'Lisa Park',phone:'(718) 555-0602',job:'Bathroom Tile',location:'Brooklyn, NY',value:5200,stage:'won',date:'Jun 15'},
+    {id:7,name:'Rob Martinez',phone:'(718) 555-0703',job:'Deck Repair',location:'Queens, NY',value:3800,stage:'est',date:'Jun 20'},
+  ],
+  calls: [
+    {name:'Mike Salvatore',num:'(718) 555-0142',outcome:'Estimate booked',duration:'3:42',time:'9:14am',type:'booked'},
+    {name:'Unknown',num:'(929) 555-0188',outcome:'Voicemail left',duration:'0:28',time:'8:52am',type:'voicemail'},
+    {name:'James Rivera',num:'(718) 555-0199',outcome:'Follow-up scheduled',duration:'5:11',time:'8:30am',type:'followup'},
+    {name:'Maria Santos',num:'(718) 555-0277',outcome:'Estimate booked',duration:'4:02',time:'Yesterday 4:48pm',type:'booked'},
+    {name:'Unknown',num:'(646) 555-0390',outcome:'Hung up',duration:'0:12',time:'Yesterday 3:15pm',type:'missed'},
+    {name:'Carlos Diaz',num:'(718) 555-0441',outcome:'Not interested',duration:'1:44',time:'Yesterday 2:00pm',type:'none'},
+  ],
+  events: [
+    {day:8,title:'Mike Salvatore',sub:'Bathroom Estimate',color:'#F97316'},
+    {day:9,title:'Kim Basement',sub:'Framing Day 1',color:'#3B82F6'},
+    {day:9,title:'Chen Kitchen',sub:'Demo Day 2',color:'#8B5CF6'},
+    {day:10,title:'Sarah Chen',sub:'Kitchen Walkthrough',color:'#3B82F6'},
+    {day:14,title:'Lisa Park',sub:'Tile Inspection',color:'#10B981'},
+    {day:15,title:'Rob Martinez',sub:'Deck Estimate',color:'#F97316'},
+    {day:16,title:'Kim Basement',sub:'Drywall Day 1',color:'#3B82F6'},
+    {day:21,title:'Maria Santos',sub:'Bathroom Estimate',color:'#F97316'},
+    {day:22,title:'Chen Kitchen',sub:'Cabinets Day 1',color:'#8B5CF6'},
+    {day:23,title:'Kim Basement',sub:'Electrical',color:'#3B82F6'},
+  ],
+  quotes: [
+    {client:'Mike Salvatore',job:'Bathroom Remodel',amount:10500,sent:'Jun 21',status:'pending'},
+    {client:'Tony Morales',job:'Deck Construction',amount:8900,sent:'Jun 18',status:'pending'},
+    {client:'Rob Martinez',job:'Deck Repair',amount:3800,sent:'Jun 20',status:'pending'},
+    {client:'James Rivera',job:'Kitchen Backsplash',amount:6200,sent:'Jun 19',status:'accepted'},
+    {client:'Lisa Park',job:'Bathroom Tile',amount:5200,sent:'Jun 15',status:'accepted'},
+  ]
+};
+
+/* ═══════════════════ TAB SWITCHING ═══════════════════ */
+const tabTitles = {
+  dashboard:'Dashboard', schedule:'Schedule', pipeline:'Pipeline',
+  clients:'Clients', projects:'Projects', quotes:'Quotes & Estimates',
+  eliko:'Eliko — AI Estimator', calls:'Call Log', financials:'Financials',
+  route:'Route Optimizer'
+};
+
+function switchTab(id, el) {
+  document.querySelectorAll('.tab-panel').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (el) el.classList.add('active');
+  document.getElementById('topbarTitle').textContent = tabTitles[id] || id;
+  if (id === 'schedule') buildCalendar();
+  if (id === 'pipeline') buildPipeline();
+  if (id === 'clients') buildClients();
+  if (id === 'projects') buildProjects();
+  if (id === 'quotes') buildQuotes();
+  if (id === 'calls') buildCalls();
+  if (id === 'financials') buildCharts();
+}
+
+/* ═══════════════════ CALENDAR ═══════════════════ */
+function buildCalendar() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  days.forEach(d => { const h = document.createElement('div'); h.className='cal-day-head'; h.textContent=d; grid.appendChild(h); });
+  // July 2026 starts on Wed (index 3)
+  for (let i = 0; i < 3; i++) {
+    const d = document.createElement('div'); d.className='cal-day other-month'; grid.appendChild(d);
+  }
+  for (let day = 1; day <= 31; day++) {
+    const d = document.createElement('div');
+    d.className = 'cal-day' + (day === 21 ? ' today' : '');
+    d.innerHTML = `<div class="cal-date">${day}</div>`;
+    const evts = DB.events.filter(e => e.day === day);
+    evts.forEach(e => {
+      const ev = document.createElement('div');
+      ev.className = 'cal-event';
+      ev.style.cssText = `background:${e.color}22;color:${e.color};border:1px solid ${e.color}44;`;
+      ev.textContent = e.title;
+      ev.onclick = (ev2) => { ev2.stopPropagation(); openModal('jobDetail'); };
+      d.appendChild(ev);
+    });
+    grid.appendChild(d);
+  }
+  // Pad to 6 rows
+  const total = 3 + 31;
+  const rem = (42 - total);
+  for (let i = 0; i < rem; i++) {
+    const d = document.createElement('div'); d.className='cal-day other-month'; grid.appendChild(d);
+  }
+}
+
+/* ═══════════════════ PIPELINE ═══════════════════ */
+const stageMap = {new:'col-new',est:'col-est',won:'col-won',progress:'col-prog'};
+function buildPipeline() {
+  ['col-new','col-est','col-won','col-prog'].forEach(id => document.getElementById(id).innerHTML = '');
+  DB.leads.forEach(lead => {
+    const col = document.getElementById(stageMap[lead.stage]);
+    if (!col) return;
+    col.innerHTML += `<div class="job-card" onclick="openModal('clientDetail')" style="margin-bottom:10px;">
+      <div class="jc-head">
+        <div><div class="jc-name">${lead.name}</div><div class="jc-addr">${lead.job} · ${lead.location}</div></div>
+        <div class="jc-val">$${(lead.value/1000).toFixed(1)}K</div>
+      </div>
+      <div style="display:flex;gap:6px;margin-top:8px;">
+        <button style="flex:1;padding:6px;border-radius:7px;background:var(--og-bg);border:1px solid var(--og-bdr);color:var(--og);font-size:11px;font-weight:700;cursor:pointer;" onclick="event.stopPropagation();switchTab('eliko',document.querySelectorAll('.nav-item')[7])">Estimate</button>
+        <button style="flex:1;padding:6px;border-radius:7px;background:var(--bg3);border:1px solid var(--b1);color:var(--md);font-size:11px;font-weight:600;cursor:pointer;" onclick="event.stopPropagation();">Call</button>
+      </div>
+    </div>`;
+  });
+}
+
+/* ═══════════════════ CLIENTS ═══════════════════ */
+function buildClients() {
+  const tbody = document.getElementById('clientBody');
+  tbody.innerHTML = '';
+  DB.leads.forEach(c => {
+    const stage = {new:'New Lead',est:'Estimating',won:'Active',progress:'In Progress'}[c.stage];
+    const color = {new:'var(--blue)',est:'var(--og)',won:'var(--green)',progress:'var(--purple)'}[c.stage];
+    const bg = {new:'var(--blue-bg)',est:'var(--og-bg)',won:'var(--green-bg)',progress:'rgba(139,92,246,.08)'}[c.stage];
+    tbody.innerHTML += `<tr onclick="openModal('clientDetail')" style="cursor:pointer;">
+      <td><div class="client-name">${c.name}</div></td>
+      <td>${c.phone}</td>
+      <td style="color:var(--md);">${c.job}</td>
+      <td style="color:var(--lo);">${c.date}</td>
+      <td style="color:var(--og);font-family:'Syne',sans-serif;font-weight:800;">$${c.value.toLocaleString()}</td>
+      <td><span class="client-tag" style="background:${bg};color:${color};border:1px solid ${color}44;">${stage}</span></td>
+    </tr>`;
+  });
+}
+
+/* ═══════════════════ PROJECTS ═══════════════════ */
+function buildProjects() {
+  const grid = document.getElementById('projectsGrid');
+  const active = DB.leads.filter(l => l.stage === 'progress' || l.stage === 'won');
+  const phases = {3:['Demo','Tile Work','Finish'],4:['Demo','Framing','Drywall','Finish'],5:['Demo','Plumbing','Cabinets','Tile','Finish']};
+  grid.innerHTML = '';
+  active.forEach((p, i) => {
+    const ph = phases[Object.keys(phases)[i % 3]] || phases[3];
+    const current = i % 3;
+    const pct = [65,30,10][i % 3];
+    grid.innerHTML += `<div class="job-card" onclick="openModal('jobDetail')">
+      <div class="jc-head">
+        <div><div class="jc-name">${p.name}</div><div class="jc-addr">${p.job} · ${p.location}</div></div>
+        <div class="jc-val">$${p.value.toLocaleString()}</div>
+      </div>
+      <div class="progress-bar" style="margin:12px 0 6px;"><div class="progress-fill" style="width:${pct}%"></div></div>
+      <div style="font-size:10.5px;color:var(--md);margin-bottom:14px;">${pct}% complete · Phase ${current+1} of ${ph.length}: ${ph[current]}</div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap;">
+        ${ph.map((phase,idx)=>`<div style="flex:1;min-width:60px;padding:5px 6px;border-radius:6px;text-align:center;font-size:10px;font-weight:700;background:${idx<=current?'var(--og-bg)':'var(--bg3)'};color:${idx<=current?'var(--og)':'var(--lo)'};border:1px solid ${idx<=current?'var(--og-bdr)':'var(--b0)'};">${phase}</div>`).join('')}
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;">
+        <button style="flex:1;padding:7px;border-radius:8px;background:var(--bg3);border:1px solid var(--b1);color:var(--md);font-size:11.5px;font-weight:600;cursor:pointer;">View Files</button>
+        <button style="flex:1;padding:7px;border-radius:8px;background:var(--og-bg);border:1px solid var(--og-bdr);color:var(--og);font-size:11.5px;font-weight:700;cursor:pointer;">Update Phase</button>
+      </div>
+    </div>`;
+  });
+}
+
+/* ═══════════════════ QUOTES ═══════════════════ */
+function buildQuotes() {
+  const tbody = document.getElementById('quotesBody');
+  tbody.innerHTML = '';
+  DB.quotes.forEach(q => {
+    const sc = q.status === 'accepted' ? 'var(--green)' : q.status === 'pending' ? 'var(--amber)' : 'var(--red)';
+    const sbg = q.status === 'accepted' ? 'var(--green-bg)' : q.status === 'pending' ? 'rgba(245,158,11,.08)' : 'var(--red-bg)';
+    tbody.innerHTML += `<tr style="cursor:pointer;">
+      <td><div class="client-name">${q.client}</div></td>
+      <td style="color:var(--md);">${q.job}</td>
+      <td style="font-family:'Syne',sans-serif;font-weight:800;color:var(--og);">$${q.amount.toLocaleString()}</td>
+      <td style="color:var(--lo);">${q.sent}</td>
+      <td><span class="client-tag" style="background:${sbg};color:${sc};border:1px solid ${sc}44;text-transform:capitalize;">${q.status}</span></td>
+      <td><button style="padding:5px 12px;border-radius:7px;background:var(--bg2);border:1px solid var(--b1);color:var(--md);font-size:11px;font-weight:600;cursor:pointer;" onclick="openModal('quoteDetail')">View</button></td>
+    </tr>`;
+  });
+}
+
+/* ═══════════════════ CALLS ═══════════════════ */
+function buildCalls() {
+  const log = document.getElementById('callLog');
+  const colors = {booked:'var(--green)',voicemail:'var(--amber)',followup:'var(--blue)',missed:'var(--red)',none:'var(--lo)'};
+  log.innerHTML = '';
+  DB.calls.forEach(c => {
+    log.innerHTML += `<div class="call-row" onclick="openModal('callDetail')">
+      <div class="call-dot" style="background:${colors[c.type]};"></div>
+      <div class="call-info">
+        <div class="call-name">${c.name}</div>
+        <div class="call-detail">${c.num} · ${c.outcome}</div>
+      </div>
+      <div class="call-meta">
+        <div class="call-dur">${c.duration}</div>
+        <div class="call-time">${c.time}</div>
+        <span class="call-tag" style="background:${colors[c.type]}22;color:${colors[c.type]};border:1px solid ${colors[c.type]}44;">${c.type}</span>
+      </div>
+    </div>`;
+  });
+}
+
+/* ═══════════════════ CHARTS ═══════════════════ */
+function buildCharts() {
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+  const rev = [38000,45000,52000,48000,61000,58000,64200];
+  const prf = [22000,28000,33000,29000,40000,38000,42360];
+  function chart(id, vals, color) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const max = Math.max(...vals);
+    el.innerHTML = vals.map((v,i) => `
+      <div class="fin-bar-wrap">
+        <div class="fin-bar" style="width:100%;height:${(v/max)*100}%;background:${color};opacity:${i===vals.length-1?1:.55};" title="$${(v/1000).toFixed(0)}K"></div>
+        <div class="fin-bar-label">${months[i]}</div>
+      </div>`).join('');
+  }
+  chart('revenueChart', rev, 'var(--og)');
+  chart('profitChart', prf, 'var(--green)');
+}
+
+/* ═══════════════════ ELIKO ENGINE ═══════════════════ */
+function runEliko() {
+  const prompt = document.getElementById('elikoPrompt').value.trim();
+  document.getElementById('elikoEmpty').style.display = 'none';
+  document.getElementById('elikoResult').style.display = 'none';
+  document.getElementById('elikoThinking').classList.add('show');
+  document.getElementById('elikoActions').style.display = 'none';
+  const steps = document.querySelectorAll('.thinking-step');
+  steps.forEach(s => { s.classList.remove('active','done'); });
+  let i = 0;
+  const timer = setInterval(() => {
+    if (i > 0) steps[i-1].classList.replace('active','done');
+    if (i < steps.length) { steps[i].classList.add('active'); i++; }
+    else {
+      clearInterval(timer);
+      setTimeout(() => {
+        document.getElementById('elikoThinking').classList.remove('show');
+        document.getElementById('elikoResult').style.display = 'block';
+        document.getElementById('elikoActions').style.display = 'flex';
+        document.getElementById('elikoOutputTitle').textContent = 'Salvatore Bathroom Remodel — $9,000';
+      }, 400);
+    }
+  }, 520);
+}
+
+/* ═══════════════════ MODALS ═══════════════════ */
+const modalTemplates = {
+  revenue: `<div class="modal-title">Monthly Revenue</div><div class="modal-sub">June 2026 breakdown</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${[['Kitchen Remodel — Chen','$24,800'],['Bathroom — Salvatore','$10,500'],['Basement — Kim','$15,400'],['Backsplash — Rivera','$6,200'],['Tile — Park','$5,200'],['Other','$2,100']].map(([l,v])=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg2);border:1px solid var(--b0);border-radius:10px;">
+        <span style="font-size:13px;color:var(--md);">${l}</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--og);">${v}</span>
+      </div>`).join('')}
+      <div style="display:flex;justify-content:space-between;padding:12px 14px;border-top:1px solid var(--b1);margin-top:4px;">
+        <span style="font-size:14px;font-weight:600;color:var(--hi);">Total</span>
+        <span style="font-family:'Syne',sans-serif;font-size:22px;font-weight:800;color:var(--og);">$64,200</span>
+      </div>
+    </div>`,
+
+  expenses: `<div class="modal-title">Total Expenses</div><div class="modal-sub">June 2026</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      ${[['Materials — Home Depot','$8,400'],['Subcontractors','$6,200'],['Labor (crew pay)','$4,800'],['Fuel & vehicle','$1,240'],['Tools & equipment','$820'],['Insurance','$380']].map(([l,v])=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:var(--bg2);border:1px solid var(--b0);border-radius:10px;">
+        <span style="font-size:13px;color:var(--md);">${l}</span>
+        <span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--red);">${v}</span>
+      </div>`).join('')}
+    </div>`,
+
+  profit: `<div class="modal-title">Net Profit</div><div class="modal-sub">Revenue minus all expenses</div>
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-family:'Syne',sans-serif;font-size:56px;font-weight:800;color:var(--green);letter-spacing:-.05em;">$42,360</div>
+      <div style="font-size:13px;color:var(--lo);margin-top:6px;">66% net margin · June 2026</div>
+      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <div style="background:var(--og-bg);border:1px solid var(--og-bdr);border-radius:11px;padding:14px;"><div style="font-size:22px;font-family:'Syne',sans-serif;font-weight:800;color:var(--og);">$64,200</div><div style="font-size:11px;color:var(--lo);">Revenue</div></div>
+        <div style="background:var(--red-bg);border:1px solid var(--red-b);border-radius:11px;padding:14px;"><div style="font-size:22px;font-family:'Syne',sans-serif;font-weight:800;color:var(--red);">$21,840</div><div style="font-size:11px;color:var(--lo);">Expenses</div></div>
+      </div>
+    </div>`,
+
+  clientDetail: `<div class="modal-title">Mike Salvatore</div><div class="modal-sub">(718) 555-0142 · Brooklyn, NY</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
+      <div style="background:var(--bg2);border:1px solid var(--b0);border-radius:10px;padding:12px;"><div style="font-size:10px;color:var(--lo);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Job</div><div style="font-size:13px;color:var(--hi);font-weight:600;">Bathroom Remodel</div></div>
+      <div style="background:var(--og-bg);border:1px solid var(--og-bdr);border-radius:10px;padding:12px;"><div style="font-size:10px;color:var(--lo);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px;">Est. Value</div><div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--og);">$10,500</div></div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--b0);border-radius:10px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:10px;color:var(--lo);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">AI Call Summary</div>
+      <div style="font-size:13px;color:var(--md);line-height:1.65;">Called at 9:14am. Requested quote on 80 sq ft bathroom gut job. Booked estimate for <strong style="color:var(--hi);">Tuesday Jul 8 at 10:00am</strong>. Budget flexible — mentioned up to $12K.</div>
+    </div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-save" onclick="switchTab('eliko',document.querySelectorAll('.nav-item')[7]);closeModal();">Open in Eliko →</button></div>`,
+
+  jobDetail: `<div class="modal-title">Chen Kitchen — Phase 1</div><div class="modal-sub">Manhattan, NY · Full Kitchen Remodel</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+      <div style="background:var(--bg2);border:1px solid var(--b0);border-radius:10px;padding:12px;">
+        <div style="font-size:10px;color:var(--lo);font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;">Progress</div>
+        <div style="display:flex;flex-direction:column;gap:5px;">
+          ${['Demo','Plumbing','Cabinets','Tile','Finish'].map((p,i)=>`<div style="display:flex;align-items:center;gap:8px;"><div style="width:14px;height:14px;border-radius:4px;background:${i===0?'var(--og-bg)':'var(--bg3)'};border:1px solid ${i===0?'var(--og-bdr)':'var(--b0)'};display:flex;align-items:center;justify-content:center;font-size:8px;color:${i===0?'var(--og)':'var(--lo)'};">${i===0?'→':''}</div><span style="font-size:13px;color:${i===0?'var(--hi)':'var(--lo)'};">${p}</span></div>`).join('')}
+        </div>
+      </div>
+    </div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-save">Update Phase</button></div>`,
+
+  newLead: `<div class="modal-title">Add Lead</div><div class="modal-sub">Manually add a new prospect</div>
+    <div class="form-group"><label class="form-label">Client Name</label><input class="form-input" placeholder="Full name"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Phone</label><input class="form-input" placeholder="(718) 555-0000"></div>
+      <div class="form-group"><label class="form-label">Job Type</label><input class="form-input" placeholder="e.g. Kitchen Remodel"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Location</label><input class="form-input" placeholder="Borough / City"></div>
+      <div class="form-group"><label class="form-label">Est. Value ($)</label><input class="form-input" placeholder="0"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notes</label><textarea class="form-input form-textarea" placeholder="Source, details, how they heard about you..."></textarea></div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="closeModal()">Add Lead</button></div>`,
+
+  newJob: `<div class="modal-title">New Job</div><div class="modal-sub">Create a project from an existing lead or from scratch</div>
+    <div class="form-group"><label class="form-label">Client</label><input class="form-input" placeholder="Search client name..."></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Job Type</label><input class="form-input" placeholder="e.g. Bathroom Remodel"></div>
+      <div class="form-group"><label class="form-label">Contract Value ($)</label><input class="form-input" placeholder="0"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Start Date</label><input class="form-input" type="date"></div>
+      <div class="form-group"><label class="form-label">Est. End Date</label><input class="form-input" type="date"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Assign Crew</label><input class="form-input" placeholder="JR, AM, TM..."></div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Cancel</button><button class="btn-save" onclick="closeModal()">Create Job</button></div>`,
+
+  materials: `<div class="modal-title">Home Depot Materials List</div><div class="modal-sub">Salvatore Bathroom Remodel · Auto-generated by Eliko</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:350px;overflow-y:auto;">
+      ${[
+        ['Daltile Ridgecrest White 12x12 (90 sq ft)','$2.18/sf','$196.20','#HDM-11234'],
+        ['Subway Tile 3x6 White (120 sq ft)','$1.89/sf','$226.80','#HDM-44512'],
+        ['Mapei Grout Sanded Ivory (20 lbs)','$18.97','$18.97','#HDM-22901'],
+        ['Schluter Kerdi-Band (25 ft)','$21.47','$21.47','#HDM-77341'],
+        ['Custom Building Thinset (50 lbs x2)','$23.48 ea','$46.96','#HDM-33210'],
+        ['American Standard Toilet','$149.00','$149.00','#HDM-55672'],
+        ['MOEN Shower Valve Kit','$124.97','$124.97','#HDM-88432'],
+        ['Wax Ring + Closet Bolts','$8.97','$8.97','#HDM-11093'],
+      ].map(([name,unit,total,sku])=>`<div style="display:flex;align-items:center;gap:10px;padding:10px;background:var(--bg2);border:1px solid var(--b0);border-radius:9px;">
+        <div style="flex:1;"><div style="font-size:12.5px;color:var(--hi);font-weight:500;">${name}</div><div style="font-size:10.5px;color:var(--lo);margin-top:1px;">${sku} · ${unit}</div></div>
+        <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;color:var(--og);">${total}</div>
+      </div>`).join('')}
+    </div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-save">Open in Home Depot →</button></div>`,
+
+  payment: `<div class="modal-title">Payment Schedule</div><div class="modal-sub">Salvatore Bathroom Remodel · $9,000 Total</div>
+    <div style="display:flex;flex-direction:column;gap:9px;">
+      ${[['Deposit (30%) — Due at signing','$2,700'],['Phase 2 (40%) — Due after demo & rough-in','$3,600'],['Final (30%) — Due on completion','$2,700']].map(([l,v],i)=>`
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px;background:${i===0?'var(--og-bg)':'var(--bg2)'};border:1px solid ${i===0?'var(--og-bdr)':'var(--b0)'};border-radius:11px;">
+        <div><div style="font-size:12.5px;color:var(--hi);font-weight:600;">${l}</div></div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:800;color:var(--og);">${v}</div>
+      </div>`).join('')}
+    </div>
+    <div class="form-actions" style="margin-top:16px;"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-save">Export PDF</button></div>`,
+
+  callDetail: `<div class="modal-title">Call — Mike Salvatore</div><div class="modal-sub">(718) 555-0142 · Today 9:14am · 3:42 duration</div>
+    <div style="background:var(--green-bg);border:1px solid var(--green-b);border-radius:11px;padding:14px;margin-bottom:14px;">
+      <div style="font-size:10px;font-weight:800;color:var(--green);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px;">Outcome</div>
+      <div style="font-size:14px;color:var(--hi);font-weight:600;">Estimate booked — Tuesday Jul 8 at 10:00am</div>
+    </div>
+    <div style="background:var(--bg2);border:1px solid var(--b0);border-radius:11px;padding:14px;">
+      <div style="font-size:10px;font-weight:800;color:var(--lo);letter-spacing:.07em;text-transform:uppercase;margin-bottom:8px;">AI Summary</div>
+      <div style="font-size:13px;color:var(--md);line-height:1.65;">Caller requested a quote on a full bathroom gut renovation, approx 80 sq ft. Interested in tile floor and walls, new shower, vanity and toilet. Budget up to $12K. Booked estimate visit. Lead qualified.</div>
+    </div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-save" onclick="closeModal()">Add to Pipeline</button></div>`,
+
+  quoteDetail: `<div class="modal-title">Quote — Mike Salvatore</div><div class="modal-sub">Bathroom Remodel · Sent Jun 21 · Pending</div>
+    <div style="background:var(--bg2);border:1px solid var(--b0);border-radius:11px;padding:14px;margin-bottom:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="font-size:14px;color:var(--hi);font-weight:600;">Total Estimate</div>
+        <div style="font-family:'Syne',sans-serif;font-size:26px;font-weight:800;color:var(--og);">$10,500</div>
+      </div>
+    </div>
+    <div class="form-actions"><button class="btn-cancel" onclick="closeModal()">Close</button><button class="btn-save">Mark as Accepted</button></div>`,
+
+  pipeline: `<div class="modal-title">Open Pipeline</div><div class="modal-sub">$128,000 in active opportunities</div>
+    ${DB.leads.map(l=>`<div style="display:flex;justify-content:space-between;padding:10px 13px;background:var(--bg2);border:1px solid var(--b0);border-radius:9px;margin-bottom:7px;"><span style="font-size:13px;color:var(--hi);">${l.name} · ${l.job}</span><span style="font-family:'Syne',sans-serif;font-weight:800;color:var(--og);">$${l.value.toLocaleString()}</span></div>`).join('')}`,
+};
+
+function openModal(key) {
+  const tpl = modalTemplates[key];
+  if (!tpl) return;
+  document.getElementById('modalContent').innerHTML = tpl;
+  document.getElementById('modalOverlay').classList.add('open');
+}
+function closeModal() { document.getElementById('modalOverlay').classList.remove('open'); }
+
+/* ═══════════════════ THEME ═══════════════════ */
+function toggleTheme() {
+  document.documentElement.dataset.theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+}
+
+function openDrive() {
+  alert('Connect your Google Drive folder in Settings → Integrations to link your project tracker.');
+}
+
+/* ═══════════════════ INIT ═══════════════════ */
+buildCalendar();
+buildCharts();
+
+/* ═══════════════════ MASMER SHARED DB ═══════════════════ */
+const MasmerDB = {
+  _k: k => 'masmer_' + k,
+  get: function(k){ try{ return JSON.parse(localStorage.getItem(this._k(k)))||null; }catch(e){ return null; } },
+  set: function(k,v){ try{ localStorage.setItem(this._k(k), JSON.stringify(v)); }catch(e){} },
+  getClients: function(){ return this.get('clients') || []; },
+  saveClient: function(c){ const a=this.getClients(); const i=a.findIndex(x=>x.id===c.id); if(i>=0)a[i]=c; else a.unshift(c); this.set('clients',a); this._ping(); },
+  getQuotes: function(){ return this.get('quotes') || []; },
+  saveQuote: function(q){ const a=this.getQuotes(); a.unshift(q); this.set('quotes',a.slice(0,100)); this._ping(); },
+  getJobs: function(){ return this.get('jobs') || []; },
+  saveJob: function(j){ const a=this.getJobs(); const i=a.findIndex(x=>x.id===j.id); if(i>=0)a[i]=j; else a.unshift(j); this.set('jobs',a); this._ping(); },
+  _ping: function(){
+    const el=document.getElementById('gSync'); if(!el) return;
+    const cc=this.getClients().length, qc=this.getQuotes().length;
+    el.textContent=`● ${cc} client${cc!==1?'s':''} · ${qc} quote${qc!==1?'s':''}`;
+    el.style.color='#10B981'; setTimeout(()=>{if(el)el.style.color='#3A506A';},2000);
+  },
+  init: function(){
+    const el=document.getElementById('gSync'); if(!el) return;
+    const cc=this.getClients().length, qc=this.getQuotes().length;
+    el.textContent=cc||qc ? `● ${cc} client${cc!==1?'s':''} · ${qc} quote${qc!==1?'s':''}` : '● Connected';
+  }
+};
+MasmerDB.init();
+
+// Merge Eliko clients into Dashboard Clients section on page load
+(function mergeElikoData(){
+  const ec = MasmerDB.getClients();
+  if(!ec.length) return;
+  // Add a DB Clients section badge to the nav
+  const clientsNav = document.querySelector('.nav-item[onclick*="clients"]');
+  if(clientsNav) {
+    const existing = clientsNav.querySelector('.nav-badge');
+    if(!existing){ const b=document.createElement('span'); b.className='nav-badge'; b.textContent=ec.length; clientsNav.appendChild(b); }
+    else existing.textContent = ec.length;
+  }
+})();
+</script>
+</div><!-- /app-shell -->
+</body>
+</html>

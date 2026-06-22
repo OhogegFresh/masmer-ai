@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Investor Overview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0D1117;
+  --card: #111827;
+  --card-hover: #1a2234;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.35);
+  --text: #F9FAFB;
+  --muted: #9CA3AF;
+  --dim: #4B5563;
+  --border: rgba(255,255,255,0.07);
+  --green: #10B981;
+  --red: #EF4444;
+  --amber: #F59E0B;
+  --blue: #3B82F6;
+}
+body { background: var(--bg); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; line-height: 1.6; }
+
+/* HEADER */
+.header { padding: 16px 40px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: rgba(13,17,23,0.96); backdrop-filter: blur(12px); z-index: 100; }
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark { width: 34px; height: 34px; background: var(--orange); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: white; }
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.3px; }
+.logo-text span { color: var(--orange); }
+.header-badge { background: var(--orange-glow); border: 1px solid var(--orange-border); color: var(--orange); padding: 4px 14px; border-radius: 20px; font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; }
+.header-link { font-size: 12px; color: var(--dim); }
+
+/* TABS */
+.tabs { display: flex; gap: 2px; padding: 20px 40px 0; }
+.tab { padding: 10px 22px; border-radius: 8px 8px 0 0; border: 1px solid transparent; border-bottom: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--muted); background: none; transition: all 0.18s; position: relative; bottom: -1px; }
+.tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.tab.active { color: var(--orange); background: var(--card); border-color: var(--border); border-bottom-color: var(--card); }
+.tab-bar { border-bottom: 1px solid var(--border); margin: 0 0 0 0; }
+
+/* CONTENT */
+.content { padding: 32px 40px 60px; max-width: 1180px; margin: 0 auto; }
+.section { display: none; animation: fadein 0.25s ease; }
+.section.active { display: block; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* STATS GRID */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 24px; transition: border-color 0.2s, transform 0.2s; cursor: default; }
+.stat-card:hover { border-color: var(--orange-border); transform: translateY(-2px); }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: 6px; }
+.stat-label { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 2px; }
+.stat-source { font-size: 10px; color: var(--dim); }
+
+/* MARKET GRID */
+.market-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 24px; }
+.info-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 26px; }
+.info-card h3 { font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 700; margin-bottom: 18px; color: var(--text); letter-spacing: -0.2px; }
+.gap-row { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; }
+.gap-label { font-size: 12px; color: var(--muted); width: 80px; flex-shrink: 0; }
+.gap-bar-bg { flex: 1; height: 30px; background: rgba(255,255,255,0.04); border-radius: 7px; overflow: hidden; }
+.gap-bar { height: 100%; border-radius: 7px; display: flex; align-items: center; padding: 0 12px; font-size: 12px; font-weight: 600; color: white; }
+.gap-bar.want { background: var(--orange); width: 74%; }
+.gap-bar.using { background: var(--blue); width: 25%; }
+.gap-note { background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 8px; padding: 11px 14px; margin-top: 14px; font-size: 12px; color: var(--orange); font-weight: 500; line-height: 1.5; }
+.narrative p { font-size: 13px; color: var(--muted); line-height: 1.8; margin-bottom: 12px; }
+.narrative p:last-child { margin-bottom: 0; }
+.narrative strong { color: var(--text); font-weight: 600; }
+
+/* MARKET FOOTER */
+.market-footer { background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 14px; padding: 22px 32px; display: flex; align-items: center; justify-content: space-around; }
+.mf-stat { text-align: center; }
+.mf-num { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; color: var(--orange); }
+.mf-label { font-size: 11px; color: var(--muted); margin-top: 3px; }
+.mf-divider { width: 1px; height: 44px; background: var(--border); }
+
+/* SECTION HEADERS */
+.sec-title { font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800; margin-bottom: 4px; letter-spacing: -0.3px; }
+.sec-sub { font-size: 13px; color: var(--muted); margin-bottom: 26px; }
+
+/* COMPETITOR CARDS */
+.comp-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.comp-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; cursor: pointer; transition: all 0.2s; position: relative; overflow: hidden; }
+.comp-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: transparent; transition: background 0.2s; }
+.comp-card:hover { border-color: var(--orange-border); background: var(--card-hover); transform: translateY(-3px); }
+.comp-card:hover::after { background: var(--orange); }
+.comp-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.comp-name { font-family: 'Syne', sans-serif; font-size: 15px; font-weight: 700; }
+.comp-price { font-size: 10px; background: rgba(255,255,255,0.06); padding: 3px 9px; border-radius: 20px; color: var(--muted); font-weight: 500; white-space: nowrap; }
+.comp-tagline { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+.comp-feats { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.comp-feat { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--muted); line-height: 1.4; }
+.dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.dot.g { background: var(--green); }
+.dot.r { background: var(--red); }
+.dot.a { background: var(--amber); }
+.comp-weak { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.18); border-radius: 7px; padding: 8px 10px; font-size: 11px; color: #FCA5A5; line-height: 1.4; margin-bottom: 12px; }
+.comp-cta { width: 100%; text-align: center; padding: 8px; background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 7px; font-size: 11px; color: var(--orange); font-weight: 600; cursor: pointer; transition: background 0.18s; }
+.comp-cta:hover { background: rgba(249,115,22,0.2); }
+
+/* MODAL */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(5px); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #141A27; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; width: 660px; max-height: 85vh; overflow-y: auto; padding: 34px; transform: translateY(18px); transition: transform 0.22s; position: relative; scrollbar-width: thin; scrollbar-color: var(--dim) transparent; }
+.overlay.open .modal { transform: translateY(0); }
+.modal::-webkit-scrollbar { width: 5px; }
+.modal::-webkit-scrollbar-thumb { background: var(--dim); border-radius: 10px; }
+.modal-close { position: absolute; top: 18px; right: 18px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; transition: all 0.18s; }
+.modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+.modal-name { font-family: 'Syne', sans-serif; font-size: 26px; font-weight: 800; margin-bottom: 4px; }
+.modal-ptag { display: inline-block; font-size: 12px; background: rgba(255,255,255,0.06); padding: 3px 10px; border-radius: 20px; color: var(--muted); margin-bottom: 22px; }
+.msec { margin-bottom: 22px; }
+.msec-title { font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dim); margin-bottom: 10px; }
+.msec p { font-size: 13px; color: var(--muted); line-height: 1.75; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.col-head { font-size: 10px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.col-head.g { color: var(--green); }
+.col-head.r { color: var(--red); }
+.m-list { display: flex; flex-direction: column; gap: 8px; }
+.m-item { display: flex; gap: 8px; font-size: 12px; align-items: flex-start; line-height: 1.5; }
+.m-item.g { color: #6EE7B7; }
+.m-item.r { color: #FCA5A5; }
+.m-icon { flex-shrink: 0; font-weight: 700; margin-top: 1px; }
+.wins-box { background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 11px; padding: 18px 20px; }
+.wins-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--orange); margin-bottom: 12px; }
+.win-row { display: flex; gap: 8px; font-size: 12px; color: #FED7AA; margin-bottom: 8px; align-items: flex-start; line-height: 1.5; }
+.win-row:last-child { margin-bottom: 0; }
+.win-arrow { color: var(--orange); flex-shrink: 0; font-weight: 700; }
+
+/* EDGE SECTION */
+.edge-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 32px; }
+.edge-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px 16px; text-align: center; transition: all 0.2s; }
+.edge-card:hover { border-color: var(--orange-border); background: var(--card-hover); transform: translateY(-2px); }
+.edge-icon { font-size: 26px; margin-bottom: 10px; }
+.edge-title { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: var(--orange); margin-bottom: 7px; line-height: 1.3; }
+.edge-desc { font-size: 11px; color: var(--muted); line-height: 1.55; }
+
+/* FEATURE MATRIX */
+.matrix-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 32px; }
+table { width: 100%; border-collapse: collapse; font-size: 12px; }
+thead th { padding: 13px 14px; font-weight: 600; font-size: 11px; text-align: center; border-bottom: 1px solid var(--border); color: var(--muted); white-space: nowrap; }
+thead th.ft { text-align: left; color: var(--dim); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; }
+thead th.mth { background: var(--orange-glow); color: var(--orange); font-weight: 700; }
+tbody td { padding: 11px 14px; border-bottom: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 12px; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(255,255,255,0.015); }
+tbody td.fn { text-align: left; font-weight: 500; color: var(--text); }
+tbody td.mc { background: var(--orange-glow); }
+.ck { color: var(--green); font-size: 15px; font-weight: 700; }
+.cx { color: var(--red); opacity: 0.55; font-size: 13px; }
+.cp { color: var(--amber); font-size: 11px; }
+
+/* CLOSING */
+.closing { background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 16px; padding: 30px 36px; text-align: center; }
+.closing h2 { font-family: 'Syne', sans-serif; font-size: 23px; font-weight: 800; margin-bottom: 10px; line-height: 1.3; letter-spacing: -0.4px; }
+.closing h2 span { color: var(--orange); }
+.closing p { color: var(--muted); font-size: 13px; max-width: 580px; margin: 0 auto; line-height: 1.75; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div class="header-badge">Investor Overview — CRM Landscape</div>
+  <div class="header-link">masmer.info</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('market', this)">01 &mdash; Market Opportunity</button>
+  <button class="tab" onclick="showTab('competitors', this)">02 &mdash; The Competition</button>
+  <button class="tab" onclick="showTab('edge', this)">03 &mdash; Masmer's Edge</button>
+</div>
+<div class="tab-bar"></div>
+
+<div class="content">
+
+  <!-- MARKET TAB -->
+  <div class="section active" id="market">
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-num">$126B</div>
+        <div class="stat-label">Global CRM market 2026</div>
+        <div class="stat-source">Growing 17.3% CAGR through 2030</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">7M+</div>
+        <div class="stat-label">Contractors in the US</div>
+        <div class="stat-source">Total addressable base</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">74%</div>
+        <div class="stat-label">Contractors say AI is key</div>
+        <div class="stat-source">ServiceTitan, n=1,000 survey, 2026</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">25%</div>
+        <div class="stat-label">Are actually using AI</div>
+        <div class="stat-source">49-point adoption gap = our opening</div>
+      </div>
+    </div>
+
+    <div class="market-grid">
+      <div class="info-card">
+        <h3>The AI Adoption Gap</h3>
+        <div class="gap-row">
+          <div class="gap-label">Want AI</div>
+          <div class="gap-bar-bg"><div class="gap-bar want">74%</div></div>
+        </div>
+        <div class="gap-row">
+          <div class="gap-label">Using AI</div>
+          <div class="gap-bar-bg"><div class="gap-bar using">25%</div></div>
+        </div>
+        <div class="gap-note">
+          49-point gap. Over 3.6 million contractors want AI but don't have it yet. That's our market right now — and it's wide open.
+        </div>
+      </div>
+
+      <div class="info-card narrative">
+        <h3>Why the Window Is Open Now</h3>
+        <p>The contractor software market is in its first real <strong>AI-native disruption</strong> since cloud killed desktop tools in 2010.</p>
+        <p>Incumbents like ServiceTitan and Jobber are <strong>retrofitting AI onto decade-old codebases</strong>. Contractors pay $300–$800/month for platforms that still can't answer a phone call.</p>
+        <p><strong>40% of contractor calls go unanswered.</strong> That's not a feature gap — it's a structural failure that only an AI-first platform built for this industry can solve.</p>
+      </div>
+    </div>
+
+    <div class="market-footer">
+      <div class="mf-stat">
+        <div class="mf-num">40%</div>
+        <div class="mf-label">of contractor calls go unanswered</div>
+      </div>
+      <div class="mf-divider"></div>
+      <div class="mf-stat">
+        <div class="mf-num">$17,000</div>
+        <div class="mf-label">lost per contractor per month</div>
+      </div>
+      <div class="mf-divider"></div>
+      <div class="mf-stat">
+        <div class="mf-num">3–5 hrs</div>
+        <div class="mf-label">wasted per estimate</div>
+      </div>
+      <div class="mf-divider"></div>
+      <div class="mf-stat">
+        <div class="mf-num">$8.71</div>
+        <div class="mf-label">ROI for every $1 spent on CRM</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- COMPETITORS TAB -->
+  <div class="section" id="competitors">
+    <div class="sec-title">The Competitive Landscape</div>
+    <div class="sec-sub">Click any competitor to see strengths, weaknesses, and exactly where Masmer wins.</div>
+
+    <div class="comp-grid">
+
+      <div class="comp-card" onclick="openModal('jobber')">
+        <div class="comp-head">
+          <div class="comp-name">Jobber</div>
+          <div class="comp-price">$29–$499/mo</div>
+        </div>
+        <div class="comp-tagline">Most popular CRM for small home service businesses. Scheduling, quoting, invoicing.</div>
+        <div class="comp-feats">
+          <div class="comp-feat"><div class="dot g"></div>Strong scheduling & mobile app</div>
+          <div class="comp-feat"><div class="dot g"></div>70+ integrations including QuickBooks</div>
+          <div class="comp-feat"><div class="dot r"></div>No native AI call answering</div>
+          <div class="comp-feat"><div class="dot r"></div>AI features locked at $499/mo tier</div>
+        </div>
+        <div class="comp-weak">Per-user pricing explodes as teams scale. AI is always an expensive add-on.</div>
+        <div class="comp-cta">View Full Analysis →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('housecall')">
+        <div class="comp-head">
+          <div class="comp-name">Housecall Pro</div>
+          <div class="comp-price">$49–$199/mo</div>
+        </div>
+        <div class="comp-tagline">Built for recurring service businesses — HVAC maintenance, pest control, cleaning.</div>
+        <div class="comp-feats">
+          <div class="comp-feat"><div class="dot g"></div>Marketing automation & reviews</div>
+          <div class="comp-feat"><div class="dot g"></div>Customer booking portal</div>
+          <div class="comp-feat"><div class="dot r"></div>Not built for construction projects</div>
+          <div class="comp-feat"><div class="dot r"></div>No AI call answering or estimating</div>
+        </div>
+        <div class="comp-weak">Designed for same-day service calls. Falls apart on multi-phase contractor jobs.</div>
+        <div class="comp-cta">View Full Analysis →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('workiz')">
+        <div class="comp-head">
+          <div class="comp-name">Workiz</div>
+          <div class="comp-price">$225–$495/mo</div>
+        </div>
+        <div class="comp-tagline">Markets itself as "phone-first" — tracks inbound calls and auto-creates job records.</div>
+        <div class="comp-feats">
+          <div class="comp-feat"><div class="dot g"></div>Built-in phone & call tracking</div>
+          <div class="comp-feat"><div class="dot g"></div>Inbound call auto-populates records</div>
+          <div class="comp-feat"><div class="dot r"></div>Tracks calls — does NOT answer them</div>
+          <div class="comp-feat"><div class="dot r"></div>$225/mo minimum — expensive entry</div>
+        </div>
+        <div class="comp-weak">"Phone-first" but still misses calls. You still need someone to pick up.</div>
+        <div class="comp-cta">View Full Analysis →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('servicetitan')">
+        <div class="comp-head">
+          <div class="comp-name">ServiceTitan</div>
+          <div class="comp-price">$300–$800+/mo</div>
+        </div>
+        <div class="comp-tagline">The enterprise option. Powerful, complex, built for $500K+ revenue operations only.</div>
+        <div class="comp-feats">
+          <div class="comp-feat"><div class="dot g"></div>Deep analytics & reporting</div>
+          <div class="comp-feat"><div class="dot g"></div>AI features at enterprise tier</div>
+          <div class="comp-feat"><div class="dot r"></div>12-month annual contracts required</div>
+          <div class="comp-feat"><div class="dot r"></div>Months to implement — complex</div>
+        </div>
+        <div class="comp-weak">Overkill under $500K revenue. Data lock-in. Difficult to cancel. Expensive.</div>
+        <div class="comp-cta">View Full Analysis →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('hearth')">
+        <div class="comp-head">
+          <div class="comp-name">Hearth</div>
+          <div class="comp-price">$1,499–$4,999/yr</div>
+        </div>
+        <div class="comp-tagline">A financing platform with basic CRM features bolted on. Lets contractors offer payment plans.</div>
+        <div class="comp-feats">
+          <div class="comp-feat"><div class="dot g"></div>Customer financing marketplace</div>
+          <div class="comp-feat"><div class="dot a"></div>Basic quotes & contracts</div>
+          <div class="comp-feat"><div class="dot r"></div>No AI features at all</div>
+          <div class="comp-feat"><div class="dot r"></div>1.8/5 stars — notoriously poor follow-up</div>
+        </div>
+        <div class="comp-weak">Contractors losing signed deals because Hearth never calls clients back. 1.8★</div>
+        <div class="comp-cta">View Full Analysis →</div>
+      </div>
+
+      <div class="comp-card" onclick="openModal('projul')">
+        <div class="comp-head">
+          <div class="comp-name">Projul</div>
+          <div class="comp-price">$4,788/yr flat</div>
+        </div>
+        <div class="comp-tagline">Strong project management for multi-phase construction jobs. Unlimited users, flat price.</div>
+        <div class="comp-feats">
+          <div class="comp-feat"><div class="dot g"></div>Multi-phase project management</div>
+          <div class="comp-feat"><div class="dot g"></div>Job costing & time tracking</div>
+          <div class="comp-feat"><div class="dot r"></div>Zero AI features</div>
+          <div class="comp-feat"><div class="dot r"></div>No lead capture or call handling</div>
+        </div>
+        <div class="comp-weak">A strong project tool — but no AI. No receptionist. No estimating bot. A 2015 product.</div>
+        <div class="comp-cta">View Full Analysis →</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- EDGE TAB -->
+  <div class="section" id="edge">
+    <div class="sec-title">Why Masmer Wins</div>
+    <div class="sec-sub">Five structural advantages no competitor can quickly replicate.</div>
+
+    <div class="edge-grid">
+      <div class="edge-card">
+        <div class="edge-icon">📞</div>
+        <div class="edge-title">Actually answers calls</div>
+        <div class="edge-desc">Workiz tracks calls. Jobber charges $99/mo extra. Masmer answers, qualifies, and books — built in at every tier.</div>
+      </div>
+      <div class="edge-card">
+        <div class="edge-icon">🧠</div>
+        <div class="edge-title">AI-native architecture</div>
+        <div class="edge-desc">Competitors bolt AI onto 10-year-old codebases. Masmer was born AI-first. That's a 2–3 year product velocity lead.</div>
+      </div>
+      <div class="edge-card">
+        <div class="edge-icon">📋</div>
+        <div class="edge-title">Estimate bot + HD cart</div>
+        <div class="edge-desc">No competitor builds a real materials list or Home Depot cart. Masmer does it in minutes — not 3–5 hours.</div>
+      </div>
+      <div class="edge-card">
+        <div class="edge-icon">🔨</div>
+        <div class="edge-title">Built by a contractor</div>
+        <div class="edge-desc">Every competitor was built by engineers who've never been on a job site. Masmer's founder has lived every problem in the product.</div>
+      </div>
+      <div class="edge-card">
+        <div class="edge-icon">🚀</div>
+        <div class="edge-title">Deploy in minutes</div>
+        <div class="edge-desc">ServiceTitan takes months. Masmer takes minutes. No implementation fees, no annual lock-in, no consultant required.</div>
+      </div>
+    </div>
+
+    <div style="font-family:'Syne',sans-serif; font-size:15px; font-weight:700; margin-bottom:14px; color:var(--text);">Feature comparison matrix</div>
+
+    <div class="matrix-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="ft">Feature</th>
+            <th class="mth">Masmer AI ✦</th>
+            <th>Jobber</th>
+            <th>Housecall Pro</th>
+            <th>Workiz</th>
+            <th>ServiceTitan</th>
+            <th>Hearth</th>
+            <th>Projul</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="fn">AI answers calls 24/7</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="cp">$99 add-on</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cp">tracks only</span></td>
+            <td><span class="cp">enterprise</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">AI estimating bot</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="cp">basic quotes</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cp">limited</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">Home Depot cart builder</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">AI lead scoring & pipeline</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="cp">basic</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">Job scheduling / planner</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="ck">✓</span></td>
+          </tr>
+          <tr>
+            <td class="fn">Auto lead follow-up</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="cp">higher tiers</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="cp">basic</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="cx">✗ 1.8★</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">No annual contract</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="ck">✓</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">Built by a contractor</td>
+            <td class="mc"><span class="ck">✓</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+            <td><span class="cx">✗</span></td>
+          </tr>
+          <tr>
+            <td class="fn">Starting price</td>
+            <td class="mc" style="color:var(--orange); font-weight:600;">$99/mo</td>
+            <td>$29/mo</td>
+            <td>$49/mo</td>
+            <td>$225/mo</td>
+            <td>$300+/mo</td>
+            <td>$1,499/yr</td>
+            <td>$4,788/yr</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="closing">
+      <h2>74% want it. 25% have it.<br><span>Masmer is how they close that gap.</span></h2>
+      <p>Every contractor in America is losing leads to voicemail and spending evenings building estimates by hand. Masmer AI is the first platform that solves both — built by someone who's lived it, priced for the contractor who's ready to win.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeOnBg(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const data = {
+  jobber: {
+    name: 'Jobber', price: '$29–$499/month',
+    about: 'Jobber is the most widely used field service CRM for home service businesses with 1–20 technicians. It covers scheduling, quoting, invoicing, client records, and communication. It rebuilt its scheduling engine in late 2025 and recently added a beta AI receptionist as a paid add-on. Best fit: plumbers, HVAC, lawn care, cleaning companies doing under 20 jobs/week.',
+    pros: ['Intuitive UI with low learning curve — easiest onboarding in the market', 'Strong mobile app for field techs on iOS and Android', '70+ integrations including QuickBooks and Stripe', 'Drag-and-drop scheduling rebuilt in Oct 2025', 'Strong support and documentation'],
+    cons: ['No native AI call answering — requires $99/mo add-on on top of plan price', 'Full AI features only on $499/mo Plus plan — a huge jump', 'Per-user pricing ($29/extra user) gets expensive fast for growing teams', 'Basic analytics — no predictive AI, no churn risk modeling', 'Cannot break down revenue by service type in reporting'],
+    wins: ['Masmer\'s AI receptionist is included — Jobber charges $99/mo extra on top of your plan', 'Masmer\'s estimating bot generates full materials lists + contracts — Jobber only does basic line-item quotes', 'Masmer has no per-user pricing — it scales without punishing you', 'Masmer was purpose-built for contractors — Jobber serves all home service verticals']
+  },
+  housecall: {
+    name: 'Housecall Pro', price: '$49–$199/month',
+    about: 'Housecall Pro is best for recurring service businesses — HVAC maintenance, pest control, pool cleaning, and similar industries that run repeat appointments. It has strong marketing automation (review requests, email campaigns, referral programs) but was architected around same-day service dispatch, not construction projects with multiple phases and subcontractors.',
+    pros: ['Strong marketing automation and automated review requests', 'Good customer-facing online booking portal', 'Automated follow-up campaigns for recurring customers', 'Decent pricing — accessible for solo operators at $49/mo'],
+    cons: ['Not designed for multi-day or multi-phase construction projects', 'No AI call answering — misses calls like everyone else', 'No AI estimating, no materials list generation', 'Scheduling and cost tracking break down on complex contractor jobs', 'Better for maintenance contracts than project-based contracting'],
+    wins: ['Masmer handles multi-phase contractor jobs natively — Housecall Pro was never built for them', 'Masmer\'s AI receptionist captures every lead 24/7 — Housecall Pro has no call answering', 'Masmer generates full scope of work, materials lists, and contracts — Housecall Pro can\'t', 'Masmer is purpose-built for construction — not repurposed from a cleaning company template']
+  },
+  workiz: {
+    name: 'Workiz', price: '$225–$495/month',
+    about: 'Workiz differentiates on its built-in phone system — inbound calls automatically pop up the customer record, log the call duration, and create a lead in one click. It\'s genuinely better than Jobber or Housecall Pro at call management. But here\'s the critical distinction: it tracks calls. It does not answer them with AI. You still need staff picking up the phone.',
+    pros: ['Genuinely strong built-in phone system — best call tracking of any CRM in this tier', 'Inbound call auto-populates customer record in one click', 'Call recording, duration logging, and automatic job creation', 'Free tier for teams under 2 people'],
+    cons: ['Tracks and logs calls — does NOT answer them with AI. You still need a human.', '$225/mo minimum — expensive entry point for solo operators', 'No AI estimating, no materials list builder', '"Phone-first" marketing overpromises vs. the actual missed-call problem it doesn\'t solve', 'Limited analytics compared to ServiceTitan'],
+    wins: ['Masmer\'s AI actually answers calls at 2am on a Sunday — Workiz just records that a call was missed', 'Masmer starts at $99/mo vs Workiz\'s $225/mo floor — less than half the cost to start', 'Masmer includes AI estimating with materials lists — Workiz has no estimate builder', 'Masmer\'s lead scoring and AI call summaries are automatic — Workiz requires manual note-taking']
+  },
+  servicetitan: {
+    name: 'ServiceTitan', price: '$300–$800+/month',
+    about: 'ServiceTitan is the enterprise platform for trades — publicly traded (NASDAQ: TTAN), used by multi-location operations with $500K+ in revenue. It has the deepest reporting, best dispatch optimization, and is adding AI features. However, it requires annual contracts, months to implement, and is widely considered overkill — and unaffordable — for small to mid-size contractors.',
+    pros: ['Most powerful analytics and reporting in the entire market', 'AI features available (requires enterprise implementation)', 'Deep integrations with ERP, accounting, inventory', 'GPS tracking and technician performance dashboards', 'Proven at scale across thousands of locations'],
+    cons: ['$300–$800+/mo — most contractors can\'t justify this until $500K+ revenue', '12-month annual contracts required — no flexibility', 'Average implementation takes 3–6 months with a consultant', 'Data lock-in — contractors report difficulty exporting data after canceling', '44% of contractors cite complexity as the #1 barrier to AI adoption — ServiceTitan is the poster child for this'],
+    wins: ['Masmer deploys in minutes — ServiceTitan takes months and a dedicated implementation team', 'No annual contract — Masmer is month-to-month, cancel anytime', 'Masmer at $99–$349/mo vs ServiceTitan\'s $300–$800+/mo — same AI outcomes, fraction of the cost', 'Masmer eliminates the complexity that\'s killing AI adoption across the trades']
+  },
+  hearth: {
+    name: 'Hearth', price: '$1,499–$4,999/year',
+    about: 'Hearth is primarily a customer financing marketplace — it lets contractors offer homeowners monthly payment plans with no dealer fees. It added CRM features (quotes, contracts, invoices, basic scheduling) to its core financing product. The problem: it has a 1.8/5 star rating driven by a consistent pattern of contractors losing signed deals because Hearth fails to follow up with pre-qualified clients.',
+    pros: ['Customer financing marketplace with no dealer fees', 'Financing for customers with FICO scores as low as 550', 'Mobile-first design — works from a phone on the job site', 'Digital contracts with e-signature'],
+    cons: ['1.8/5 stars — contractors publicly reporting lost signed deals due to Hearth\'s non-response', 'Not a real CRM — financing platform with a basic UI layer', 'No AI features: no call answering, no estimating, no scheduling', '$1,499–$4,999/year required upfront — no monthly option', 'Contractors call it "the worst financing company I\'ve ever worked with"'],
+    wins: ['Masmer actually follows through — Hearth loses deals because nobody follows up', 'Masmer is a complete CRM built for contractors — Hearth is a fintech product with a notes section', 'Masmer has AI call answering, estimating, scheduling — Hearth has none of this', 'Masmer is month-to-month starting at $99 — Hearth demands $1,500–$5,000 upfront']
+  },
+  projul: {
+    name: 'Projul', price: '$4,788/year flat',
+    about: 'Projul is the strongest pure project management tool in this space — built specifically for contractors managing multi-phase jobs, multiple crews, and subcontractors. Unlimited users on all plans at a flat annual rate. Great for tracking a job from permit to final walkthrough. But it has zero AI features and no front-of-funnel tools for capturing or converting leads.',
+    pros: ['Unlimited users on all plans — no per-user fees ever', 'Strong multi-phase project management built for construction', 'Job costing, time tracking, and subcontractor management', 'QuickBooks integration', 'Flat annual pricing — easy to budget'],
+    cons: ['Zero AI features — no AI receptionist, no estimating bot, no lead scoring', '$4,788/year upfront — annual commitment with no monthly option', 'No lead capture, no call handling — can\'t help if the phone rings', 'No AI-generated estimates or materials lists — you still build them manually', 'Strong at running jobs, silent on winning them'],
+    wins: ['Masmer captures the leads that become Projul projects — without Masmer, there\'s no lead funnel', 'Masmer\'s AI builds the scope of work and materials list that Projul assumes you already have', 'Masmer covers the full lifecycle: lead → estimate → schedule → deliver → invoice', 'Masmer is month-to-month at $99–$349 — Projul locks you in at $4,788 upfront']
+  }
+};
+
+function showTab(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  el.classList.add('active');
+}
+
+function openModal(id) {
+  const c = data[id];
+  document.getElementById('modalBody').innerHTML = `
+    <div class="modal-name">${c.name}</div>
+    <div class="modal-ptag">${c.price}</div>
+    <div class="msec">
+      <div class="msec-title">Overview</div>
+      <p>${c.about}</p>
+    </div>
+    <div class="msec">
+      <div class="msec-title">Strengths & Weaknesses</div>
+      <div class="two-col">
+        <div>
+          <div class="col-head g">What they do well</div>
+          <div class="m-list">${c.pros.map(p=>`<div class="m-item g"><span class="m-icon">+</span><span>${p}</span></div>`).join('')}</div>
+        </div>
+        <div>
+          <div class="col-head r">Where they fall short</div>
+          <div class="m-list">${c.cons.map(x=>`<div class="m-item r"><span class="m-icon">−</span><span>${x}</span></div>`).join('')}</div>
+        </div>
+      </div>
+    </div>
+    <div class="wins-box">
+      <div class="wins-title">→ How Masmer AI wins</div>
+      ${c.wins.map(w=>`<div class="win-row"><span class="win-arrow">→</span><span>${w}</span></div>`).join('')}
+    </div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+
+function closeOnBg(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

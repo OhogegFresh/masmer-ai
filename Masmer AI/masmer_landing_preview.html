@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — The AI Brain Behind Your Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ── Design tokens: Dark Navy + Orange ──────────────────────────────── */
+:root {
+  --bg:        #08111F;
+  --surface:   #0D1B30;
+  --elevated:  #132240;
+  --overlay:   #1A2E50;
+
+  --orange:        #F97316;
+  --orange-hover:  #FB923C;
+  --orange-muted:  rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.28);
+  --orange-dim:    #C2560D;
+
+  --navy:      #1E3A5F;
+  --navy-deep: #0A1628;
+
+  --text:    #EFF4FF;
+  --muted:   #8898B0;
+  --dim:     #4A5C72;
+
+  --border:  rgba(255,255,255,0.07);
+  --border-h: rgba(255,255,255,0.14);
+
+  --green:  #10B981;
+  --red:    #EF4444;
+
+  --grad-orange: linear-gradient(135deg, #F97316, #C2560D);
+  --grad-navy:   linear-gradient(135deg, #2D5080, #0A1628);
+  --shadow-orange: 0 0 32px rgba(249,115,22,0.25);
+  --blueprint: rgba(30,58,95,0.12);
+}
+
+/* ── Base ─────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4 {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+a { text-decoration: none; color: inherit; }
+img { display: block; }
+
+/* ── Nav ─────────────────────────────────────────────────────────────── */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 40px; height: 68px;
+  background: rgba(8,17,31,0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.nav-logo { display: flex; align-items: center; gap: 10px; }
+.nav-mark {
+  width: 36px; height: 36px; background: var(--orange); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: #fff;
+}
+.nav-wordmark { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 19px; letter-spacing: -0.04em; }
+.nav-wordmark span { color: var(--orange); }
+.nav-links { display: flex; gap: 36px; align-items: center; }
+.nav-links a {
+  font-size: 14px; font-weight: 500; color: var(--muted);
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text); }
+.nav-ctas { display: flex; align-items: center; gap: 12px; }
+.btn-ghost {
+  font-size: 14px; font-weight: 500; color: var(--muted);
+  padding: 8px 16px; border-radius: 8px;
+  transition: color 0.2s, background 0.2s;
+}
+.btn-ghost:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+.btn-primary {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--grad-orange); color: #fff;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  padding: 10px 22px; border-radius: 9px;
+  box-shadow: var(--shadow-orange);
+  transition: transform 0.18s, box-shadow 0.18s;
+}
+.btn-primary:hover { transform: scale(1.02); }
+.btn-primary svg { width: 14px; height: 14px; transition: transform 0.18s; }
+.btn-primary:hover svg { transform: translateX(2px); }
+
+/* ── Blueprint grid ─────────────────────────────────────────────────── */
+.blueprint-grid {
+  background-image:
+    linear-gradient(var(--blueprint) 1px, transparent 1px),
+    linear-gradient(90deg, var(--blueprint) 1px, transparent 1px);
+  background-size: 52px 52px;
+}
+
+/* ── Hero ─────────────────────────────────────────────────────────────── */
+.hero {
+  position: relative; overflow: hidden;
+  padding: 180px 40px 140px;
+  text-align: center;
+}
+.hero-grid { position: absolute; inset: 0; opacity: 0.45; }
+.hero-grid.blueprint-grid {}
+.hero-fade { position: absolute; inset: 0; background: linear-gradient(to bottom, transparent 40%, var(--bg) 100%); }
+.hero-orb-orange {
+  position: absolute; top: -60px; left: 50%; transform: translateX(-50%);
+  width: 900px; height: 600px; border-radius: 9999px;
+  background: var(--orange); opacity: 0.12; filter: blur(120px);
+  pointer-events: none;
+}
+.hero-orb-navy {
+  position: absolute; top: 0; right: -100px;
+  width: 700px; height: 700px; border-radius: 9999px;
+  background: var(--navy); opacity: 0.3; filter: blur(100px);
+  pointer-events: none;
+}
+.hero-inner { position: relative; max-width: 900px; margin: 0 auto; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px;
+  border: 1px solid var(--orange-border);
+  background: var(--orange-muted);
+  color: var(--orange);
+  padding: 6px 18px; border-radius: 999px;
+  font-size: 12px; font-weight: 600; letter-spacing: 0.03em;
+  margin-bottom: 32px;
+}
+.eyebrow-dot {
+  width: 6px; height: 6px; border-radius: 999px;
+  background: var(--orange);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+.hero h1 {
+  font-size: clamp(52px, 8vw, 96px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  margin-bottom: 28px;
+}
+.grad-text {
+  background: var(--grad-orange);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hero-sub {
+  font-size: 18px; line-height: 1.65;
+  color: var(--muted);
+  max-width: 520px; margin: 0 auto 40px;
+}
+.hero-ctas { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; }
+.btn-outline {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 1px solid var(--border-h); color: var(--muted);
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600;
+  padding: 10px 22px; border-radius: 9px;
+  transition: border-color 0.2s, color 0.2s;
+}
+.btn-outline:hover { border-color: var(--orange-border); color: var(--text); }
+.btn-outline svg { width: 14px; height: 14px; }
+.hero-note {
+  margin-top: 28px; font-size: 12px; color: var(--dim);
+}
+
+/* ── Stats strip ──────────────────────────────────────────────────────── */
+.stats-strip {
+  display: flex; align-items: center; justify-content: center;
+  gap: 0; padding: 40px 40px;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.stat-item {
+  flex: 1; text-align: center;
+  padding: 20px 32px;
+  border-right: 1px solid var(--border);
+}
+.stat-item:last-child { border-right: none; }
+.stat-num {
+  font-family: 'Syne', sans-serif;
+  font-size: 42px; font-weight: 800;
+  color: var(--orange); letter-spacing: -0.04em; line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-label { font-size: 13px; color: var(--muted); font-weight: 500; }
+
+/* ── Section shell ───────────────────────────────────────────────────── */
+.section {
+  padding: 100px 40px;
+  max-width: 1180px; margin: 0 auto;
+}
+.section-eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--orange); margin-bottom: 14px;
+}
+.section-title {
+  font-size: clamp(36px, 5vw, 60px);
+  line-height: 1; letter-spacing: -0.04em;
+  margin-bottom: 16px;
+}
+.section-sub {
+  font-size: 17px; color: var(--muted); max-width: 480px; line-height: 1.65;
+}
+.section-head { margin-bottom: 64px; }
+.section-head.center { text-align: center; }
+.section-head.center .section-sub { margin: 0 auto; }
+
+/* ── Problem ─────────────────────────────────────────────────────────── */
+.problem-wrap { background: linear-gradient(to bottom, var(--bg), var(--surface)); }
+.pain-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.pain-card {
+  background: var(--elevated); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px 28px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.pain-card:hover { border-color: var(--orange-border); transform: translateY(-3px); }
+.pain-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--orange-muted); border: 1px solid var(--orange-border);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; color: var(--orange);
+}
+.pain-icon svg { width: 22px; height: 22px; }
+.pain-card h3 { font-size: 19px; margin-bottom: 10px; }
+.pain-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── Features ────────────────────────────────────────────────────────── */
+.features-wrap { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.features-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.feature-card {
+  background: var(--elevated); border: 1px solid var(--border);
+  border-radius: 16px; padding: 32px 28px;
+  border-left: 3px solid var(--orange);
+  transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+.feature-card:hover { border-color: var(--orange); transform: translateY(-3px); box-shadow: var(--shadow-orange); }
+.feature-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: var(--grad-orange);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 20px; color: #fff;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.25);
+}
+.feature-icon svg { width: 22px; height: 22px; }
+.feature-card h3 { font-size: 18px; margin-bottom: 10px; }
+.feature-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+/* ── How it works ─────────────────────────────────────────────────────── */
+.steps { display: flex; flex-direction: column; gap: 0; max-width: 760px; margin: 0 auto; }
+.step {
+  display: flex; gap: 32px; align-items: flex-start;
+  padding: 36px 0;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+.step:last-child { border-bottom: none; }
+.step-num {
+  width: 48px; height: 48px; border-radius: 14px;
+  background: var(--grad-orange);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 18px; color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.3);
+}
+.step-content h3 { font-size: 22px; margin-bottom: 10px; }
+.step-content p { font-size: 15px; color: var(--muted); line-height: 1.7; }
+
+/* ── Pricing ──────────────────────────────────────────────────────────── */
+.pricing-wrap { background: linear-gradient(to bottom, var(--surface), var(--bg)); border-top: 1px solid var(--border); }
+.pricing-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 860px; margin: 0 auto; }
+.plan-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 20px; padding: 40px 36px;
+  transition: transform 0.2s;
+}
+.plan-card.featured {
+  border: 2px solid var(--orange);
+  box-shadow: var(--shadow-orange);
+  transform: scale(1.02);
+  position: relative;
+}
+.plan-badge {
+  position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+  background: var(--grad-orange); color: #fff;
+  font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 5px 18px; border-radius: 999px;
+  box-shadow: var(--shadow-orange);
+  white-space: nowrap;
+}
+.plan-name { font-size: 16px; font-weight: 700; font-family: 'Syne', sans-serif; color: var(--muted); margin-bottom: 8px; }
+.plan-price {
+  font-family: 'Syne', sans-serif; font-size: 58px; font-weight: 800;
+  background: var(--grad-orange); -webkit-background-clip: text; background-clip: text; color: transparent;
+  line-height: 1; letter-spacing: -0.04em;
+}
+.plan-period { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+.plan-divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 32px; }
+.plan-features li {
+  display: flex; align-items: flex-start; gap: 10px;
+  font-size: 14px; color: var(--muted);
+}
+.check-icon { color: var(--green); flex-shrink: 0; margin-top: 1px; }
+.check-icon svg { width: 16px; height: 16px; }
+.plan-cta {
+  display: block; width: 100%; text-align: center;
+  font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 700;
+  padding: 13px; border-radius: 10px;
+  transition: all 0.2s;
+}
+.plan-cta.primary {
+  background: var(--grad-orange); color: #fff;
+  box-shadow: 0 4px 16px rgba(249,115,22,0.25);
+}
+.plan-cta.primary:hover { transform: translateY(-1px); box-shadow: var(--shadow-orange); }
+.plan-cta.secondary {
+  border: 1px solid var(--orange-border); color: var(--orange);
+}
+.plan-cta.secondary:hover { background: var(--orange-muted); }
+
+/* ── CTA Banner ───────────────────────────────────────────────────────── */
+.cta-banner {
+  margin: 0 40px 100px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, var(--navy) 0%, var(--navy-deep) 60%);
+  border: 1px solid rgba(30,58,95,0.8);
+  padding: 80px 60px;
+  text-align: center;
+  position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute; top: -50%; left: 50%; transform: translateX(-50%);
+  width: 600px; height: 400px; border-radius: 9999px;
+  background: var(--orange); opacity: 0.06; filter: blur(80px);
+  pointer-events: none;
+}
+.cta-banner h2 { font-size: clamp(32px, 4vw, 52px); margin-bottom: 16px; }
+.cta-banner p { font-size: 16px; color: var(--muted); max-width: 440px; margin: 0 auto 36px; line-height: 1.7; }
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+.footer-inner {
+  max-width: 1180px; margin: 0 auto;
+  padding: 60px 40px 40px;
+}
+.footer-top { display: flex; justify-content: space-between; gap: 60px; margin-bottom: 60px; }
+.footer-brand { max-width: 280px; }
+.footer-brand .logo { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.footer-cols { display: flex; gap: 60px; }
+.footer-col h4 { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 16px; }
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col ul li a { font-size: 13px; color: var(--muted); transition: color 0.2s; }
+.footer-col ul li a:hover { color: var(--orange); }
+.footer-bottom {
+  display: flex; align-items: center; justify-content: space-between;
+  padding-top: 28px; border-top: 1px solid var(--border);
+  font-size: 12px; color: var(--dim);
+}
+
+/* ── Light theme variant ─────────────────────────────────────────────── */
+.theme-light {
+  --bg:       #F0EDEA;
+  --surface:  #FFFFFF;
+  --elevated: #E8E4E0;
+  --overlay:  #DEDAD6;
+  --text:     #1A1714;
+  --muted:    #6B6560;
+  --dim:      #9E9894;
+  --border:   rgba(0,0,0,0.08);
+  --border-h: rgba(0,0,0,0.16);
+}
+
+/* ── Theme toggle ────────────────────────────────────────────────────── */
+.theme-toggle {
+  position: fixed; bottom: 24px; right: 24px; z-index: 200;
+  display: flex; background: var(--elevated); border: 1px solid var(--border);
+  border-radius: 999px; padding: 4px; gap: 4px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+.toggle-btn {
+  font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600;
+  padding: 6px 16px; border-radius: 999px; border: none; cursor: pointer;
+  color: var(--muted); background: none;
+  transition: all 0.2s;
+}
+.toggle-btn.active { background: var(--orange); color: #fff; }
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .nav { padding: 0 20px; }
+  .nav-links { display: none; }
+  .hero { padding: 140px 24px 100px; }
+  .stats-strip { flex-wrap: wrap; }
+  .stat-item { border-right: none; border-bottom: 1px solid var(--border); }
+  .section { padding: 72px 24px; }
+  .pain-grid, .features-grid { grid-template-columns: 1fr; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .plan-card.featured { transform: none; }
+  .cta-banner { margin: 0 20px 72px; padding: 56px 32px; }
+  .footer-top { flex-direction: column; }
+  .footer-cols { gap: 40px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── Navbar ─────────────────────────────────────────────────────────── -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">
+    <div class="nav-mark">M</div>
+    <div class="nav-wordmark">Masmer <span>AI</span></div>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <div class="nav-ctas">
+    <a href="#" class="btn-ghost">Sign in</a>
+    <a href="#" class="btn-primary">
+      Start Free
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</nav>
+
+<!-- ── Hero ───────────────────────────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-grid blueprint-grid"></div>
+  <div class="hero-fade"></div>
+  <div class="hero-orb-orange"></div>
+  <div class="hero-orb-navy"></div>
+
+  <div class="hero-inner">
+    <div class="eyebrow">
+      <div class="eyebrow-dot"></div>
+      Built by a contractor. Built for contractors.
+    </div>
+
+    <h1>The <span class="grad-text">AI Brain</span><br>Behind Your Business</h1>
+
+    <p class="hero-sub">
+      Answer every call, book every estimate, follow up every lead — automatically.
+      Stop losing jobs to voicemail.
+    </p>
+
+    <div class="hero-ctas">
+      <a href="#" class="btn-primary" style="font-size:15px; padding:13px 28px;">
+        Start for Free
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+      <a href="#features" class="btn-outline" style="font-size:15px; padding:13px 28px;">
+        See the features
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+      </a>
+    </div>
+
+    <p class="hero-note">No credit card required · First month free for the first 10 contractors</p>
+  </div>
+</section>
+
+<!-- ── Stats strip ─────────────────────────────────────────────────────── -->
+<div class="stats-strip">
+  <div class="stat-item">
+    <div class="stat-num">$17K</div>
+    <div class="stat-label">avg monthly lost to missed calls</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">24/7</div>
+    <div class="stat-label">AI receptionist availability</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">3 min</div>
+    <div class="stat-label">to generate a full estimate</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-num">0</div>
+    <div class="stat-label">missed leads with Masmer</div>
+  </div>
+</div>
+
+<!-- ── Problem ────────────────────────────────────────────────────────── -->
+<div class="problem-wrap">
+  <div class="section">
+    <div class="section-head center">
+      <div class="section-eyebrow">The Problem</div>
+      <h2 class="section-title">Contractors Lose<br><span class="grad-text">$17,000/Month</span><br>in Missed Calls</h2>
+      <p class="section-sub">You're on the job site. Your phone goes to voicemail. The lead calls your competitor.</p>
+    </div>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.07 6.07l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16.5"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </div>
+        <h3>You're on the job site</h3>
+        <p>Your phone goes to voicemail and leads disappear into the void — for good.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M2 20c0-4 4-7 10-7"/><line x1="18" y1="14" x2="18" y2="20"/><line x1="15" y1="17" x2="21" y2="17"/></svg>
+        </div>
+        <h3>Leads call once</h3>
+        <p>If you don't answer, they call your competitor — and never call back.</p>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h3>Endless admin work</h3>
+        <p>Estimating, scheduling, and follow-up eat hours you don't have.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Features ───────────────────────────────────────────────────────── -->
+<div class="features-wrap" id="features">
+  <div class="section">
+    <div class="section-head center">
+      <div class="section-eyebrow">The Solution</div>
+      <h2 class="section-title">Meet Your <span class="grad-text">AI Team</span></h2>
+      <p class="section-sub">Five AI agents that work around the clock so you don't have to.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.07 6.07l.94-.94a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <h3>AI Receptionist</h3>
+        <p>Answers every call 24/7, speaks like a real person, qualifies leads, and never misses a job opportunity.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M9 16l2 2 4-4"/></svg>
+        </div>
+        <h3>Estimate Booker</h3>
+        <p>Qualifies inbound leads and books estimate appointments directly into your calendar — automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h3>Lead Follow-Up Agent</h3>
+        <p>Texts and emails leads after first contact. Persistent, personal follow-up without lifting a finger.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+        <h3>Job Scheduler</h3>
+        <p>Manages your calendar, sends confirmations, and cuts no-shows with automated reminders.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3>Eliko — AI Estimator</h3>
+        <p>Describe your project. Get a full estimate, Home Depot cart, payment schedule, and contract in minutes.</p>
+      </div>
+      <div class="feature-card" style="background: var(--orange-muted); border-color: var(--orange-border); border-left-color: var(--orange);">
+        <div class="feature-icon" style="background: var(--orange-border); box-shadow: none;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>CRM Pipeline</h3>
+        <p>Track every lead, project, and customer in one place. From first call to final invoice.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── How it works ───────────────────────────────────────────────────── -->
+<div id="how">
+  <div class="section">
+    <div class="section-head">
+      <div class="section-eyebrow">How It Works</div>
+      <h2 class="section-title">Set up in minutes.<br><span class="grad-text">Works forever.</span></h2>
+      <p class="section-sub">Three steps and Masmer is running your front-office on autopilot.</p>
+    </div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <h3>Connect your phone number</h3>
+          <p>Forward your existing number to Masmer or get a new one. Your AI receptionist is live within minutes — answering calls, qualifying leads, and booking appointments 24/7.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <h3>Your leads flow into the CRM</h3>
+          <p>Every call, text, and web form drops straight into your Masmer pipeline. No more sticky notes, spreadsheets, or lost leads — everything is tracked automatically.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <h3>Send estimates in minutes, not days</h3>
+          <p>Describe the job to Eliko and get a full professional estimate with a Home Depot materials list, payment schedule, and ready-to-sign contract. Send it from the app in one click.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Pricing ────────────────────────────────────────────────────────── -->
+<div class="pricing-wrap" id="pricing">
+  <div class="section">
+    <div class="section-head center">
+      <div class="section-eyebrow">Pricing</div>
+      <h2 class="section-title">Simple, <span class="grad-text">Transparent</span> Pricing</h2>
+      <p class="section-sub">First month free for the first 10 contractors who sign up.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="plan-card">
+        <div class="plan-name">Essentials</div>
+        <div class="plan-price">$199</div>
+        <div class="plan-period">/month · billed monthly</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            AI Receptionist — 24/7 call answering
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Lead Follow-Up Agent
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Job Scheduling Agent
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            CRM Pipeline
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Monthly Performance Report
+          </li>
+        </ul>
+        <a href="#" class="plan-cta secondary">Get Started</a>
+      </div>
+      <div class="plan-card featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Full Suite</div>
+        <div class="plan-price">$399</div>
+        <div class="plan-period">/month · billed monthly</div>
+        <hr class="plan-divider">
+        <ul class="plan-features">
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Everything in Essentials, plus:
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Eliko — AI Estimate Generator
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Home Depot Materials Cart Builder
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Professional PDF Estimates
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Payment Schedule Builder
+          </li>
+          <li>
+            <span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>
+            Dedicated Setup Support
+          </li>
+        </ul>
+        <a href="#" class="plan-cta primary">Get Started</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CTA Banner ─────────────────────────────────────────────────────── -->
+<div class="cta-banner">
+  <div class="section-eyebrow" style="margin-bottom:16px;">Get Started Today</div>
+  <h2>Stop losing leads.<br><span class="grad-text">Start closing more jobs.</span></h2>
+  <p>Join contractors who let Masmer AI run their front office. First month on us.</p>
+  <a href="#" class="btn-primary" style="font-size:16px; padding:15px 36px; display:inline-flex;">
+    Create Free Account
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;margin-left:8px;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</div>
+
+<!-- ── Footer ─────────────────────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="logo">
+          <div class="nav-mark" style="width:32px;height:32px;font-size:16px;">M</div>
+          <div class="nav-wordmark" style="font-size:17px;">Masmer <span>AI</span></div>
+        </div>
+        <p>The AI brain behind your contracting business. Built by a contractor, for contractors.</p>
+      </div>
+      <div class="footer-cols">
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#">AI Receptionist</a></li>
+            <li><a href="#">Eliko</a></li>
+            <li><a href="#">CRM Pipeline</a></li>
+            <li><a href="#">Pricing</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Masmer AI. All rights reserved.</span>
+      <span>masmer.info</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ── Theme toggle ───────────────────────────────────────────────────── -->
+<div class="theme-toggle">
+  <button class="toggle-btn active" id="btn-dark" onclick="setTheme('dark')">Dark</button>
+  <button class="toggle-btn" id="btn-light" onclick="setTheme('light')">Concrete</button>
+</div>
+
+<script>
+  // Theme switcher
+  function setTheme(theme) {
+    const body = document.body;
+    const btnDark = document.getElementById('btn-dark');
+    const btnLight = document.getElementById('btn-light');
+    if (theme === 'light') {
+      body.classList.add('theme-light');
+      btnDark.classList.remove('active');
+      btnLight.classList.add('active');
+    } else {
+      body.classList.remove('theme-light');
+      btnDark.classList.add('active');
+      btnLight.classList.remove('active');
+    }
+  }
+
+  // Scroll-based nav background intensity
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 20) {
+      nav.style.background = 'rgba(8,17,31,0.97)';
+    } else {
+      nav.style.background = 'rgba(8,17,31,0.88)';
+    }
+  }, { passive: true });
+
+  // Animate elements into view
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = e.target.style.transform?.replace('translateY(24px)', 'translateY(0)') || '';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.pain-card, .feature-card, .step, .plan-card').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(24px)';
+    el.style.transition = 'opacity 0.5s ease, transform 0.5s ease, border-color 0.2s, box-shadow 0.2s';
+    observer.observe(el);
+  });
+</script>
+</body>
+</html>

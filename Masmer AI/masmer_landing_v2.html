@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — The AI Brain Behind Your Business</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+/* ─────────────────────────────────────────────
+   TOKENS
+───────────────────────────────────────────── */
+:root {
+  --bg:         #07101E;
+  --bg-card:    #0C1929;
+  --bg-raised:  #112036;
+  --bg-high:    #172844;
+
+  --orange:     #F97316;
+  --orange-dim: #C2560D;
+  --og-muted:   rgba(249,115,22,.10);
+  --og-border:  rgba(249,115,22,.25);
+  --og-glow:    rgba(249,115,22,.18);
+
+  --navy:       #1A3256;
+  --navy-glow:  rgba(26,50,86,.5);
+
+  --text:       #ECF2FF;
+  --muted:      #7A90B0;
+  --dim:        #3E5270;
+
+  --border:     rgba(255,255,255,.07);
+  --border-hi:  rgba(255,255,255,.13);
+
+  --green:  #10B981;
+  --red:    #EF4444;
+  --amber:  #F59E0B;
+
+  --grad-o: linear-gradient(135deg, #F97316 0%, #C2560D 100%);
+  --grad-n: linear-gradient(135deg, #1A3256 0%, #07101E 100%);
+  --shadow-o: 0 0 40px rgba(249,115,22,.22);
+  --shadow-card: 0 1px 0 rgba(255,255,255,.04) inset, 0 4px 24px rgba(0,0,0,.35);
+}
+
+/* ─────────────────────────────────────────────
+   RESET + BASE
+───────────────────────────────────────────── */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; font-size:16px; }
+body {
+  background:var(--bg); color:var(--text);
+  font-family:'DM Sans',sans-serif;
+  line-height:1.6; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a { text-decoration:none; color:inherit; }
+
+h1,h2,h3,h4 {
+  font-family:'Syne',sans-serif;
+  font-weight:800; line-height:1;
+  letter-spacing:-0.04em;
+}
+
+/* ─────────────────────────────────────────────
+   NAV
+───────────────────────────────────────────── */
+.nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 48px; height:64px;
+  transition:background .3s, border-color .3s;
+  border-bottom:1px solid transparent;
+}
+.nav.scrolled {
+  background:rgba(7,16,30,.92);
+  backdrop-filter:blur(20px);
+  border-color:var(--border);
+}
+.logo { display:flex; align-items:center; gap:10px; }
+.logo-mark {
+  width:34px; height:34px; background:var(--grad-o);
+  border-radius:9px; display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:16px; color:#fff;
+  box-shadow:0 2px 12px rgba(249,115,22,.35);
+}
+.logo-name {
+  font-family:'Syne',sans-serif; font-weight:800;
+  font-size:18px; letter-spacing:-.04em;
+}
+.logo-name em { color:var(--orange); font-style:normal; }
+.nav-links { display:flex; gap:32px; }
+.nav-links a {
+  font-size:14px; font-weight:500; color:var(--muted);
+  transition:color .2s;
+}
+.nav-links a:hover { color:var(--text); }
+.nav-right { display:flex; align-items:center; gap:10px; }
+.btn-ghost {
+  font-size:13px; font-weight:600; color:var(--muted);
+  padding:8px 16px; border-radius:8px; border:none; background:none;
+  cursor:pointer; transition:color .2s, background .2s;
+}
+.btn-ghost:hover { color:var(--text); background:rgba(255,255,255,.06); }
+.btn-orange {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:700;
+  color:#fff; background:var(--grad-o);
+  padding:9px 20px; border-radius:9px; border:none; cursor:pointer;
+  box-shadow:0 2px 16px rgba(249,115,22,.3);
+  transition:transform .18s, box-shadow .18s;
+}
+.btn-orange:hover { transform:scale(1.02); box-shadow:var(--shadow-o); }
+.btn-orange svg { width:14px; height:14px; transition:transform .18s; }
+.btn-orange:hover svg { transform:translateX(2px); }
+
+/* ─────────────────────────────────────────────
+   HERO
+───────────────────────────────────────────── */
+.hero {
+  min-height:100vh; display:flex; align-items:center;
+  padding:120px 48px 80px;
+  position:relative; overflow:hidden;
+}
+
+/* Blueprint grid */
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(rgba(26,50,86,.14) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,50,86,.14) 1px, transparent 1px);
+  background-size:56px 56px;
+  mask-image:radial-gradient(ellipse 80% 80% at 50% 40%, black 0%, transparent 100%);
+}
+
+/* Glow orbs */
+.orb {
+  position:absolute; border-radius:9999px;
+  pointer-events:none; filter:blur(100px);
+}
+.orb-1 { width:700px; height:500px; top:-100px; left:50%; transform:translateX(-50%); background:var(--orange); opacity:.07; }
+.orb-2 { width:500px; height:500px; top:0; right:-100px; background:var(--navy); opacity:.35; filter:blur(80px); }
+.orb-3 { width:300px; height:300px; bottom:0; left:0; background:var(--orange); opacity:.05; }
+
+.hero-inner {
+  position:relative; max-width:1200px; margin:0 auto; width:100%;
+  display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:center;
+}
+
+/* Left column */
+.hero-left { display:flex; flex-direction:column; gap:28px; }
+.eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  background:var(--og-muted); border:1px solid var(--og-border);
+  color:var(--orange); padding:6px 16px; border-radius:999px;
+  font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  width:fit-content;
+}
+.eyebrow-dot {
+  width:5px; height:5px; border-radius:999px; background:var(--orange);
+  animation:blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+.hero h1 {
+  font-size:clamp(52px, 6vw, 80px);
+  line-height:.95; letter-spacing:-.045em;
+}
+.hero h1 .line-2 {
+  background:var(--grad-o);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  display:block;
+}
+.hero-sub {
+  font-size:17px; line-height:1.7; color:var(--muted);
+  max-width:460px;
+}
+.hero-ctas { display:flex; gap:12px; flex-wrap:wrap; }
+.btn-primary-lg {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:700;
+  color:#fff; background:var(--grad-o);
+  padding:14px 28px; border-radius:11px; border:none; cursor:pointer;
+  box-shadow:0 4px 20px rgba(249,115,22,.3);
+  transition:transform .18s, box-shadow .18s;
+}
+.btn-primary-lg:hover { transform:translateY(-2px); box-shadow:0 8px 32px rgba(249,115,22,.35); }
+.btn-primary-lg svg { width:16px; height:16px; transition:transform .18s; }
+.btn-primary-lg:hover svg { transform:translateX(3px); }
+.btn-outline-lg {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:'DM Sans',sans-serif; font-size:15px; font-weight:600;
+  color:var(--muted); background:transparent;
+  padding:14px 24px; border-radius:11px;
+  border:1px solid var(--border-hi); cursor:pointer;
+  transition:border-color .2s, color .2s, background .2s;
+}
+.btn-outline-lg:hover { border-color:var(--og-border); color:var(--text); background:var(--og-muted); }
+.hero-note { font-size:12px; color:var(--dim); }
+
+/* ─────────────────────────────────────────────
+   LIVE CALL DEMO CARD (hero right)
+───────────────────────────────────────────── */
+.demo-card {
+  background:var(--bg-card);
+  border:1px solid var(--border-hi);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--shadow-card), 0 0 0 1px rgba(249,115,22,.08);
+  position:relative;
+}
+.demo-card::before {
+  content:''; position:absolute; top:-1px; left:0; right:0; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(249,115,22,.5), transparent);
+}
+.demo-titlebar {
+  display:flex; align-items:center; gap:10px;
+  padding:14px 18px;
+  border-bottom:1px solid var(--border);
+  background:rgba(255,255,255,.02);
+}
+.demo-dots { display:flex; gap:6px; }
+.demo-dots span {
+  width:10px; height:10px; border-radius:50%;
+}
+.dot-r { background:#EF4444; }
+.dot-y { background:#F59E0B; }
+.dot-g { background:#10B981; }
+.demo-title-label {
+  flex:1; text-align:center;
+  font-size:11px; font-weight:600; color:var(--dim);
+  letter-spacing:.05em; text-transform:uppercase;
+}
+.demo-live {
+  display:flex; align-items:center; gap:5px;
+  font-size:10px; font-weight:700; color:var(--green);
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.demo-live-dot {
+  width:6px; height:6px; border-radius:50%; background:var(--green);
+  animation:livepulse 1.5s ease-in-out infinite;
+}
+@keyframes livepulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+
+.demo-body { padding:20px; display:flex; flex-direction:column; gap:0; }
+
+/* Incoming call banner */
+.call-banner {
+  background:linear-gradient(135deg, rgba(249,115,22,.12), rgba(249,115,22,.05));
+  border:1px solid var(--og-border); border-radius:12px;
+  padding:14px 16px; display:flex; align-items:center; gap:12px;
+  margin-bottom:16px;
+}
+.call-icon {
+  width:38px; height:38px; border-radius:10px;
+  background:var(--grad-o); display:flex; align-items:center; justify-content:center;
+  flex-shrink:0; box-shadow:0 2px 12px rgba(249,115,22,.35);
+  animation:ring .6s ease-in-out infinite alternate;
+}
+@keyframes ring { from{transform:rotate(-8deg)} to{transform:rotate(8deg)} }
+.call-icon svg { width:18px; height:18px; color:#fff; stroke:currentColor; fill:none; }
+.call-info { flex:1; }
+.call-label { font-size:10px; color:var(--muted); font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+.call-name { font-family:'Syne',sans-serif; font-weight:700; font-size:16px; color:var(--text); }
+.call-num { font-size:12px; color:var(--dim); }
+.call-badge {
+  font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  padding:4px 10px; border-radius:999px;
+  background:var(--og-muted); border:1px solid var(--og-border); color:var(--orange);
+  animation:fadein .4s ease;
+}
+
+/* Conversation thread */
+.thread { display:flex; flex-direction:column; gap:10px; padding:4px 0 16px; }
+.msg {
+  display:flex; gap:10px; align-items:flex-start;
+  opacity:0; transform:translateY(8px);
+  transition:opacity .35s ease, transform .35s ease;
+}
+.msg.visible { opacity:1; transform:translateY(0); }
+.msg-avatar {
+  width:28px; height:28px; border-radius:8px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:11px; font-weight:800; font-family:'Syne',sans-serif;
+}
+.msg-ai .msg-avatar {
+  background:var(--grad-o); color:#fff;
+  box-shadow:0 2px 8px rgba(249,115,22,.3);
+}
+.msg-user .msg-avatar {
+  background:var(--bg-raised); border:1px solid var(--border-hi); color:var(--muted);
+}
+.msg-bubble {
+  border-radius:10px; padding:9px 13px;
+  font-size:13px; line-height:1.55; max-width:240px;
+}
+.msg-ai .msg-bubble {
+  background:var(--bg-raised); border:1px solid var(--border);
+  color:var(--text);
+}
+.msg-user .msg-bubble {
+  background:rgba(255,255,255,.04); border:1px solid var(--border);
+  color:var(--muted);
+}
+.msg-sender { font-size:10px; font-weight:700; margin-bottom:3px; color:var(--orange); letter-spacing:.04em; text-transform:uppercase; }
+.msg-ai .msg-sender { color:var(--orange); }
+.msg-user .msg-sender { color:var(--muted); }
+
+/* Typing indicator */
+.typing {
+  display:flex; gap:10px; align-items:center;
+  opacity:0; transition:opacity .3s;
+  padding-left:0;
+}
+.typing.visible { opacity:1; }
+.typing-dots { display:flex; gap:4px; padding:9px 13px; background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; }
+.typing-dots span {
+  width:6px; height:6px; border-radius:50%; background:var(--muted);
+  animation:bounce 1.2s ease-in-out infinite;
+}
+.typing-dots span:nth-child(2) { animation-delay:.15s; }
+.typing-dots span:nth-child(3) { animation-delay:.3s; }
+@keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-5px)} }
+
+/* Outcome bar */
+.outcome {
+  background:linear-gradient(135deg, rgba(16,185,129,.1), rgba(16,185,129,.04));
+  border:1px solid rgba(16,185,129,.25); border-radius:12px;
+  padding:12px 14px; display:flex; align-items:center; gap:10px;
+  opacity:0; transform:translateY(6px);
+  transition:opacity .4s ease, transform .4s ease;
+}
+.outcome.visible { opacity:1; transform:translateY(0); }
+.outcome-icon { color:var(--green); flex-shrink:0; }
+.outcome-icon svg { width:18px; height:18px; stroke:currentColor; fill:none; }
+.outcome-text { flex:1; font-size:12px; }
+.outcome-label { color:var(--green); font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.07em; }
+.outcome-val { color:var(--text); font-weight:600; font-size:13px; margin-top:1px; }
+
+/* Demo footer */
+.demo-footer {
+  border-top:1px solid var(--border); padding:12px 18px;
+  display:flex; align-items:center; justify-content:space-between;
+  background:rgba(255,255,255,.015);
+}
+.demo-footer-label { font-size:11px; color:var(--dim); }
+.demo-footer-stat { font-size:11px; color:var(--green); font-weight:600; }
+
+/* ─────────────────────────────────────────────
+   MARQUEE (social proof strip)
+───────────────────────────────────────────── */
+.marquee-wrap {
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  background:var(--bg-card); overflow:hidden; padding:20px 0;
+  position:relative;
+}
+.marquee-wrap::before,
+.marquee-wrap::after {
+  content:''; position:absolute; top:0; bottom:0; width:120px; z-index:1;
+}
+.marquee-wrap::before { left:0; background:linear-gradient(90deg, var(--bg-card), transparent); }
+.marquee-wrap::after { right:0; background:linear-gradient(-90deg, var(--bg-card), transparent); }
+.marquee-track {
+  display:flex; gap:0; width:max-content;
+  animation:marquee 28s linear infinite;
+}
+@keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+.marquee-item {
+  padding:0 44px;
+  font-size:13px; font-weight:600; color:var(--dim);
+  letter-spacing:.04em; white-space:nowrap;
+  border-right:1px solid var(--border);
+  display:flex; align-items:center; gap:8px;
+}
+.marquee-item span { color:var(--muted); }
+
+/* ─────────────────────────────────────────────
+   STATS GRID
+───────────────────────────────────────────── */
+.stats-section { padding:80px 48px; max-width:1200px; margin:0 auto; }
+.stats-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+.stat-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:16px; padding:28px 24px;
+  transition:border-color .2s, transform .2s;
+  cursor:default;
+}
+.stat-card:hover { border-color:var(--og-border); transform:translateY(-3px); }
+.stat-card:hover .stat-num { filter:brightness(1.1); }
+.stat-num {
+  font-family:'Syne',sans-serif; font-size:46px; font-weight:800;
+  color:var(--orange); letter-spacing:-.05em; line-height:1;
+  margin-bottom:8px; transition:filter .2s;
+}
+.stat-label { font-size:13px; color:var(--muted); line-height:1.5; }
+
+/* ─────────────────────────────────────────────
+   SECTION SHELL
+───────────────────────────────────────────── */
+.section { padding:100px 48px; max-width:1200px; margin:0 auto; }
+.section-eyebrow {
+  font-size:11px; font-weight:700; color:var(--orange);
+  letter-spacing:.1em; text-transform:uppercase; margin-bottom:16px;
+}
+.section-h {
+  font-size:clamp(40px,5vw,64px); line-height:1;
+  letter-spacing:-.04em; margin-bottom:20px;
+}
+.section-sub {
+  font-size:17px; color:var(--muted); max-width:500px; line-height:1.7;
+}
+.grad { background:var(--grad-o); -webkit-background-clip:text; background-clip:text; color:transparent; }
+
+/* Reveal animation */
+.reveal {
+  opacity:0; transform:translateY(32px);
+  transition:opacity .6s ease, transform .6s ease;
+}
+.reveal.in { opacity:1; transform:translateY(0); }
+.reveal-delay-1 { transition-delay:.1s; }
+.reveal-delay-2 { transition-delay:.2s; }
+.reveal-delay-3 { transition-delay:.3s; }
+.reveal-delay-4 { transition-delay:.4s; }
+
+/* ─────────────────────────────────────────────
+   PROBLEM
+───────────────────────────────────────────── */
+.problem-section {
+  background:var(--bg-card);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.pain-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-top:56px; }
+.pain-card {
+  background:var(--bg-raised); border:1px solid var(--border); border-radius:16px;
+  padding:32px 28px; position:relative; overflow:hidden;
+  transition:border-color .25s, transform .25s;
+}
+.pain-card::after {
+  content:''; position:absolute; inset:0; border-radius:16px;
+  background:linear-gradient(135deg, var(--og-muted), transparent);
+  opacity:0; transition:opacity .25s;
+}
+.pain-card:hover { border-color:var(--og-border); transform:translateY(-4px); }
+.pain-card:hover::after { opacity:1; }
+.pain-icon {
+  width:44px; height:44px; border-radius:12px;
+  background:var(--og-muted); border:1px solid var(--og-border);
+  display:flex; align-items:center; justify-content:center;
+  margin-bottom:20px; position:relative; z-index:1; color:var(--orange);
+  transition:box-shadow .25s;
+}
+.pain-card:hover .pain-icon { box-shadow:0 0 20px rgba(249,115,22,.25); }
+.pain-icon svg { width:20px; height:20px; stroke:currentColor; fill:none; stroke-width:1.75; }
+.pain-card h3 { font-size:20px; margin-bottom:10px; position:relative; z-index:1; }
+.pain-card p { font-size:14px; color:var(--muted); line-height:1.7; position:relative; z-index:1; }
+
+/* ─────────────────────────────────────────────
+   FEATURES TABS
+───────────────────────────────────────────── */
+.features-section { background:linear-gradient(to bottom, var(--bg), var(--bg-card)); }
+.features-header { max-width:600px; margin-bottom:60px; }
+.tab-nav {
+  display:flex; gap:4px; margin-bottom:32px;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:14px; padding:5px; width:fit-content;
+}
+.tab-btn {
+  font-family:'DM Sans',sans-serif; font-size:13px; font-weight:600;
+  color:var(--muted); background:none; border:none; cursor:pointer;
+  padding:9px 18px; border-radius:10px; white-space:nowrap;
+  transition:color .2s, background .2s;
+}
+.tab-btn.active { background:var(--bg-raised); color:var(--text); }
+.tab-btn:hover:not(.active) { color:var(--text); background:rgba(255,255,255,.04); }
+
+.features-stage {
+  display:grid; grid-template-columns:1fr 1fr; gap:40px; align-items:center;
+}
+.feature-info { display:none; flex-direction:column; gap:20px; }
+.feature-info.active { display:flex; animation:fadein .3s ease; }
+@keyframes fadein { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+
+.fi-icon {
+  width:52px; height:52px; border-radius:14px;
+  background:var(--grad-o); display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 16px rgba(249,115,22,.3);
+}
+.fi-icon svg { width:24px; height:24px; stroke:#fff; fill:none; stroke-width:1.75; }
+.fi-tag {
+  font-size:10px; font-weight:700; color:var(--orange);
+  letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px;
+}
+.fi-title { font-size:clamp(26px,3vw,36px); letter-spacing:-.04em; margin-bottom:12px; }
+.fi-body { font-size:15px; color:var(--muted); line-height:1.75; }
+.fi-points { list-style:none; display:flex; flex-direction:column; gap:10px; margin-top:8px; }
+.fi-points li {
+  display:flex; align-items:flex-start; gap:10px;
+  font-size:14px; color:var(--muted);
+}
+.fi-check { color:var(--green); flex-shrink:0; margin-top:2px; }
+.fi-check svg { width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2.5; }
+
+/* Feature mock preview */
+.feature-preview {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:18px; overflow:hidden;
+  box-shadow:var(--shadow-card);
+  min-height:380px; position:relative;
+  display:none;
+}
+.feature-preview.active { display:block; animation:fadein .35s ease; }
+.preview-top {
+  background:var(--bg-raised); border-bottom:1px solid var(--border);
+  padding:13px 16px; display:flex; align-items:center; gap:10px;
+}
+.preview-dots { display:flex; gap:5px; }
+.preview-dots span { width:10px; height:10px; border-radius:50%; }
+.preview-title { font-size:11px; color:var(--dim); letter-spacing:.04em; }
+
+/* CRM pipeline preview */
+.crm-preview { padding:16px; }
+.crm-cols { display:flex; gap:10px; }
+.crm-col { flex:1; }
+.crm-col-head {
+  font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:10px; padding:0 2px;
+}
+.crm-card {
+  background:var(--bg-raised); border:1px solid var(--border);
+  border-radius:10px; padding:12px; margin-bottom:8px;
+  transition:border-color .2s, transform .2s;
+  cursor:pointer;
+}
+.crm-card:hover { border-color:var(--og-border); transform:translateY(-1px); }
+.crm-card-name { font-size:12px; font-weight:700; color:var(--text); margin-bottom:4px; font-family:'Syne',sans-serif; }
+.crm-card-val { font-size:11px; color:var(--orange); font-weight:700; }
+.crm-card-meta { font-size:11px; color:var(--dim); }
+.crm-badge {
+  display:inline-block; font-size:9px; font-weight:700; letter-spacing:.06em;
+  text-transform:uppercase; padding:2px 7px; border-radius:999px; margin-top:6px;
+}
+.badge-new { background:rgba(59,130,246,.12); color:#3B82F6; border:1px solid rgba(59,130,246,.25); }
+.badge-est { background:var(--og-muted); color:var(--orange); border:1px solid var(--og-border); }
+.badge-won { background:rgba(16,185,129,.12); color:var(--green); border:1px solid rgba(16,185,129,.25); }
+
+/* Receptionist preview */
+.recept-preview { padding:16px; display:flex; flex-direction:column; gap:10px; }
+.active-call {
+  background:linear-gradient(135deg, rgba(249,115,22,.1), transparent);
+  border:1px solid var(--og-border); border-radius:12px; padding:14px;
+}
+.ac-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+.ac-label { font-size:10px; font-weight:700; color:var(--orange); letter-spacing:.08em; text-transform:uppercase; }
+.ac-timer { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--text); }
+.ac-info h4 { font-family:'Syne',sans-serif; font-size:16px; font-weight:800; }
+.ac-info p { font-size:12px; color:var(--muted); }
+.waveform {
+  display:flex; align-items:center; gap:3px; height:28px; margin-top:10px;
+}
+.wave-bar {
+  width:3px; background:var(--orange); border-radius:2px; opacity:.7;
+  animation:wave var(--d, .8s) ease-in-out infinite alternate;
+}
+@keyframes wave { from{height:4px} to{height:var(--h,20px)} }
+
+/* Estimate preview */
+.est-preview { padding:16px; }
+.est-header { margin-bottom:12px; }
+.est-header h4 { font-family:'Syne',sans-serif; font-size:14px; font-weight:800; }
+.est-header p { font-size:11px; color:var(--muted); }
+.est-items { display:flex; flex-direction:column; gap:6px; margin-bottom:12px; }
+.est-item {
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--bg-raised); border:1px solid var(--border); border-radius:8px;
+  padding:9px 12px;
+}
+.est-item-name { font-size:12px; font-weight:600; color:var(--text); }
+.est-item-price { font-size:12px; font-weight:700; color:var(--orange); font-family:'Syne',sans-serif; }
+.est-total {
+  display:flex; justify-content:space-between; align-items:center;
+  border-top:1px solid var(--border); padding-top:10px;
+}
+.est-total-label { font-size:12px; color:var(--muted); }
+.est-total-val { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--orange); }
+
+/* ─────────────────────────────────────────────
+   HOW IT WORKS — vertical timeline
+───────────────────────────────────────────── */
+.how-section { position:relative; }
+.how-grid { display:grid; grid-template-columns:1fr 1fr; gap:80px; align-items:start; margin-top:64px; }
+.timeline { position:relative; display:flex; flex-direction:column; gap:0; }
+.timeline::before {
+  content:''; position:absolute; left:20px; top:24px; bottom:24px; width:1px;
+  background:linear-gradient(to bottom, var(--orange), var(--og-border), transparent);
+}
+.tl-step {
+  display:flex; gap:24px; padding:24px 0; cursor:pointer;
+  transition:all .2s;
+}
+.tl-num {
+  width:40px; height:40px; border-radius:12px; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Syne',sans-serif; font-weight:800; font-size:16px;
+  background:var(--bg-raised); border:1px solid var(--border); color:var(--muted);
+  transition:all .2s; position:relative; z-index:1;
+}
+.tl-step.active .tl-num {
+  background:var(--grad-o); color:#fff; border-color:transparent;
+  box-shadow:0 0 20px rgba(249,115,22,.35);
+}
+.tl-body { padding-top:8px; }
+.tl-title {
+  font-family:'Syne',sans-serif; font-weight:800; font-size:18px;
+  color:var(--muted); margin-bottom:6px; transition:color .2s;
+}
+.tl-step.active .tl-title { color:var(--text); }
+.tl-desc { font-size:14px; color:var(--dim); line-height:1.7; max-height:0; overflow:hidden; transition:max-height .4s ease, opacity .3s ease; opacity:0; }
+.tl-step.active .tl-desc { max-height:120px; opacity:1; }
+
+/* How right: rotating screen mock */
+.how-screen {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:20px; overflow:hidden; box-shadow:var(--shadow-card);
+  position:sticky; top:120px;
+}
+.how-screen-panel { display:none; padding:24px; min-height:320px; }
+.how-screen-panel.active { display:block; animation:fadein .35s ease; }
+.phone-mock {
+  background:var(--bg-raised); border:1px solid var(--og-border);
+  border-radius:14px; padding:16px; text-align:center;
+}
+.phone-caller { font-family:'Syne',sans-serif; font-size:22px; font-weight:800; margin:8px 0 4px; }
+.phone-num { font-size:13px; color:var(--muted); margin-bottom:16px; }
+.phone-actions { display:flex; gap:12px; justify-content:center; }
+.phone-btn {
+  width:48px; height:48px; border-radius:50%; border:none; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+}
+.phone-btn.decline { background:#EF4444; }
+.phone-btn.accept { background:#10B981; }
+
+/* ─────────────────────────────────────────────
+   PRICING
+───────────────────────────────────────────── */
+.pricing-section {
+  background:var(--bg-card);
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.pricing-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; max-width:820px; margin:56px auto 0; }
+.plan {
+  background:var(--bg-raised); border:1px solid var(--border);
+  border-radius:20px; padding:36px 32px;
+  transition:transform .2s, border-color .2s, box-shadow .2s;
+}
+.plan:hover { transform:translateY(-4px); border-color:var(--border-hi); box-shadow:0 16px 48px rgba(0,0,0,.3); }
+.plan.highlight {
+  border:2px solid var(--orange);
+  box-shadow:var(--shadow-o), 0 0 0 1px rgba(249,115,22,.1);
+  position:relative;
+}
+.plan.highlight:hover { transform:translateY(-4px) scale(1.01); }
+.plan-chip {
+  position:absolute; top:-13px; left:50%; transform:translateX(-50%);
+  background:var(--grad-o); color:#fff; border:none;
+  font-size:10px; font-weight:800; letter-spacing:.1em; text-transform:uppercase;
+  padding:4px 16px; border-radius:999px; box-shadow:0 2px 12px rgba(249,115,22,.4);
+  white-space:nowrap;
+}
+.plan-tier { font-size:12px; font-weight:700; color:var(--muted); letter-spacing:.06em; text-transform:uppercase; margin-bottom:10px; }
+.plan-price {
+  font-family:'Syne',sans-serif; font-size:56px; font-weight:800;
+  letter-spacing:-.05em; line-height:1;
+  background:var(--grad-o); -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.plan-cadence { font-size:13px; color:var(--dim); margin-bottom:24px; }
+.plan-divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
+.plan-list { list-style:none; display:flex; flex-direction:column; gap:11px; margin-bottom:28px; }
+.plan-list li { display:flex; align-items:flex-start; gap:10px; font-size:14px; color:var(--muted); }
+.plan-list li svg { width:15px; height:15px; stroke:var(--green); fill:none; stroke-width:2.5; flex-shrink:0; margin-top:2px; }
+.plan-btn {
+  display:block; width:100%; text-align:center;
+  font-family:'DM Sans',sans-serif; font-size:14px; font-weight:700;
+  padding:13px; border-radius:11px; cursor:pointer; border:none;
+  transition:all .2s;
+}
+.plan-btn.primary {
+  background:var(--grad-o); color:#fff;
+  box-shadow:0 4px 16px rgba(249,115,22,.25);
+}
+.plan-btn.primary:hover { box-shadow:var(--shadow-o); transform:translateY(-1px); }
+.plan-btn.secondary {
+  background:transparent; color:var(--orange);
+  border:1px solid var(--og-border);
+}
+.plan-btn.secondary:hover { background:var(--og-muted); }
+
+/* ─────────────────────────────────────────────
+   CTA SECTION
+───────────────────────────────────────────── */
+.cta-section { padding:80px 48px 100px; }
+.cta-block {
+  max-width:1200px; margin:0 auto;
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:28px; padding:80px 60px;
+  display:grid; grid-template-columns:1fr auto; gap:40px; align-items:center;
+  position:relative; overflow:hidden;
+}
+.cta-block::before {
+  content:''; position:absolute; right:-100px; top:50%; transform:translateY(-50%);
+  width:500px; height:500px; border-radius:50%;
+  background:var(--orange); opacity:.05; filter:blur(80px); pointer-events:none;
+}
+.cta-block::after {
+  content:''; position:absolute; top:-1px; left:60px; right:60px; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(249,115,22,.4), transparent);
+}
+.cta-eyebrow { font-size:11px; font-weight:700; color:var(--orange); letter-spacing:.1em; text-transform:uppercase; margin-bottom:14px; }
+.cta-h { font-size:clamp(34px,4vw,52px); letter-spacing:-.04em; margin-bottom:14px; line-height:1.05; }
+.cta-sub { font-size:16px; color:var(--muted); max-width:440px; line-height:1.7; }
+.cta-action { display:flex; flex-direction:column; gap:10px; align-items:center; flex-shrink:0; }
+.cta-note { font-size:12px; color:var(--dim); text-align:center; }
+
+/* ─────────────────────────────────────────────
+   FOOTER
+───────────────────────────────────────────── */
+.footer { border-top:1px solid var(--border); background:var(--bg-card); padding:60px 48px 36px; }
+.footer-inner { max-width:1200px; margin:0 auto; }
+.footer-top { display:grid; grid-template-columns:2fr 1fr 1fr; gap:60px; margin-bottom:48px; }
+.footer-brand-logo { display:flex; align-items:center; gap:10px; margin-bottom:14px; }
+.footer-brand p { font-size:14px; color:var(--muted); line-height:1.7; max-width:260px; }
+.footer-col h4 { font-family:'Syne',sans-serif; font-size:13px; font-weight:700; color:var(--text); margin-bottom:16px; }
+.footer-col ul { list-style:none; display:flex; flex-direction:column; gap:10px; }
+.footer-col ul li a { font-size:13px; color:var(--muted); transition:color .2s; }
+.footer-col ul li a:hover { color:var(--orange); }
+.footer-bottom {
+  display:flex; align-items:center; justify-content:space-between;
+  border-top:1px solid var(--border); padding-top:24px;
+  font-size:12px; color:var(--dim);
+}
+
+/* ─────────────────────────────────────────────
+   RESPONSIVE
+───────────────────────────────────────────── */
+@media (max-width:960px) {
+  .nav { padding:0 24px; }
+  .nav-links { display:none; }
+  .hero { padding:100px 24px 60px; }
+  .hero-inner { grid-template-columns:1fr; gap:48px; }
+  .stats-section { padding:48px 24px; }
+  .stats-grid { grid-template-columns:1fr 1fr; }
+  .section { padding:72px 24px; }
+  .pain-grid { grid-template-columns:1fr; }
+  .features-stage { grid-template-columns:1fr; }
+  .how-grid { grid-template-columns:1fr; gap:40px; }
+  .how-screen { position:relative; top:auto; }
+  .pricing-grid { grid-template-columns:1fr; max-width:420px; }
+  .plan.highlight { transform:none; }
+  .cta-block { grid-template-columns:1fr; text-align:center; padding:48px 32px; }
+  .cta-sub { max-width:100%; }
+  .footer-top { grid-template-columns:1fr; gap:40px; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+  .marquee-track { animation:none; }
+  * { transition-duration:.01ms !important; animation-duration:.01ms !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav class="nav" id="mainNav">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-name">Masmer <em>AI</em></div>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how">How It Works</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost">Sign in</button>
+    <button class="btn-orange">
+      Start Free
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     HERO
+══════════════════════════════════════════ -->
+<section class="hero">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <div class="hero-inner">
+
+    <!-- Left: Headline -->
+    <div class="hero-left reveal">
+      <div class="eyebrow">
+        <div class="eyebrow-dot"></div>
+        Built by a contractor · Built for contractors
+      </div>
+      <h1>
+        The AI Brain
+        <span class="line-2">Behind Your<br>Business</span>
+      </h1>
+      <p class="hero-sub">
+        Masmer answers your calls, books estimates, follows up leads,
+        and runs your CRM — 24 hours a day. You just do the work.
+      </p>
+      <div class="hero-ctas">
+        <button class="btn-primary-lg">
+          Start for Free
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </button>
+        <button class="btn-outline-lg">Watch it work ↓</button>
+      </div>
+      <p class="hero-note">No credit card · First month free for the first 10 contractors</p>
+    </div>
+
+    <!-- Right: Live Call Demo -->
+    <div class="demo-card reveal reveal-delay-2" id="demoCard">
+      <div class="demo-titlebar">
+        <div class="demo-dots">
+          <span class="dot-r"></span>
+          <span class="dot-y"></span>
+          <span class="dot-g"></span>
+        </div>
+        <div class="demo-title-label">Masmer AI Receptionist</div>
+        <div class="demo-live"><div class="demo-live-dot"></div> Live</div>
+      </div>
+      <div class="demo-body">
+        <!-- Incoming call -->
+        <div class="call-banner" id="callBanner">
+          <div class="call-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.07 6.07l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          </div>
+          <div class="call-info">
+            <div class="call-label">Incoming call</div>
+            <div class="call-name">Mike Salvatore</div>
+            <div class="call-num">(718) 555-0142 · New York, NY</div>
+          </div>
+          <div class="call-badge" id="callBadge">Answering…</div>
+        </div>
+
+        <!-- Conversation thread -->
+        <div class="thread" id="thread">
+          <div class="msg msg-ai" id="m1">
+            <div class="msg-avatar">M</div>
+            <div>
+              <div class="msg-sender">Masmer AI</div>
+              <div class="msg-bubble">Hey Mike! Thanks for calling. How can I help you today?</div>
+            </div>
+          </div>
+          <div class="msg msg-user" id="m2">
+            <div class="msg-avatar">MS</div>
+            <div>
+              <div class="msg-sender">Mike Salvatore</div>
+              <div class="msg-bubble">Yeah hi, I need a quote on a bathroom remodel, gut job.</div>
+            </div>
+          </div>
+          <div class="msg msg-ai" id="m3">
+            <div class="msg-avatar">M</div>
+            <div>
+              <div class="msg-sender">Masmer AI</div>
+              <div class="msg-bubble">Perfect — we do those all the time. What's the square footage and when are you looking to start?</div>
+            </div>
+          </div>
+          <div class="msg msg-user" id="m4">
+            <div class="msg-avatar">MS</div>
+            <div>
+              <div class="msg-sender">Mike Salvatore</div>
+              <div class="msg-bubble">About 80 sq ft. Ideally next month.</div>
+            </div>
+          </div>
+          <div class="msg msg-ai" id="m5">
+            <div class="msg-avatar">M</div>
+            <div>
+              <div class="msg-sender">Masmer AI</div>
+              <div class="msg-bubble">Great fit. I can book you a free estimate — does Tuesday at 10am or Thursday at 2pm work?</div>
+            </div>
+          </div>
+          <div class="msg msg-user" id="m6">
+            <div class="msg-avatar">MS</div>
+            <div>
+              <div class="msg-sender">Mike Salvatore</div>
+              <div class="msg-bubble">Tuesday at 10 works perfectly.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Typing indicator -->
+        <div class="typing" id="typing" style="padding-left:38px;">
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+
+        <!-- Outcome -->
+        <div class="outcome" id="outcome">
+          <div class="outcome-icon">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div class="outcome-text">
+            <div class="outcome-label">Estimate Booked ✓</div>
+            <div class="outcome-val">Tuesday, Jul 8 · 10:00am · Mike Salvatore</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="demo-footer">
+        <span class="demo-footer-label">Lead automatically added to CRM pipeline</span>
+        <span class="demo-footer-stat">0 calls missed today</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     MARQUEE
+══════════════════════════════════════════ -->
+<div class="marquee-wrap">
+  <div class="marquee-track" id="marqueeTrack">
+    <div class="marquee-item">🏗 <span>General Contractors</span></div>
+    <div class="marquee-item">🔧 <span>Plumbers</span></div>
+    <div class="marquee-item">⚡ <span>Electricians</span></div>
+    <div class="marquee-item">🏠 <span>Remodelers</span></div>
+    <div class="marquee-item">🔑 <span>HVAC Techs</span></div>
+    <div class="marquee-item">🪟 <span>Window Companies</span></div>
+    <div class="marquee-item">🏗 <span>Roofers</span></div>
+    <div class="marquee-item">🪣 <span>Painters</span></div>
+    <div class="marquee-item">🔩 <span>Handymen</span></div>
+    <div class="marquee-item">🌿 <span>Landscapers</span></div>
+    <div class="marquee-item">🚿 <span>Bathroom Specialists</span></div>
+    <div class="marquee-item">🏗 <span>General Contractors</span></div>
+    <div class="marquee-item">🔧 <span>Plumbers</span></div>
+    <div class="marquee-item">⚡ <span>Electricians</span></div>
+    <div class="marquee-item">🏠 <span>Remodelers</span></div>
+    <div class="marquee-item">🔑 <span>HVAC Techs</span></div>
+    <div class="marquee-item">🪟 <span>Window Companies</span></div>
+    <div class="marquee-item">🏗 <span>Roofers</span></div>
+    <div class="marquee-item">🪣 <span>Painters</span></div>
+    <div class="marquee-item">🔩 <span>Handymen</span></div>
+    <div class="marquee-item">🌿 <span>Landscapers</span></div>
+    <div class="marquee-item">🚿 <span>Bathroom Specialists</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     STATS
+══════════════════════════════════════════ -->
+<div class="stats-section">
+  <div class="stats-grid">
+    <div class="stat-card reveal">
+      <div class="stat-num" data-target="17">$0K</div>
+      <div class="stat-label">average monthly revenue lost to missed calls</div>
+    </div>
+    <div class="stat-card reveal reveal-delay-1">
+      <div class="stat-num">24/7</div>
+      <div class="stat-label">AI receptionist uptime — never sleeps, never misses</div>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <div class="stat-num" data-count="3">0 min</div>
+      <div class="stat-label">to generate a full estimate with materials and contract</div>
+    </div>
+    <div class="stat-card reveal reveal-delay-3">
+      <div class="stat-num">$199</div>
+      <div class="stat-label">starting price — less than one lost job per month</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PROBLEM
+══════════════════════════════════════════ -->
+<div class="problem-section" id="problem">
+  <div class="section">
+    <div class="section-eyebrow reveal">The Problem</div>
+    <h2 class="section-h reveal reveal-delay-1">
+      You're losing <span class="grad">$17,000/month</span><br>
+      to your voicemail
+    </h2>
+    <p class="section-sub reveal reveal-delay-2">
+      Contractors don't lose jobs because they're bad at the work. They lose them because they couldn't pick up the phone.
+    </p>
+    <div class="pain-grid">
+      <div class="pain-card reveal reveal-delay-1">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.07 6.07l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+        </div>
+        <h3>You're on the job site</h3>
+        <p>You're hands-deep in a renovation. Your phone rings. You can't answer. That lead just called your competitor.</p>
+      </div>
+      <div class="pain-card reveal reveal-delay-2">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M2 20c0-4 4-7 10-7"/><line x1="20" y1="12" x2="20" y2="18"/><line x1="17" y1="15" x2="23" y2="15"/></svg>
+        </div>
+        <h3>Leads call once</h3>
+        <p>Studies show 78% of leads go with the first company that responds. If that's not you, it's someone else — forever.</p>
+      </div>
+      <div class="pain-card reveal reveal-delay-3">
+        <div class="pain-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <h3>Admin eats your evenings</h3>
+        <p>Estimates, follow-ups, scheduling — hours of work every night just to keep up. That's time you'll never get back.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FEATURES
+══════════════════════════════════════════ -->
+<div class="features-section" id="features">
+  <div class="section">
+    <div class="features-header">
+      <div class="section-eyebrow reveal">The Solution</div>
+      <h2 class="section-h reveal reveal-delay-1">Five AI agents.<br><span class="grad">One platform.</span></h2>
+      <p class="section-sub reveal reveal-delay-2">Everything your front office needs to run without you.</p>
+    </div>
+
+    <div class="tab-nav reveal">
+      <button class="tab-btn active" onclick="setFeature(0, this)">📞 Receptionist</button>
+      <button class="tab-btn" onclick="setFeature(1, this)">📋 CRM Pipeline</button>
+      <button class="tab-btn" onclick="setFeature(2, this)">📄 Eliko Estimator</button>
+      <button class="tab-btn" onclick="setFeature(3, this)">📅 Scheduler</button>
+    </div>
+
+    <div class="features-stage">
+
+      <!-- Info panels -->
+      <div>
+        <!-- Panel 0: Receptionist -->
+        <div class="feature-info active" id="fi-0">
+          <div class="fi-icon"><svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4A2 2 0 0 1 3.6 1.23h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6.07 6.07l.94-.94a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div>
+          <div>
+            <div class="fi-tag">AI Receptionist</div>
+            <h3 class="fi-title">Never miss a call again</h3>
+            <p class="fi-body">Masmer picks up every call 24/7, sounds like a real person, qualifies the lead, and books the appointment — all without you.</p>
+          </div>
+          <ul class="fi-points">
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Answers in under 3 seconds, every time</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Qualifies lead before adding to CRM</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Books estimate appointments automatically</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Powered by VAPI voice AI</li>
+          </ul>
+        </div>
+
+        <!-- Panel 1: CRM -->
+        <div class="feature-info" id="fi-1">
+          <div class="fi-icon"><svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+          <div>
+            <div class="fi-tag">Lead & Customer CRM</div>
+            <h3 class="fi-title">Every lead tracked, automatically</h3>
+            <p class="fi-body">Your full pipeline — from first call to final invoice — organized without a spreadsheet in sight. Kanban view, project tracking, customer history.</p>
+          </div>
+          <ul class="fi-points">
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Leads auto-added from every call</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Kanban pipeline: New → Estimate → Won</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Full customer and project history</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Built on Supabase real-time</li>
+          </ul>
+        </div>
+
+        <!-- Panel 2: Estimate -->
+        <div class="feature-info" id="fi-2">
+          <div class="fi-icon"><svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+          <div>
+            <div class="fi-tag">Eliko — AI Estimator</div>
+            <h3 class="fi-title">A full estimate in 3 minutes</h3>
+            <p class="fi-body">Describe the job. Eliko builds a professional estimate with a Home Depot materials cart, payment schedule, and ready-to-sign contract.</p>
+          </div>
+          <ul class="fi-points">
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Describe job in plain English</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Home Depot materials list built automatically</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Professional PDF ready to send</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Payment schedule + contract included</li>
+          </ul>
+        </div>
+
+        <!-- Panel 3: Scheduler -->
+        <div class="feature-info" id="fi-3">
+          <div class="fi-icon"><svg viewBox="0 0 24 24" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+          <div>
+            <div class="fi-tag">Job Scheduler</div>
+            <h3 class="fi-title">Your calendar, on autopilot</h3>
+            <p class="fi-body">The AI books appointments, sends confirmation texts, and follows up automatically to cut no-shows. Your schedule fills itself.</p>
+          </div>
+          <ul class="fi-points">
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Books straight from the AI call</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Sends confirmation + reminder texts</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Reduces no-shows dramatically</li>
+            <li><span class="fi-check"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></span>Planner view with job details</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Preview panels -->
+      <div>
+        <!-- Receptionist preview -->
+        <div class="feature-preview active" id="fp-0">
+          <div class="preview-top">
+            <div class="preview-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <div class="preview-title">Masmer Receptionist · Live</div>
+          </div>
+          <div class="recept-preview">
+            <div class="active-call">
+              <div class="ac-head">
+                <div class="ac-label">🔴 Active Call</div>
+                <div class="ac-timer" id="callTimer">0:24</div>
+              </div>
+              <div class="ac-info">
+                <h4>Mike Salvatore</h4>
+                <p>(718) 555-0142 · Bathroom remodel · 80 sq ft</p>
+              </div>
+              <div class="waveform" id="waveform"></div>
+            </div>
+            <div style="display:flex; gap:10px; margin-top:10px;">
+              <div style="flex:1; background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px;">
+                <div style="font-size:10px; color:var(--muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px;">Qualified Lead</div>
+                <div style="font-size:13px; font-weight:600; color:var(--text);">Bathroom Remodel</div>
+                <div style="font-size:11px; color:var(--dim);">80 sq ft · Est. $8–12K</div>
+              </div>
+              <div style="flex:1; background:rgba(16,185,129,.06); border:1px solid rgba(16,185,129,.2); border-radius:10px; padding:12px;">
+                <div style="font-size:10px; color:var(--green); font-weight:700; letter-spacing:.06em; text-transform:uppercase; margin-bottom:6px;">Booking…</div>
+                <div style="font-size:13px; font-weight:600; color:var(--text);">Tue, Jul 8</div>
+                <div style="font-size:11px; color:var(--dim);">10:00am · Estimate</div>
+              </div>
+            </div>
+            <div style="background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px; margin-top:10px; display:flex; align-items:center; justify-content:space-between;">
+              <div style="font-size:12px; color:var(--muted);">Calls answered today</div>
+              <div style="font-family:'Syne',sans-serif; font-size:22px; font-weight:800; color:var(--orange);">8</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CRM preview -->
+        <div class="feature-preview" id="fp-1">
+          <div class="preview-top">
+            <div class="preview-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <div class="preview-title">Masmer CRM · Pipeline</div>
+          </div>
+          <div class="crm-preview">
+            <div class="crm-cols">
+              <div class="crm-col">
+                <div class="crm-col-head">New Leads</div>
+                <div class="crm-card"><div class="crm-card-name">Mike Salvatore</div><div class="crm-card-val">$10,500</div><div class="crm-card-meta">Bathroom remodel</div><span class="crm-badge badge-new">New</span></div>
+                <div class="crm-card"><div class="crm-card-name">James Rivera</div><div class="crm-card-val">$6,200</div><div class="crm-card-meta">Kitchen backsplash</div><span class="crm-badge badge-new">New</span></div>
+              </div>
+              <div class="crm-col">
+                <div class="crm-col-head">Estimating</div>
+                <div class="crm-card"><div class="crm-card-name">Sarah Chen</div><div class="crm-card-val">$24,800</div><div class="crm-card-meta">Full kitchen remodel</div><span class="crm-badge badge-est">Estimate Sent</span></div>
+                <div class="crm-card"><div class="crm-card-name">Tony Morales</div><div class="crm-card-val">$8,900</div><div class="crm-card-meta">Deck construction</div><span class="crm-badge badge-est">Pending</span></div>
+              </div>
+              <div class="crm-col">
+                <div class="crm-col-head">Won ✓</div>
+                <div class="crm-card"><div class="crm-card-name">David Kim</div><div class="crm-card-val">$15,400</div><div class="crm-card-meta">Basement finishing</div><span class="crm-badge badge-won">Won</span></div>
+                <div class="crm-card"><div class="crm-card-name">Lisa Park</div><div class="crm-card-val">$5,200</div><div class="crm-card-meta">Bathroom tile</div><span class="crm-badge badge-won">Won</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Estimate preview -->
+        <div class="feature-preview" id="fp-2">
+          <div class="preview-top">
+            <div class="preview-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <div class="preview-title">Eliko · Estimate Generator</div>
+          </div>
+          <div class="est-preview">
+            <div class="est-header">
+              <h4>Bathroom Remodel — Salvatore Residence</h4>
+              <p style="font-size:11px; color:var(--dim); margin-top:3px;">80 sq ft · Full gut renovation · Generated in 2m 38s</p>
+            </div>
+            <div class="est-items">
+              <div class="est-item"><span class="est-item-name">Demo & removal</span><span class="est-item-price">$1,200</span></div>
+              <div class="est-item"><span class="est-item-name">Plumbing rough-in</span><span class="est-item-price">$2,400</span></div>
+              <div class="est-item"><span class="est-item-name">Tile (floor + walls)</span><span class="est-item-price">$2,800</span></div>
+              <div class="est-item"><span class="est-item-name">Fixtures & vanity</span><span class="est-item-price">$1,900</span></div>
+              <div class="est-item"><span class="est-item-name">Labor & cleanup</span><span class="est-item-price">$2,200</span></div>
+            </div>
+            <div class="est-total">
+              <span class="est-total-label">Total Estimate</span>
+              <span class="est-total-val">$10,500</span>
+            </div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <button style="flex:1; background:var(--grad-o); color:#fff; border:none; border-radius:8px; padding:10px; font-size:12px; font-weight:700; cursor:pointer; font-family:'DM Sans',sans-serif;">📄 Send PDF</button>
+              <button style="flex:1; background:var(--bg-raised); border:1px solid var(--border); color:var(--muted); border-radius:8px; padding:10px; font-size:12px; font-weight:600; cursor:pointer; font-family:'DM Sans',sans-serif;">🛒 HD Cart</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Scheduler preview -->
+        <div class="feature-preview" id="fp-3">
+          <div class="preview-top">
+            <div class="preview-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+            <div class="preview-title">Masmer · Schedule — Jul 2026</div>
+          </div>
+          <div style="padding:16px; display:flex; flex-direction:column; gap:8px;">
+            <div style="background:var(--bg-raised); border-left:3px solid var(--orange); border-radius:10px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="font-size:10px; font-weight:700; color:var(--orange); letter-spacing:.07em; text-transform:uppercase;">Tue Jul 8 · 10:00am</span>
+                <span style="font-size:10px; background:var(--og-muted); border:1px solid var(--og-border); color:var(--orange); padding:2px 8px; border-radius:999px; font-weight:700;">Estimate</span>
+              </div>
+              <div style="font-size:14px; font-weight:700; color:var(--text); font-family:'Syne',sans-serif;">Mike Salvatore</div>
+              <div style="font-size:12px; color:var(--dim);">Bathroom remodel · 80 sq ft · Brooklyn, NY</div>
+            </div>
+            <div style="background:var(--bg-raised); border-left:3px solid var(--green); border-radius:10px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="font-size:10px; font-weight:700; color:var(--green); letter-spacing:.07em; text-transform:uppercase;">Wed Jul 9 · 9:00am</span>
+                <span style="font-size:10px; background:rgba(16,185,129,.1); border:1px solid rgba(16,185,129,.25); color:var(--green); padding:2px 8px; border-radius:999px; font-weight:700;">Job Start</span>
+              </div>
+              <div style="font-size:14px; font-weight:700; color:var(--text); font-family:'Syne',sans-serif;">David Kim</div>
+              <div style="font-size:12px; color:var(--dim);">Basement finishing · Phase 1 of 3</div>
+            </div>
+            <div style="background:var(--bg-raised); border-left:3px solid #3B82F6; border-radius:10px; padding:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                <span style="font-size:10px; font-weight:700; color:#3B82F6; letter-spacing:.07em; text-transform:uppercase;">Thu Jul 10 · 2:00pm</span>
+                <span style="font-size:10px; background:rgba(59,130,246,.1); border:1px solid rgba(59,130,246,.25); color:#3B82F6; padding:2px 8px; border-radius:999px; font-weight:700;">Estimate</span>
+              </div>
+              <div style="font-size:14px; font-weight:700; color:var(--text); font-family:'Syne',sans-serif;">Sarah Chen</div>
+              <div style="font-size:12px; color:var(--dim);">Kitchen remodel walkthrough</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     HOW IT WORKS
+══════════════════════════════════════════ -->
+<div id="how">
+  <div class="section how-section">
+    <div class="section-eyebrow reveal">How It Works</div>
+    <h2 class="section-h reveal reveal-delay-1">Up in minutes.<br><span class="grad">Running forever.</span></h2>
+
+    <div class="how-grid">
+      <div class="timeline">
+        <div class="tl-step active" onclick="setStep(0, this)">
+          <div class="tl-num">1</div>
+          <div class="tl-body">
+            <div class="tl-title">Forward your phone number</div>
+            <div class="tl-desc">Forward your existing business number to Masmer, or get a new one. Your AI receptionist goes live instantly — no training needed.</div>
+          </div>
+        </div>
+        <div class="tl-step" onclick="setStep(1, this)">
+          <div class="tl-num">2</div>
+          <div class="tl-body">
+            <div class="tl-title">Leads flow into your CRM</div>
+            <div class="tl-desc">Every call creates a lead card automatically. Qualified, categorized, and ready for your review — nothing falls through the cracks.</div>
+          </div>
+        </div>
+        <div class="tl-step" onclick="setStep(2, this)">
+          <div class="tl-num">3</div>
+          <div class="tl-body">
+            <div class="tl-title">Send estimates in minutes</div>
+            <div class="tl-desc">Describe the job to Eliko. Get a full PDF estimate, materials list, and payment schedule — ready to send to the customer from your phone.</div>
+          </div>
+        </div>
+        <div class="tl-step" onclick="setStep(3, this)">
+          <div class="tl-num">4</div>
+          <div class="tl-body">
+            <div class="tl-title">Close more, stress less</div>
+            <div class="tl-desc">Masmer follows up with leads, sends appointment reminders, and keeps your pipeline full — while you focus on actually doing the work.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="how-screen">
+        <div class="preview-top" style="padding:13px 16px;">
+          <div class="preview-dots"><span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span></div>
+          <div class="preview-title">Masmer AI</div>
+        </div>
+        <div class="how-screen-panel active" id="hs-0">
+          <div style="text-align:center; padding:20px 0 10px;">
+            <div style="font-size:48px; margin-bottom:12px;">📱</div>
+            <h4 style="font-size:20px; margin-bottom:8px;">Forward your number</h4>
+            <p style="font-size:13px; color:var(--muted); margin-bottom:20px; line-height:1.6;">Takes 60 seconds. Forward your number in your phone settings, paste it into Masmer, and you're live.</p>
+            <div style="background:var(--bg-raised); border:1px solid var(--og-border); border-radius:12px; padding:16px; text-align:left;">
+              <div style="font-size:10px; color:var(--orange); font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:8px;">Your Masmer Number</div>
+              <div style="font-family:'Syne',sans-serif; font-size:24px; font-weight:800; color:var(--text);">(917) 555-MASMER</div>
+              <div style="font-size:12px; color:var(--muted); margin-top:4px;">Ready to receive calls · 24/7</div>
+            </div>
+          </div>
+        </div>
+        <div class="how-screen-panel" id="hs-1">
+          <div style="padding:4px 0;">
+            <div style="font-size:12px; color:var(--muted); margin-bottom:12px; font-weight:600;">Pipeline updated — 3 new leads today</div>
+            <div style="display:flex; flex-direction:column; gap:8px;">
+              <div style="display:flex; align-items:center; gap:10px; background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px;">
+                <div style="width:8px; height:8px; border-radius:50%; background:var(--orange); flex-shrink:0;"></div>
+                <div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--text); font-family:'Syne',sans-serif;">Mike Salvatore</div><div style="font-size:11px; color:var(--dim);">Bathroom remodel · Called 4 min ago</div></div>
+                <div style="font-size:13px; font-weight:700; color:var(--orange); font-family:'Syne',sans-serif;">$10K</div>
+              </div>
+              <div style="display:flex; align-items:center; gap:10px; background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px;">
+                <div style="width:8px; height:8px; border-radius:50%; background:#3B82F6; flex-shrink:0;"></div>
+                <div style="flex:1;"><div style="font-size:13px; font-weight:700; color:var(--text); font-family:'Syne',sans-serif;">James Rivera</div><div style="font-size:11px; color:var(--dim);">Kitchen backsplash · Called 1hr ago</div></div>
+                <div style="font-size:13px; font-weight:700; color:var(--orange); font-family:'Syne',sans-serif;">$6K</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="how-screen-panel" id="hs-2">
+          <div>
+            <div style="background:var(--og-muted); border:1px solid var(--og-border); border-radius:10px; padding:12px; margin-bottom:12px; font-size:13px; color:var(--text);">
+              <strong style="color:var(--orange);">You:</strong> Bathroom gut job. 80 sq ft. Tile floor and walls, new vanity, plumbing.
+            </div>
+            <div style="background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px; font-size:13px; color:var(--muted); margin-bottom:12px;">
+              <strong style="color:var(--text);">Eliko:</strong> Done. Full estimate ready — $10,500. Includes Home Depot cart and payment schedule.
+            </div>
+            <div style="background:var(--grad-o); border-radius:10px; padding:12px; text-align:center; cursor:pointer;">
+              <div style="font-size:13px; font-weight:700; color:#fff;">📄 View & Send Estimate →</div>
+            </div>
+          </div>
+        </div>
+        <div class="how-screen-panel" id="hs-3">
+          <div style="text-align:center; padding:16px 0;">
+            <div style="font-family:'Syne',sans-serif; font-size:48px; font-weight:800; color:var(--orange); margin-bottom:4px;">+31%</div>
+            <div style="font-size:13px; color:var(--muted); margin-bottom:20px;">more jobs closed · last 30 days</div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+              <div style="background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px;">
+                <div style="font-family:'Syne',sans-serif; font-size:24px; font-weight:800; color:var(--green);">$0</div>
+                <div style="font-size:11px; color:var(--dim);">leads lost this week</div>
+              </div>
+              <div style="background:var(--bg-raised); border:1px solid var(--border); border-radius:10px; padding:12px;">
+                <div style="font-family:'Syne',sans-serif; font-size:24px; font-weight:800; color:var(--orange);">48</div>
+                <div style="font-size:11px; color:var(--dim);">calls answered by AI</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PRICING
+══════════════════════════════════════════ -->
+<div class="pricing-section" id="pricing">
+  <div class="section" style="text-align:center;">
+    <div class="section-eyebrow reveal">Pricing</div>
+    <h2 class="section-h reveal reveal-delay-1">Simple. <span class="grad">Transparent.</span></h2>
+    <p class="section-sub reveal reveal-delay-2" style="margin:0 auto;">Less than the cost of one lost job per month.</p>
+    <div class="pricing-grid">
+      <div class="plan reveal reveal-delay-1">
+        <div class="plan-tier">Essentials</div>
+        <div class="plan-price">$199</div>
+        <div class="plan-cadence">/month</div>
+        <hr class="plan-divider">
+        <ul class="plan-list">
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> AI Receptionist — 24/7</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Lead Follow-Up Agent</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Job Scheduler</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> CRM Pipeline</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Monthly Performance Report</li>
+        </ul>
+        <button class="plan-btn secondary">Get Started</button>
+      </div>
+      <div class="plan highlight reveal reveal-delay-2">
+        <div class="plan-chip">Most Popular</div>
+        <div class="plan-tier">Full Suite</div>
+        <div class="plan-price">$399</div>
+        <div class="plan-cadence">/month</div>
+        <hr class="plan-divider">
+        <ul class="plan-list">
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Everything in Essentials</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Eliko — AI Estimator</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Home Depot Cart Builder</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> PDF Estimates + Contracts</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Payment Schedule Builder</li>
+          <li><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Dedicated Setup Support</li>
+        </ul>
+        <button class="plan-btn primary">Get Started Free</button>
+      </div>
+    </div>
+    <p style="margin-top:24px; font-size:13px; color:var(--dim);">First month free for the first 10 contractors who sign up.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     CTA
+══════════════════════════════════════════ -->
+<div class="cta-section">
+  <div class="cta-block reveal">
+    <div>
+      <div class="cta-eyebrow">Get Started Today</div>
+      <h2 class="cta-h">Stop losing jobs<br>to your voicemail.</h2>
+      <p class="cta-sub">Set up in 60 seconds. Masmer starts answering calls the same day. No credit card required.</p>
+    </div>
+    <div class="cta-action">
+      <button class="btn-primary-lg" style="font-size:16px; padding:16px 36px;">
+        Create Free Account
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <p class="cta-note">First month free · No setup fees</p>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-brand-logo">
+          <div class="logo-mark">M</div>
+          <div class="logo-name">Masmer <em>AI</em></div>
+        </div>
+        <p>The AI brain behind your contracting business. Built by a contractor, built for contractors.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#">AI Receptionist</a></li>
+          <li><a href="#">Eliko Estimator</a></li>
+          <li><a href="#">CRM Pipeline</a></li>
+          <li><a href="#">Pricing</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Masmer AI. All rights reserved.</span>
+      <span>masmer.info</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════════ -->
+<script>
+/* ── Scroll-based nav ── */
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, { passive: true });
+
+/* ── Reveal on scroll ── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ── Animated call demo ── */
+const msgs = ['m1','m2','m3','m4','m5','m6'];
+const badge = document.getElementById('callBadge');
+const typing = document.getElementById('typing');
+const outcome = document.getElementById('outcome');
+
+function runDemo() {
+  // Reset
+  msgs.forEach(id => document.getElementById(id).classList.remove('visible'));
+  typing.classList.remove('visible');
+  outcome.classList.remove('visible');
+  badge.textContent = 'Answering…';
+
+  let delay = 600;
+  msgs.forEach((id, i) => {
+    // Show typing before AI messages
+    if (id === 'm1' || id === 'm3' || id === 'm5') {
+      setTimeout(() => { typing.classList.add('visible'); }, delay);
+      delay += 700;
+      setTimeout(() => {
+        typing.classList.remove('visible');
+        document.getElementById(id).classList.add('visible');
+        if (id === 'm1') badge.textContent = 'In Progress';
+      }, delay);
+      delay += 1000 + Math.random() * 400;
+    } else {
+      setTimeout(() => { document.getElementById(id).classList.add('visible'); }, delay);
+      delay += 900 + Math.random() * 300;
+    }
+  });
+
+  setTimeout(() => {
+    badge.textContent = 'Booked ✓';
+    badge.style.background = 'rgba(16,185,129,.12)';
+    badge.style.borderColor = 'rgba(16,185,129,.3)';
+    badge.style.color = '#10B981';
+    outcome.classList.add('visible');
+  }, delay + 400);
+
+  // Loop
+  setTimeout(() => {
+    badge.style.background = '';
+    badge.style.borderColor = '';
+    badge.style.color = '';
+    runDemo();
+  }, delay + 5000);
+}
+
+// Start demo when visible
+const demoObs = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting) { runDemo(); demoObs.disconnect(); }
+}, { threshold: 0.4 });
+demoObs.observe(document.getElementById('demoCard'));
+
+/* ── Waveform animation ── */
+const wf = document.getElementById('waveform');
+if (wf) {
+  for (let i = 0; i < 28; i++) {
+    const bar = document.createElement('div');
+    bar.className = 'wave-bar';
+    const h = 4 + Math.random() * 22;
+    bar.style.setProperty('--h', h + 'px');
+    bar.style.setProperty('--d', (0.4 + Math.random() * 0.8) + 's');
+    bar.style.animationDelay = (Math.random() * 0.5) + 's';
+    wf.appendChild(bar);
+  }
+}
+
+/* ── Call timer ── */
+let secs = 24;
+const timerEl = document.getElementById('callTimer');
+setInterval(() => {
+  secs++;
+  const m = Math.floor(secs / 60);
+  const s = secs % 60;
+  if (timerEl) timerEl.textContent = m + ':' + String(s).padStart(2,'0');
+}, 1000);
+
+/* ── Feature tabs ── */
+function setFeature(i, btn) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.feature-info').forEach(f => f.classList.remove('active'));
+  document.querySelectorAll('.feature-preview').forEach(f => f.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('fi-'+i).classList.add('active');
+  document.getElementById('fp-'+i).classList.add('active');
+}
+
+/* ── How it works timeline ── */
+function setStep(i, el) {
+  document.querySelectorAll('.tl-step').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.how-screen-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('hs-'+i).classList.add('active');
+}
+
+/* ── Stat counter animation ── */
+function animateCount(el, target, prefix, suffix) {
+  let current = 0;
+  const duration = 1800;
+  const step = target / (duration / 16);
+  const timer = setInterval(() => {
+    current = Math.min(current + step, target);
+    el.textContent = prefix + Math.round(current) + suffix;
+    if (current >= target) clearInterval(timer);
+  }, 16);
+}
+
+const statObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target.querySelector('.stat-num[data-target]');
+    if (el) animateCount(el, parseInt(el.dataset.target), '$', 'K');
+    const el2 = e.target.querySelector('.stat-num[data-count]');
+    if (el2) animateCount(el2, parseInt(el2.dataset.count), '', ' min');
+    statObs.unobserve(e.target);
+  });
+}, { threshold: 0.5 });
+document.querySelectorAll('.stat-card').forEach(c => statObs.observe(c));
+
+/* ── Auto-advance timeline ── */
+const steps = document.querySelectorAll('.tl-step');
+let currentStep = 0;
+setInterval(() => {
+  currentStep = (currentStep + 1) % steps.length;
+  setStep(currentStep, steps[currentStep]);
+}, 3500);
+</script>
+</body>
+</html>

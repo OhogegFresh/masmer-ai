@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Design Briefs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0D1117;
+  --card: #111827;
+  --card-hover: #1a2234;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.35);
+  --text: #F9FAFB;
+  --muted: #9CA3AF;
+  --dim: #4B5563;
+  --border: rgba(255,255,255,0.07);
+  --green: #10B981;
+  --green-glow: rgba(16,185,129,0.10);
+  --green-border: rgba(16,185,129,0.28);
+  --blue: #3B82F6;
+  --blue-glow: rgba(59,130,246,0.10);
+  --blue-border: rgba(59,130,246,0.28);
+  --amber: #F59E0B;
+  --amber-glow: rgba(245,158,11,0.10);
+  --amber-border: rgba(245,158,11,0.28);
+  --purple: #8B5CF6;
+  --purple-glow: rgba(139,92,246,0.10);
+  --purple-border: rgba(139,92,246,0.28);
+  --red: #EF4444;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 16px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky; top: 0;
+  background: rgba(13,17,23,0.97);
+  backdrop-filter: blur(12px);
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; background: var(--orange); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: white;
+}
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.3px; }
+.logo-text span { color: var(--orange); }
+.header-badge {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  color: var(--orange); padding: 4px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+}
+.header-meta { font-size: 12px; color: var(--dim); }
+
+/* ── TAB NAV ── */
+.tab-nav {
+  display: flex; gap: 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(13,17,23,0.95);
+  padding: 0 40px;
+  position: sticky; top: 67px; z-index: 90;
+  backdrop-filter: blur(12px);
+}
+.tab-btn {
+  padding: 14px 24px;
+  font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 600;
+  color: var(--muted); background: none; border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; transition: all 0.18s;
+  display: flex; align-items: center; gap: 8px;
+  position: relative; bottom: -1px;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--orange); border-bottom-color: var(--orange); }
+.tab-pill {
+  background: var(--orange-glow); color: var(--orange); border: 1px solid var(--orange-border);
+  font-size: 10px; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+}
+.tab-btn:not(.active) .tab-pill {
+  background: rgba(255,255,255,0.04); color: var(--dim); border-color: var(--border);
+}
+
+/* ── SECTIONS ── */
+.doc-section { display: none; }
+.doc-section.active { display: block; animation: fadein 0.22s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── DOC LAYOUT ── */
+.doc-wrap {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 40px 80px;
+}
+
+/* ── TYPOGRAPHY — DOCUMENT STYLES ── */
+.doc-wrap h1 {
+  font-family: 'Syne', sans-serif;
+  font-size: 30px; font-weight: 800;
+  letter-spacing: -0.6px;
+  line-height: 1.2;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.doc-wrap .doc-meta {
+  font-size: 12px; color: var(--dim);
+  margin-bottom: 36px;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.doc-wrap .doc-meta span { display: flex; align-items: center; gap: 5px; }
+
+.doc-wrap h2 {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px; font-weight: 800;
+  letter-spacing: -0.3px;
+  color: var(--text);
+  margin: 44px 0 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.doc-wrap h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px; font-weight: 700;
+  letter-spacing: -0.2px;
+  color: var(--text);
+  margin: 30px 0 10px;
+}
+.doc-wrap h4 {
+  font-family: 'Syne', sans-serif;
+  font-size: 13px; font-weight: 700;
+  color: var(--orange);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  margin: 24px 0 8px;
+}
+.doc-wrap p {
+  font-size: 14px; color: var(--muted);
+  line-height: 1.8; margin-bottom: 14px;
+}
+.doc-wrap p strong, .doc-wrap li strong { color: var(--text); font-weight: 600; }
+.doc-wrap em { color: #c4b5fd; font-style: italic; }
+
+.doc-wrap ul, .doc-wrap ol {
+  margin: 10px 0 18px 20px;
+  display: flex; flex-direction: column; gap: 7px;
+}
+.doc-wrap ul li, .doc-wrap ol li {
+  font-size: 14px; color: var(--muted); line-height: 1.7;
+  padding-left: 4px;
+}
+.doc-wrap ul { list-style: none; }
+.doc-wrap ul li::before {
+  content: '–';
+  color: var(--orange);
+  margin-right: 10px;
+  font-weight: 700;
+}
+.doc-wrap ol { list-style: decimal; }
+.doc-wrap ol li::marker { color: var(--orange); font-weight: 700; }
+
+/* ── DIVIDER ── */
+.doc-wrap hr {
+  border: none; border-top: 1px solid var(--border);
+  margin: 36px 0;
+}
+
+/* ── CALLOUT BOXES ── */
+.callout {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  border-radius: 12px; padding: 16px 20px;
+  font-size: 13px; color: #FED7AA; line-height: 1.75;
+  margin: 20px 0;
+}
+.callout strong { color: var(--orange); }
+.callout-blue {
+  background: var(--blue-glow); border: 1px solid var(--blue-border);
+  border-radius: 12px; padding: 16px 20px;
+  font-size: 13px; color: #bfdbfe; line-height: 1.75;
+  margin: 20px 0;
+}
+.callout-blue strong { color: var(--blue); }
+.callout-green {
+  background: var(--green-glow); border: 1px solid var(--green-border);
+  border-radius: 12px; padding: 16px 20px;
+  font-size: 13px; color: #bbf7d0; line-height: 1.75;
+  margin: 20px 0;
+}
+.callout-green strong { color: var(--green); }
+
+/* ── TABLES ── */
+.doc-wrap table {
+  width: 100%; border-collapse: collapse;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 12px; overflow: hidden;
+  margin: 16px 0 24px; font-size: 13px;
+}
+.doc-wrap thead th {
+  padding: 11px 16px; text-align: left;
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--dim);
+  border-bottom: 1px solid var(--border);
+  background: rgba(255,255,255,0.02);
+}
+.doc-wrap tbody td {
+  padding: 11px 16px;
+  color: var(--muted);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  line-height: 1.6;
+}
+.doc-wrap tbody tr:last-child td { border-bottom: none; }
+.doc-wrap tbody td strong { color: var(--text); }
+.doc-wrap tbody tr:hover td { background: rgba(255,255,255,0.015); }
+
+/* ── CODE / MONOSPACE ── */
+.doc-wrap code {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px; background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border); border-radius: 5px;
+  padding: 2px 7px; color: #93c5fd;
+}
+.doc-wrap pre {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 10px; padding: 18px 20px;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px; color: var(--muted);
+  line-height: 1.8; overflow-x: auto;
+  margin: 16px 0 24px;
+  white-space: pre-wrap;
+}
+
+/* ── SCREEN BLOCKS (Sprint Brief) ── */
+.screen-block {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 28px 30px;
+  margin: 28px 0;
+}
+.screen-block-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.screen-num {
+  width: 32px; height: 32px; border-radius: 9px;
+  background: var(--orange); color: white;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 14px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.screen-title {
+  font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.screen-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ── SECTION LABEL ── */
+.section-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--dim);
+  margin: 32px 0 12px;
+}
+
+/* ── BADGE ── */
+.badge {
+  display: inline-block; font-size: 10px; font-weight: 600;
+  padding: 2px 9px; border-radius: 20px;
+}
+.badge-orange { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--orange-border); }
+.badge-blue { background: var(--blue-glow); color: var(--blue); border: 1px solid var(--blue-border); }
+.badge-green { background: var(--green-glow); color: var(--green); border: 1px solid var(--green-border); }
+.badge-dim { background: rgba(255,255,255,0.04); color: var(--dim); border: 1px solid var(--border); }
+
+/* ── DELIVERABLES TABLE ── */
+.deliverables-grid {
+  display: grid; grid-template-columns: 1fr 2fr;
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border); border-radius: 12px; overflow: hidden;
+  margin: 16px 0 24px;
+}
+.dg-cell {
+  background: var(--card); padding: 13px 18px;
+  font-size: 13px;
+}
+.dg-cell.header {
+  background: rgba(255,255,255,0.02);
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.05em; color: var(--dim);
+}
+.dg-cell.label { font-weight: 600; color: var(--text); }
+.dg-cell.value { color: var(--muted); line-height: 1.6; }
+
+/* ── FLOW STEP ── */
+.flow-steps {
+  display: flex; flex-direction: column; gap: 0;
+  margin: 16px 0 24px;
+}
+.flow-step {
+  display: flex; gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.flow-step:last-child { border-bottom: none; }
+.flow-step-num {
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  color: var(--orange); font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.flow-step-text { font-size: 14px; color: var(--muted); line-height: 1.7; }
+.flow-step-text strong { color: var(--text); }
+
+/* ── CHAT PREVIEW ── */
+.chat-preview {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px;
+  margin: 14px 0;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 12px; color: var(--muted); line-height: 2;
+  white-space: pre-wrap;
+}
+
+/* ── POPUP PREVIEW ── */
+.popup-preview {
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  border-radius: 12px; padding: 20px 22px;
+  margin: 14px 0; font-size: 13px;
+}
+.popup-preview .popup-row {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,0.04);
+  gap: 12px;
+}
+.popup-preview .popup-row:last-child { border-bottom: none; }
+.popup-preview .popup-label { color: var(--dim); font-size: 11px; flex-shrink: 0; }
+.popup-preview .popup-val { color: var(--text); font-size: 13px; }
+.popup-preview .popup-link { color: var(--orange); font-size: 12px; font-weight: 600; cursor: pointer; }
+.popup-divider { border-top: 1px solid var(--border); margin: 10px 0; padding-top: 10px; }
+.popup-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.popup-btn {
+  padding: 6px 14px; border-radius: 7px; font-size: 11px; font-weight: 600;
+  background: rgba(255,255,255,0.06); border: 1px solid var(--border); color: var(--text);
+}
+.popup-btn.primary { background: var(--orange); border-color: var(--orange); color: white; }
+
+/* ── NAV SIDEBAR PREVIEW ── */
+.nav-preview {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 12px; padding: 16px;
+  margin: 14px 0; font-size: 13px; color: var(--muted);
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 4px 24px;
+}
+.nav-preview .nav-group { margin-bottom: 12px; }
+.nav-preview .nav-group-label {
+  font-size: 10px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--dim); margin-bottom: 6px;
+}
+.nav-preview .nav-row { padding: 5px 0; color: var(--muted); font-size: 13px; }
+.nav-preview .nav-row.hi { color: var(--orange); font-weight: 600; }
+
+/* ── ORANGE BANNER ── */
+.orange-banner {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  border-radius: 16px; padding: 28px 32px; text-align: center; margin-top: 48px;
+}
+.orange-banner h2 {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  margin-bottom: 8px; letter-spacing: -0.3px; border: none; padding: 0;
+}
+.orange-banner h2 span { color: var(--orange); }
+.orange-banner p { color: var(--muted); font-size: 13px; max-width: 520px; margin: 0 auto; line-height: 1.7; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--border); padding: 24px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  color: var(--dim); font-size: 12px; max-width: 860px; margin: 0 auto;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  .header { padding: 12px 16px; }
+  .tab-nav { padding: 0 16px; }
+  .doc-wrap { padding: 28px 16px 60px; }
+  .screen-block { padding: 20px 18px; }
+  .footer { padding: 20px 16px; }
+  .nav-preview { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div class="header-badge">Design Brief</div>
+  <div class="header-meta">For: UX/UI Designer · June 2026</div>
+</div>
+
+<!-- TAB NAV -->
+<div class="tab-nav">
+  <button class="tab-btn active" onclick="showDoc('doc1', this)">
+    📄 Doc 1 — Full App Brief
+    <span class="tab-pill">v1.0</span>
+  </button>
+  <button class="tab-btn" onclick="showDoc('doc2', this)">
+    🎯 Doc 2 — Sprint Brief
+    <span class="tab-pill">v1.1</span>
+  </button>
+</div>
+
+
+<!-- ════════════════════════════════════════ -->
+<!-- DOC 1 — FULL APP BRIEF                  -->
+<!-- ════════════════════════════════════════ -->
+<div id="doc1" class="doc-section active">
+<div class="doc-wrap">
+
+  <h1>Masmer AI — UX/UI Design Brief</h1>
+  <div class="doc-meta">
+    <span>📄 Version 1.0 · June 2026</span>
+    <span>✍️ Prepared by Omer (Founder)</span>
+    <span>👤 For: UX/UI Designer</span>
+  </div>
+
+  <h2>Overview</h2>
+  <p>Masmer AI is a CRM and operations platform built specifically for <strong>contractors and home service companies</strong>. It replaces the chaos of missed calls, paper estimates, and manual follow-ups with an AI-powered system that handles those things automatically.</p>
+  <p>The product has three core systems that connect in a loop:</p>
+  <ol>
+    <li><strong>AI Receptionist</strong> — answers missed calls, captures leads, schedules callbacks</li>
+    <li><strong>CRM Pipeline</strong> — manages customers, jobs, and projects from lead to payment</li>
+    <li><strong>AI Estimate Bot</strong> — generates professional estimates from a plain-English job description</li>
+  </ol>
+  <p>Your job is to design the <strong>full app UI</strong> — every screen, every state, every flow — so the engineering team can build directly from your files.</p>
+
+  <h2>Users</h2>
+  <p><strong>Primary user:</strong> A contractor or small home service business owner. Think 1–5 person crew. They're on job sites, on their phone, usually not sitting at a desk. They're not technical. They want things fast and obvious.</p>
+  <p><strong>Secondary user:</strong> An office manager or admin (optional for V1 — design with this in mind but don't optimize for it).</p>
+
+  <h2>Design Direction</h2>
+  <ul>
+    <li><strong>Dark UI.</strong> The app is dark-first. Background: <code>#0D1117</code>. Cards: <code>#111827</code>.</li>
+    <li><strong>Orange accent.</strong> Primary action color: <code>#F97316</code>. Used for CTAs, active states, key numbers.</li>
+    <li><strong>Clean and confident.</strong> No clutter. Every screen should feel like a tool, not a dashboard overloaded with widgets.</li>
+    <li><strong>Mobile-aware.</strong> The app lives on desktop and tablet primarily, but key flows (call log, schedule, customer lookup) need to work on mobile.</li>
+    <li><strong>Typography:</strong> Syne (headings/display) + DM Sans (body). These are already decided — please use them.</li>
+  </ul>
+
+  <h2>App Structure</h2>
+  <p>The app uses a <strong>left sidebar navigation</strong> with a main content area. All sections:</p>
+  <div class="nav-preview">
+    <div>
+      <div class="nav-group">
+        <div class="nav-group-label">Main</div>
+        <div class="nav-row">Dashboard</div>
+        <div class="nav-row">Customers</div>
+        <div class="nav-row">Schedule</div>
+        <div class="nav-row">Projects</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Finance</div>
+        <div class="nav-row">Estimates</div>
+        <div class="nav-row">Invoices</div>
+        <div class="nav-row">Expenses</div>
+      </div>
+    </div>
+    <div>
+      <div class="nav-group">
+        <div class="nav-group-label">AI Tools</div>
+        <div class="nav-row">Estimate Bot</div>
+        <div class="nav-row">AI Receptionist</div>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-label">Account</div>
+        <div class="nav-row">Settings</div>
+      </div>
+    </div>
+  </div>
+
+  <h2>Screens to Design</h2>
+
+  <h3>1. Dashboard (Home)</h3>
+  <p><strong>Purpose:</strong> Morning glance. What's happening today, what needs attention.</p>
+  <p><strong>Key elements:</strong></p>
+  <ul>
+    <li>Top stat row: Active Customers, Revenue MTD, Active Projects, Missed Calls (handled by AI)</li>
+    <li>Today's schedule — 3–5 upcoming jobs/calls in a list</li>
+    <li>AI Receptionist activity feed — recent calls the AI handled</li>
+    <li>Lead pipeline visual — simple bar or funnel showing New → Quoted → Active → Closed</li>
+    <li>Quick Actions grid — shortcuts to: New Estimate, Add Customer, Schedule Job, Create Invoice</li>
+  </ul>
+  <p><strong>States to design:</strong> Default (data populated) · Empty state (new account, no data yet)</p>
+
+  <h3>2. Customers</h3>
+  <p><strong>Purpose:</strong> The main CRM list. Every lead and customer lives here.</p>
+  <ul>
+    <li>Search + filter bar at top (filter by status: Lead / Active / Completed / All)</li>
+    <li>View toggle: <strong>Table view</strong> ↔ <strong>Kanban pipeline view</strong></li>
+    <li>Table view columns: Name, Status badge, Phone, Location, Last Job, Total Value, Action button</li>
+    <li>Kanban view columns: New Lead → Quoted → Active Job → Completed</li>
+    <li>Each kanban card shows: Name, job type, value, source (AI lead / referral / web)</li>
+    <li>"Add Customer" button (opens a modal/drawer)</li>
+  </ul>
+  <p><strong>States:</strong> Table with data · Empty state per kanban column · Search with no results</p>
+
+  <h3>3. Customer Detail Page</h3>
+  <div class="callout"><strong>Critical screen</strong> — this needs to feel like a complete record. Everything about one customer in one place.</div>
+  <p><strong>Layout:</strong> Left column (contact info + notes) + right column (tabbed detail panel)</p>
+  <p><strong>Left column:</strong> Avatar/initials · Name, email, phone, address · Status badge · Total jobs + revenue · Notes field (editable) · Quick actions: Call, Message, New Job</p>
+  <p><strong>Right column — tabs:</strong></p>
+  <ul>
+    <li><strong>Jobs</strong> — list of all jobs (name, date, status, value)</li>
+    <li><strong>Estimates</strong> — estimates sent (status: pending / accepted / expired)</li>
+    <li><strong>Invoices</strong> — invoices issued (status: unpaid / paid / overdue)</li>
+    <li><strong>Activity</strong> — chronological log of everything</li>
+  </ul>
+
+  <h3>4. Schedule</h3>
+  <p><strong>Purpose:</strong> See all jobs and appointments on a calendar. Book new ones.</p>
+  <p><strong>Views to design:</strong> Month (primary) · Week · List</p>
+  <p><strong>Event color coding:</strong></p>
+  <ul>
+    <li>🟠 Orange = Estimate appointment</li>
+    <li>🔵 Blue = Active job / site visit</li>
+    <li>🟢 Green = Follow-up / call</li>
+    <li>🟡 Amber = Invoice due</li>
+  </ul>
+  <p><strong>Sidebar panel (month view):</strong> Today's appointments as a stacked list with time, customer name, job type, location.</p>
+  <p><strong>States:</strong> Calendar with events · Empty week/month · "Add Job" modal (customer, job type, date/time, location, notes)</p>
+
+  <h3>5. Projects</h3>
+  <p><strong>Purpose:</strong> Track active jobs from start to finish.</p>
+  <ul>
+    <li>Stat row: Active, In-Flight Value, Due This Week, Completed YTD</li>
+    <li>Table: Project name, customer, start date, est. end date, progress bar (%), value, status badge</li>
+    <li>Status badges: Starting / On Track / Mid-Job / Finishing / Completed / Delayed</li>
+    <li>Color-coded left border per project (matches schedule color)</li>
+  </ul>
+  <p><strong>Project detail:</strong> Progress tracker / phases · Linked estimate + invoice · Notes / log · Photos (placeholder slot for V1)</p>
+
+  <h3>6. Estimates</h3>
+  <p><strong>Purpose:</strong> All estimates in one place. Send, track, manage.</p>
+  <ul>
+    <li>Stat row: Open value, Accepted, Pending, Expired</li>
+    <li>Table: Estimate #, Customer, Job, Date Sent, Expiry, Status, Total</li>
+    <li>Status badges: Pending / Accepted / Expired / Draft</li>
+    <li>Filter by status</li>
+  </ul>
+  <p><strong>Estimate detail:</strong> Line-item breakdown · Labor + materials split · Markup shown · Download PDF, Send to Customer, Convert to Invoice</p>
+
+  <h3>7. Invoices</h3>
+  <p><strong>Purpose:</strong> Track what's been billed and what's been paid.</p>
+  <ul>
+    <li>Stat row: Collected MTD, Outstanding, Overdue, Avg Days to Pay</li>
+    <li>Table: Invoice #, Customer, Job, Issued, Due, Status, Amount</li>
+    <li>Status badges: Unpaid / Paid / Overdue / Partial</li>
+    <li>Overdue rows should be visually distinct (red left border or red text)</li>
+  </ul>
+  <p><strong>Invoice detail:</strong> Line items · Payment history · Send reminder button · Mark as paid button</p>
+
+  <h3>8. Expenses</h3>
+  <p><strong>Purpose:</strong> Log and track job costs to understand margins.</p>
+  <ul>
+    <li>Stat row: Spent MTD, Gross Margin %, Materials total, Sub-Contractor total</li>
+    <li>Table: Date, Description, Category (Materials / Sub / Equipment / Other), Project, Receipt (yes/no), Amount</li>
+    <li>Categories shown as color-coded badges</li>
+  </ul>
+
+  <h3>9. AI Estimate Bot</h3>
+  <p><strong>Purpose:</strong> The contractor describes a job in plain English, the AI outputs a full estimate.</p>
+  <p><strong>Layout:</strong> Full-page chat interface</p>
+  <ul>
+    <li>Chat history (bot messages on left, user on right)</li>
+    <li>Bot opens with a clear prompt: "Tell me about the job — what's the work, where is it, who's the customer?"</li>
+    <li>Suggestion chips at start: Bathroom remodel / Kitchen reno / Deck build / Interior paint / Flooring / Custom</li>
+    <li>After user describes the job: structured estimate card (line items, subtotals, markup, total) + action buttons: Save Estimate / Download PDF / Email to Customer</li>
+    <li>Input bar at bottom: multiline text field + send button</li>
+    <li>"New Estimate" button clears chat and resets</li>
+  </ul>
+  <div class="callout"><strong>Important:</strong> The estimate output card will be seen by customers — it needs to look professional and clean, not like a chat bubble.</div>
+
+  <h3>10. AI Receptionist</h3>
+  <p><strong>Purpose:</strong> Show the contractor everything the AI handled — calls, leads captured, follow-ups sent.</p>
+  <ul>
+    <li>Status pill at top: Online / Offline (green dot when active)</li>
+    <li>Stat row: Calls Handled, Leads Captured, Awaiting Review, Answer Rate</li>
+    <li>Call log: Inbound / Outbound / Missed icons · Caller name · AI summary (1 line) · Time + duration · Badge</li>
+    <li>Filter tabs: All / Missed / Leads / AI Handled</li>
+    <li>Lead card (highlighted): AI summary of what the caller said + Quick actions: Call Back / Build Estimate / Add to CRM</li>
+  </ul>
+
+  <h3>11. Settings</h3>
+  <p><strong>Sections:</strong> Business Profile · AI Receptionist config · Estimates defaults · Invoices & Payments · Plan & Billing</p>
+
+  <h2>Modals / Drawers Needed</h2>
+  <ul>
+    <li><strong>Add Customer</strong> — name, phone, email, address, status, source, notes</li>
+    <li><strong>Add Job / Schedule</strong> — customer (search), job type, date, time, location, notes</li>
+    <li><strong>Add Expense</strong> — date, description, category, project, amount, receipt upload</li>
+    <li><strong>Create Invoice</strong> — customer, linked estimate (optional), line items, due date</li>
+  </ul>
+
+  <h2>Key Flows to Map</h2>
+  <ol>
+    <li><strong>New lead → estimate → job → invoice</strong> (the core loop)</li>
+    <li><strong>AI answers a call → lead captured → contractor reviews → builds estimate</strong></li>
+    <li><strong>Contractor describes a job in Estimate Bot → estimate generated → sent to customer</strong></li>
+    <li><strong>New customer added manually → job scheduled → project tracked</strong></li>
+  </ol>
+
+  <h2>Empty States</h2>
+  <p>Every section needs an empty state. Don't leave blank tables. Each empty state needs:</p>
+  <ul>
+    <li>An icon or illustration</li>
+    <li>A 1-sentence explanation of what goes here</li>
+    <li>A clear CTA button (e.g. "Add your first customer")</li>
+  </ul>
+
+  <h2>What We're NOT Building in V1</h2>
+  <ul>
+    <li>No team / multi-user (single contractor account only)</li>
+    <li>No time tracking</li>
+    <li>No material takeoffs or detailed scope-of-work builder</li>
+    <li>No client portal (customer-facing view)</li>
+    <li>No reporting / analytics charts beyond the stat cards</li>
+  </ul>
+  <div class="callout-blue"><strong>Note:</strong> These are on the roadmap — design with them in mind but don't block on them.</div>
+
+  <h2>Deliverables Expected</h2>
+  <ul>
+    <li>Full screen designs in Figma (desktop-first, mobile for key flows)</li>
+    <li>Component library / design system file (colors, typography, buttons, badges, inputs, cards)</li>
+    <li>Annotated flows for the 4 key user journeys above</li>
+    <li>Handoff-ready specs (spacing, states, hover, focus, disabled)</li>
+  </ul>
+
+  <div class="orange-banner">
+    <h2>Questions? <span>Reach out first.</span></h2>
+    <p>Don't make major layout decisions without checking in. Happy to jump on a quick call to clarify anything before you go deep on a screen.</p>
+    <p style="margin-top:10px;font-size:12px;color:var(--dim);">Omer — Masmer AI Founder</p>
+  </div>
+
+</div><!-- /doc-wrap -->
+</div><!-- /doc1 -->
+
+
+<!-- ════════════════════════════════════════ -->
+<!-- DOC 2 — SPRINT BRIEF                    -->
+<!-- ════════════════════════════════════════ -->
+<div id="doc2" class="doc-section">
+<div class="doc-wrap">
+
+  <h1>Masmer AI — Design Sprint Brief</h1>
+  <div class="doc-meta">
+    <span>🎯 Version 1.1 · June 2026</span>
+    <span>✍️ Prepared by Omer (Founder)</span>
+    <span>🚀 First Sprint — 3 Priority Screens</span>
+  </div>
+
+  <div class="callout-blue">
+    <strong>Purpose:</strong> This is our first sprint together — a chance to test how we work. These 3 screens are the heart of the product. Nail these and the rest of the app follows their pattern.
+  </div>
+
+  <h2>Context</h2>
+  <p>This is not a full app brief. We're zooming in on the <strong>3 most important surfaces</strong> in Masmer. Every other screen can wait. These 3 need to feel world-class because they're what a contractor will live inside every single day.</p>
+  <p>The users driving this: <strong>salespeople and project managers who spend all day in their car</strong>, hopping between leads and job sites. The UI needs to work for someone who's glancing at their phone between stops, not someone sitting at a desk.</p>
+
+  <hr>
+
+  <!-- SCREEN 1 -->
+  <div class="screen-block">
+    <div class="screen-block-header">
+      <div class="screen-num">1</div>
+      <div>
+        <div class="screen-title">Customer Profile</div>
+        <div class="screen-sub">Sidebar / Detail View — the contractor's complete file on every customer</div>
+      </div>
+    </div>
+
+    <h3>What This Is</h3>
+    <p>When a contractor taps on a customer anywhere in the app, a <strong>full customer profile</strong> opens. Think of it as the contractor's complete file on that person - everything they need to know, everything they can do, all in one place.</p>
+    <p>This is the most information-dense screen in the app. It needs to be dense <em>and</em> scannable - not overwhelming.</p>
+
+    <h3>Layout</h3>
+    <p><strong>Recommended:</strong> Right-side slide-over panel (like a drawer) that opens over the customer list - OR a dedicated full page. Designer's call. But it must feel fast to open and close.</p>
+
+    <h4>Section 1 - Header (Always Visible)</h4>
+    <p>Sits at the top and never scrolls away.</p>
+    <ul>
+      <li>Customer avatar (initials + background color, auto-generated)</li>
+      <li>Full name (large)</li>
+      <li>Phone number — <strong>tappable to call</strong> on mobile</li>
+      <li>Address — <strong>tappable to open maps</strong></li>
+      <li>Status badge: Lead / Quoted / Active / Completed / Archived</li>
+      <li>Quick action buttons (always visible): 📞 Call · ✉️ Follow-up · 📋 New Estimate · 🗓 Schedule Job · ➕ Add Expense</li>
+    </ul>
+
+    <h4>Section 2 - Key Dates (Prominent, Right Under Header)</h4>
+    <p>These are critical for a contractor and constantly referenced. <strong>Do not bury them in a tab.</strong></p>
+    <table>
+      <thead><tr><th>Field</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><strong>First Visit Date</strong></td><td>When the salesperson first went out to this lead</td></tr>
+        <tr><td><strong>Estimate Sent</strong></td><td>Date the estimate was sent to the customer</td></tr>
+        <tr><td><strong>Follow-up Due</strong></td><td>Next scheduled follow-up (editable)</td></tr>
+        <tr><td><strong>Job Start Date</strong></td><td>When work began (if applicable)</td></tr>
+        <tr><td><strong>Job End / Completion</strong></td><td>When job was completed</td></tr>
+      </tbody>
+    </table>
+    <p>Each date is editable inline — tap to change. If a date hasn't been set yet, show a clear "Set date" prompt, not a blank space.</p>
+
+    <h4>Section 3 - Job Notes</h4>
+    <p>Free-text notes field. The salesperson or PM writes what the customer wants, scope details from the first visit, preferences, quirks, property specifics.</p>
+    <div class="callout"><strong>Must have:</strong> Auto-save (no save button needed). Timestamped so they know when it was last edited.</div>
+
+    <h4>Section 4 - Photos</h4>
+    <ul>
+      <li>Photo grid (2–3 columns)</li>
+      <li>Tap to upload (camera or library on mobile, file picker on desktop)</li>
+      <li>Tap photo to view full size</li>
+      <li>Optional: label/caption per photo</li>
+      <li>Upload date shown on each thumbnail</li>
+    </ul>
+    <p><em>Empty state:</em> "No photos yet — tap to add from your camera or files."</p>
+
+    <h4>Section 5 - Tabbed Detail Panel</h4>
+
+    <p><strong>Tab: Estimates</strong> — List of all estimates with: Estimate #, scope label, date sent, status badge (Draft / Sent / Pending / Accepted / Declined / Expired), total amount, actions (View / Resend / Convert to Invoice). Prominent "Create New Estimate" button at top that opens the Estimate Bot with this customer pre-selected.</p>
+
+    <p><strong>Tab: Invoices</strong> — Invoice #, linked job, issue + due date, status (Unpaid / Paid / Overdue / Partial), amount, actions. Overdue invoices visually flagged with red left border or red text.</p>
+
+    <p><strong>Tab: Payments</strong> — What's been collected. Date paid, amount, method (Cash / Check / Card / Zelle / Other), linked invoice, notes. Running lifetime total at bottom.</p>
+
+    <p><strong>Tab: Job Expenses</strong> — Expenses tied to this specific customer/job (separate from company-wide Expenses). Columns: Date, Description, Category (Materials / Sub-Contractor / Equipment / Permit / Other), Amount, Receipt attached.</p>
+    <div class="callout"><strong>Inline add:</strong> Tap "+ Add Expense" and a quick-add row appears inline — no modal. Just: Description, Category, Amount, Receipt. Keep it fast.</div>
+    <p>Summary bar at top of this tab: Total Materials · Total Sub/Labor · Total Expenses · Est. Margin % (estimate total minus expenses)</p>
+
+    <p><strong>Tab: Activity Log</strong> — Chronological feed, auto-generated. Icon + plain English description + timestamp. Most recent at top. Feels like a CRM timeline — clean, compact, scannable.</p>
+
+    <h4>Follow-up Flow</h4>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text">Tap <strong>"Send Follow-up"</strong> from the customer profile</div></div>
+      <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">Choose method: <strong>SMS / Email</strong> (WhatsApp future V2)</div></div>
+      <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-text">See a <strong>pre-written AI-drafted message</strong> (editable before sending). Pulls in customer name, job type from notes/estimate, prompt to move forward.</div></div>
+      <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-text">Send — activity log <strong>auto-records it</strong></div></div>
+    </div>
+
+    <h4>States to Design</h4>
+    <ul>
+      <li>Full profile (data populated across all tabs)</li>
+      <li>New customer (just created — dates not set, no estimates, notes empty)</li>
+      <li>Lead with no estimate yet</li>
+      <li>Customer with overdue invoice (payment tab flagged)</li>
+      <li>Archived customer</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <!-- SCREEN 2 -->
+  <div class="screen-block">
+    <div class="screen-block-header">
+      <div class="screen-num">2</div>
+      <div>
+        <div class="screen-title">Schedule</div>
+        <div class="screen-sub">Simple, fast, mobile-first — built for people driving between jobs all day</div>
+      </div>
+    </div>
+
+    <div class="callout-green"><strong>Core principle:</strong> The people using this screen are in their car all day. Keep it as simple as humanly possible. No clutter. Fast to read. Fast to act.</div>
+
+    <h4>Four Views</h4>
+    <table>
+      <thead><tr><th>View</th><th>Purpose</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Day</strong></td><td>Today's jobs only. <strong>Default view when Schedule opens.</strong></td></tr>
+        <tr><td><strong>Week</strong></td><td>7-day grid. Quick overview of the week.</td></tr>
+        <tr><td><strong>Month</strong></td><td>Full calendar. Spot open/busy days at a glance.</td></tr>
+        <tr><td><strong>List</strong></td><td>Upcoming jobs sorted by date. Cleanest for on-the-go.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>Day View</h4>
+    <ul>
+      <li>Vertical timeline, ~7am to 7pm</li>
+      <li>Each job is a card/block on the timeline</li>
+      <li>Tap a job → popup opens</li>
+      <li>Empty time slots visible but minimal — don't clutter</li>
+      <li>Top line: date + "X jobs today"</li>
+      <li>Floating "+" button to add a new job</li>
+    </ul>
+
+    <h4>Week View</h4>
+    <ul>
+      <li>7 columns (Sun–Sat or Mon–Sun)</li>
+      <li>Each day shows compact job chips (customer name + time)</li>
+      <li>Tap chip → popup opens · Tap day header → switches to Day view</li>
+    </ul>
+
+    <h4>Month View</h4>
+    <ul>
+      <li>Standard calendar grid</li>
+      <li>Days with jobs show colored dots or chips</li>
+      <li>🟠 Orange = Estimate / First visit · 🔵 Blue = Active job · 🟢 Green = Follow-up · 🟡 Amber = Invoice due</li>
+      <li>Tap a day → expands or switches to Day view</li>
+    </ul>
+
+    <h4>List View</h4>
+    <p>Simplest view. Sorted by date ascending. Each row: Date + day label, Time, Customer name, Job type, Status badge, arrow to open popup. Group by date. Today separated clearly from upcoming.</p>
+
+    <h4>The Job Popup — Design This Well</h4>
+    <div class="callout"><strong>This is the thing they'll use 20x a day.</strong> Fast, clean, action-first. Tap outside to dismiss — contractor should stay on the schedule view.</div>
+
+    <div class="popup-preview">
+      <div class="popup-row">
+        <div class="popup-val" style="font-family:'Syne',sans-serif;font-weight:800;font-size:15px;">Jose Martinez</div>
+        <span class="badge badge-orange">Active Job</span>
+      </div>
+      <div class="popup-row">
+        <div><span class="popup-label">📍 </span><span class="popup-val">142 Oak St, Brooklyn NY</span></div>
+        <span class="popup-link">Directions →</span>
+      </div>
+      <div class="popup-row">
+        <div><span class="popup-label">📞 </span><span class="popup-val">(555) 012-3456</span></div>
+        <span class="popup-link">Tap to call</span>
+      </div>
+      <div class="popup-row">
+        <div><span class="popup-label">🕐 </span><span class="popup-val">9:00 AM – 11:00 AM</span></div>
+      </div>
+      <div class="popup-divider">
+        <div style="font-size:11px;color:var(--dim);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.06em;">Job Notes</div>
+        <div style="font-size:13px;color:var(--muted);line-height:1.6;">Kitchen renovation — subway tile backsplash, new cabinets, paint. Customer wants white tile, dark grout. Has a dog, keep the door closed.</div>
+      </div>
+      <div class="popup-actions">
+        <div class="popup-btn primary">View Full Profile</div>
+        <div class="popup-btn">Edit Job</div>
+        <div class="popup-btn">Mark Complete</div>
+      </div>
+    </div>
+
+    <p><strong>Directions</strong> — opens Google Maps / Apple Maps to that address. One tap, no friction. <strong>Phone</strong> — tappable to call immediately. <strong>Job notes</strong> — readable in popup, not editable (tap "Edit Job" for that).</p>
+
+    <h4>Adding a New Job</h4>
+    <p>Tap "+" anywhere on the schedule. Simple bottom sheet or modal. Fields only:</p>
+    <ul>
+      <li>Customer (searchable dropdown)</li>
+      <li>Job type / label (short text)</li>
+      <li>Date (date picker)</li>
+      <li>Time (start + end)</li>
+      <li>Address (auto-filled from customer profile, editable)</li>
+      <li>Notes (optional)</li>
+    </ul>
+    <p>That's it. Contractor fills this in 30 seconds while on a call.</p>
+
+    <h4>States to Design</h4>
+    <ul>
+      <li>Day view: today with jobs (default / primary)</li>
+      <li>Day view: empty day ("No jobs today — enjoy it 🙌")</li>
+      <li>Week view with mixed job types</li>
+      <li>Month view with busy and empty days</li>
+      <li>List view with grouped dates</li>
+      <li>Job popup — open, all fields populated</li>
+      <li>Job popup — mobile / bottom sheet style</li>
+      <li>Add Job form</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <!-- SCREEN 3 -->
+  <div class="screen-block">
+    <div class="screen-block-header">
+      <div class="screen-num">3</div>
+      <div>
+        <div class="screen-title">AI Estimate Bot</div>
+        <div class="screen-sub">A conversation that ends with a professional document — ready to send</div>
+      </div>
+    </div>
+
+    <div class="callout-green"><strong>Core principle:</strong> This should feel like texting a really smart estimator — not filling out a form. The contractor describes the job, the AI asks questions, builds a materials list, confirms the price, and generates a quote they can send directly from the chat.</div>
+
+    <h4>Layout</h4>
+    <p>Full-page chat interface. On desktop: optional two-column layout — chat on left, live estimate preview building on the right. On mobile: single column, estimate preview collapses below the chat.</p>
+
+    <h4>The Conversation — 5 Steps</h4>
+
+    <div class="flow-steps">
+      <div class="flow-step">
+        <div class="flow-step-num">1</div>
+        <div class="flow-step-text"><strong>Contractor describes the job</strong> — types or taps a suggestion chip. Example: "Bathroom remodel for a customer in Brooklyn. Subway tile, new vanity, frameless shower door."</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">2</div>
+        <div class="flow-step-text"><strong>AI asks clarifying questions — one at a time.</strong> "What's the approximate square footage?" — "Full demo or existing walls?" — "Plumbing rough-in included or a separate sub?" — Max 3–5 questions. Feels like a conversation, not an interrogation.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">3</div>
+        <div class="flow-step-text"><strong>AI generates a materials list.</strong> Structured output: materials by item, labor breakdown by task. Contractor can reply to adjust — "Add heated floor mat" — and the list updates.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">4</div>
+        <div class="flow-step-text"><strong>AI asks for the final price.</strong> "What do you want to charge the customer? I can suggest a range based on typical rates if you'd like." If they ask, AI gives low / mid / high with brief explanation.</div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-step-num">5</div>
+        <div class="flow-step-text"><strong>AI generates the full quote card</strong> — professional, formatted, with line items, subtotals, markup, total, payment terms, and action buttons inline.</div>
+      </div>
+    </div>
+
+    <h4>The Quote Card (What the Customer Sees)</h4>
+    <div class="callout"><strong>This card will be emailed/texted to the customer.</strong> It must look professional and clean — not like a chat bubble. Design it as a polished document, not a system message.</div>
+    <div class="chat-preview">ESTIMATE — Bathroom Remodel
+Customer: Jose Martinez
+Date: June 15, 2026     Valid for: 14 days
+
+SCOPE OF WORK
+Full bathroom remodel including demo, subway tile installation,
+frameless shower door, vanity replacement, and finish paint.
+
+LINE ITEMS
+  Demo + haul away              $480
+  Tile labor (180 sq ft)        $1,260
+  Tile materials                $840
+  Frameless shower door         $1,200
+  Vanity + install              $680
+  Plumbing rough-in             $760
+  Paint + finish                $320
+  ─────────────────────────────────
+  Subtotal                      $5,540
+  Markup (35%)                  $1,939
+  ─────────────────────────────────
+  TOTAL                         $7,479
+
+Terms: 50% deposit due to start. Balance due on completion.
+
+[ Send to Customer ]  [ Link to Customer ]  [ Download PDF ]  [ Edit ]</div>
+
+    <h4>Link to Customer Flow</h4>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text">Tap <strong>"Link to Customer"</strong></div></div>
+      <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">Small search field appears: "Search customer name..."</div></div>
+      <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-text">Tap to select — estimate is now attached to that customer's profile (shows in their Estimates tab)</div></div>
+      <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-text">Tap <strong>"Send to Customer"</strong> — sends via email or SMS on file</div></div>
+    </div>
+    <p>If the contractor came into the bot <em>from</em> a customer profile, the customer is <strong>pre-linked automatically</strong>.</p>
+
+    <h4>Send to Customer Flow</h4>
+    <div class="flow-steps">
+      <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text">Preview: "Sending to Jose Martinez at jose@email.com"</div></div>
+      <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">Option to add a short personal note (pre-filled with editable template)</div></div>
+      <div class="flow-step"><div class="flow-step-num">3</div><div class="flow-step-text">Tap Confirm Send → sent</div></div>
+      <div class="flow-step"><div class="flow-step-num">4</div><div class="flow-step-text">Customer's activity log auto-updates: "Estimate sent — $7,479"</div></div>
+    </div>
+
+    <h4>Suggestion Chips (Fresh Open)</h4>
+    <p>When no conversation exists, show quick-start chips: 🚿 Bathroom remodel · 🍳 Kitchen renovation · 🌿 Deck / outdoor · 🎨 Interior paint · 🏠 Flooring · 🔨 Custom job</p>
+
+    <h4>States to Design</h4>
+    <ul>
+      <li>Fresh open — no conversation, suggestion chips visible</li>
+      <li>Mid-conversation — AI asking questions, estimate not yet generated</li>
+      <li>Materials list generated — waiting for price confirmation</li>
+      <li>Full estimate generated — all action buttons showing</li>
+      <li>Estimate linked to customer — customer name shows at top of quote card</li>
+      <li>Estimate sent — confirmation state ("✓ Sent to Jose Martinez")</li>
+      <li>Mobile layout — single column, estimate below chat</li>
+    </ul>
+  </div>
+
+  <hr>
+
+  <h2>Sprint Deliverables</h2>
+  <div class="deliverables-grid">
+    <div class="dg-cell header">Screen</div>
+    <div class="dg-cell header">What to Deliver</div>
+    <div class="dg-cell label">Customer Profile</div>
+    <div class="dg-cell value">Full desktop layout + all tab states + mobile version of header + follow-up flow</div>
+    <div class="dg-cell label">Schedule</div>
+    <div class="dg-cell value">Day / Week / Month / List views + job popup (desktop + mobile) + add job form</div>
+    <div class="dg-cell label">Estimate Bot</div>
+    <div class="dg-cell value">Full conversation flow (all 5 steps) + estimate card design + send flow + mobile layout</div>
+  </div>
+  <div class="callout-blue"><strong>Start with Customer Profile and Schedule.</strong> Those are the most used daily. Estimate Bot can follow once those are locked.</div>
+
+  <h2>Notes for the Designer</h2>
+  <ul>
+    <li>Every screen needs <strong>empty states</strong> — don't leave blanks.</li>
+    <li>Every interactive element needs <strong>hover, focus, and active states</strong>.</li>
+    <li>Phone numbers and addresses are <strong>always tappable</strong> — this is mobile-critical even on desktop.</li>
+    <li>The <strong>Job Popup on Schedule</strong> is the most mobile-critical element in the whole app. It needs to work perfectly on a phone screen.</li>
+    <li>The <strong>Estimate Bot quote card</strong> will be seen by customers — professional and clean, not a chat bubble.</li>
+    <li>When in doubt: <strong>simpler is better.</strong> Every extra tap is friction for someone between job sites.</li>
+  </ul>
+
+  <div class="orange-banner">
+    <h2>Questions? <span>Reach out before going deep.</span></h2>
+    <p>Don't make major layout decisions without checking in first. A quick call is faster than a redesign.</p>
+    <p style="margin-top:10px;font-size:12px;color:var(--dim);">Omer — Masmer AI Founder</p>
+  </div>
+
+</div><!-- /doc-wrap -->
+</div><!-- /doc2 -->
+
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="logo">
+    <div class="logo-mark" style="width:24px;height:24px;font-size:12px;border-radius:6px;">M</div>
+    <div class="logo-text" style="font-size:14px;">Masmer <span>AI</span></div>
+  </div>
+  <div>Design Briefs v1.0 + v1.1 — for internal use</div>
+</div>
+
+<script>
+function showDoc(id, btn) {
+  document.querySelectorAll('.doc-section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>

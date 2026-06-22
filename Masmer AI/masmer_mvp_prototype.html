@@ -1,0 +1,1498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — App MVP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #0D1117;
+  --card: #111827;
+  --card-hover: #1a2234;
+  --sidebar: #0B0F18;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.10);
+  --orange-border: rgba(249,115,22,0.35);
+  --text: #F9FAFB;
+  --muted: #9CA3AF;
+  --dim: #4B5563;
+  --border: rgba(255,255,255,0.07);
+  --green: #10B981;
+  --green-glow: rgba(16,185,129,0.10);
+  --green-border: rgba(16,185,129,0.28);
+  --blue: #3B82F6;
+  --blue-glow: rgba(59,130,246,0.10);
+  --blue-border: rgba(59,130,246,0.28);
+  --amber: #F59E0B;
+  --amber-glow: rgba(245,158,11,0.10);
+  --amber-border: rgba(245,158,11,0.28);
+  --purple: #8B5CF6;
+  --purple-glow: rgba(139,92,246,0.10);
+  --purple-border: rgba(139,92,246,0.28);
+  --red: #EF4444;
+}
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 230px;
+  min-width: 230px;
+  background: var(--sidebar);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+}
+.sidebar-logo {
+  padding: 22px 20px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border);
+}
+.logo-mark {
+  width: 34px; height: 34px; background: var(--orange); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: white;
+  flex-shrink: 0;
+}
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 17px; letter-spacing: -0.3px; }
+.logo-text span { color: var(--orange); }
+.sidebar-section { padding: 18px 12px 6px; }
+.sidebar-label {
+  font-size: 10px; font-weight: 600; color: var(--dim); letter-spacing: 0.09em;
+  text-transform: uppercase; padding: 0 8px; margin-bottom: 6px;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: 8px; cursor: pointer;
+  color: var(--muted); font-size: 13.5px; font-weight: 500;
+  transition: all 0.15s; position: relative;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.nav-item.active { color: var(--orange); background: var(--orange-glow); }
+.nav-item .nav-icon { font-size: 15px; width: 20px; text-align: center; flex-shrink: 0; }
+.nav-item .nav-badge {
+  margin-left: auto; background: var(--orange); color: white;
+  font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 10px;
+  font-family: 'Syne', sans-serif;
+}
+.nav-item .nav-badge.green { background: var(--green); }
+.sidebar-bottom {
+  margin-top: auto; padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+.user-card {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px; border-radius: 9px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+}
+.user-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), #c2410c);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 12px; color: white;
+}
+.user-name { font-size: 13px; font-weight: 600; line-height: 1.2; }
+.user-role { font-size: 10px; color: var(--dim); }
+
+/* ── MAIN AREA ── */
+.main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.topbar {
+  padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  background: rgba(13,17,23,0.96);
+  backdrop-filter: blur(12px);
+  flex-shrink: 0;
+}
+.topbar-title {
+  font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800;
+  letter-spacing: -0.3px;
+}
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+.topbar-btn {
+  padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; font-family: 'DM Sans', sans-serif;
+}
+.topbar-btn.primary { background: var(--orange); color: white; }
+.topbar-btn.secondary { background: rgba(255,255,255,0.06); color: var(--text); border: 1px solid var(--border); }
+.topbar-search {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 8px; padding: 7px 14px;
+}
+.topbar-search input {
+  background: none; border: none; outline: none; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; width: 180px;
+}
+.topbar-search input::placeholder { color: var(--dim); }
+.notif-btn {
+  width: 34px; height: 34px; border-radius: 8px; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border); cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; position: relative;
+}
+.notif-dot {
+  position: absolute; top: 6px; right: 6px; width: 7px; height: 7px;
+  background: var(--orange); border-radius: 50%; border: 1.5px solid var(--sidebar);
+}
+.page-content {
+  flex: 1; overflow-y: auto; padding: 28px;
+}
+.section { display: none; }
+.section.active { display: block; animation: fadein 0.22s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── SHARED COMPONENTS ── */
+.stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 20px 22px; transition: border-color 0.2s, transform 0.2s; cursor: default;
+}
+.stat-card:hover { border-color: var(--orange-border); transform: translateY(-2px); }
+.stat-num { font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800; color: var(--orange); line-height: 1; margin-bottom: 5px; }
+.stat-num.green { color: var(--green); }
+.stat-num.blue { color: var(--blue); }
+.stat-num.amber { color: var(--amber); }
+.stat-label { font-size: 12px; color: var(--text); font-weight: 500; margin-bottom: 2px; }
+.stat-source { font-size: 10px; color: var(--dim); }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 20px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 22px;
+}
+.card-title {
+  font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800;
+  letter-spacing: -0.2px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+}
+.page-header { margin-bottom: 22px; display: flex; align-items: flex-end; justify-content: space-between; }
+.page-header-left h1 {
+  font-family: 'Syne', sans-serif; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
+}
+.page-header-left p { font-size: 13px; color: var(--muted); margin-top: 3px; }
+.btn {
+  padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: none; font-family: 'DM Sans', sans-serif; display: inline-flex; align-items: center; gap: 6px;
+}
+.btn-orange { background: var(--orange); color: white; }
+.btn-ghost { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+.badge { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 9px; border-radius: 20px; }
+.badge-green { background: var(--green-glow); color: var(--green); border: 1px solid var(--green-border); }
+.badge-blue { background: var(--blue-glow); color: var(--blue); border: 1px solid var(--blue-border); }
+.badge-amber { background: var(--amber-glow); color: var(--amber); border: 1px solid var(--amber-border); }
+.badge-orange { background: var(--orange-glow); color: var(--orange); border: 1px solid var(--orange-border); }
+.badge-red { background: rgba(239,68,68,0.1); color: var(--red); border: 1px solid rgba(239,68,68,0.28); }
+.badge-dim { background: rgba(255,255,255,0.04); color: var(--dim); border: 1px solid var(--border); }
+.table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { padding: 12px 16px; font-weight: 600; font-size: 11px; text-align: left; border-bottom: 1px solid var(--border); color: var(--dim); white-space: nowrap; letter-spacing: 0.04em; text-transform: uppercase; }
+tbody td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); color: var(--text); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: rgba(255,255,255,0.018); cursor: pointer; }
+.section-tabs { display: flex; gap: 4px; margin-bottom: 20px; }
+.stab {
+  padding: 7px 16px; border-radius: 8px; font-size: 12px; font-weight: 600;
+  cursor: pointer; border: 1px solid var(--border); background: none; color: var(--muted);
+  font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+}
+.stab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
+.stab.active { color: var(--orange); background: var(--orange-glow); border-color: var(--orange-border); }
+.bar-wrap { width: 100%; background: rgba(255,255,255,0.06); border-radius: 4px; height: 6px; overflow: hidden; margin-top: 6px; }
+.bar-fill { height: 100%; border-radius: 4px; }
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.empty-state {
+  text-align: center; padding: 50px 20px; color: var(--dim);
+}
+.empty-state .icon { font-size: 36px; margin-bottom: 12px; }
+.empty-state p { font-size: 13px; color: var(--muted); }
+
+/* ── DASHBOARD ── */
+.activity-item {
+  display: flex; align-items: flex-start; gap: 12px; padding: 12px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-dot {
+  width: 8px; height: 8px; border-radius: 50%; margin-top: 5px; flex-shrink: 0;
+}
+.activity-text { font-size: 13px; color: var(--muted); line-height: 1.5; }
+.activity-text strong { color: var(--text); font-weight: 500; }
+.activity-time { font-size: 10px; color: var(--dim); margin-top: 2px; }
+.pipeline-bar { display: flex; gap: 0; border-radius: 8px; overflow: hidden; height: 10px; margin-bottom: 8px; }
+.pipeline-seg { height: 100%; transition: opacity 0.2s; }
+.pipeline-seg:hover { opacity: 0.8; }
+.pipeline-legend { display: flex; gap: 16px; }
+.legend-item { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+.quick-action {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; padding: 18px 12px; border-radius: 12px; cursor: pointer;
+  background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+  transition: all 0.15s; text-align: center;
+}
+.quick-action:hover { border-color: var(--orange-border); background: var(--orange-glow); }
+.quick-action .qa-icon { font-size: 22px; }
+.quick-action .qa-label { font-size: 11px; font-weight: 600; color: var(--muted); }
+.quick-action:hover .qa-label { color: var(--orange); }
+
+/* ── CUSTOMERS ── */
+.customer-row-name { display: flex; align-items: center; gap: 10px; }
+.customer-avatar-sm {
+  width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; color: white;
+  flex-shrink: 0;
+}
+.kanban-board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+.kanban-col { background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 12px; padding: 14px; min-height: 420px; }
+.kanban-col-header { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; }
+.kanban-count { background: rgba(255,255,255,0.08); color: var(--muted); font-size: 10px; font-weight: 600; padding: 1px 7px; border-radius: 10px; font-family: 'DM Sans', sans-serif; }
+.kanban-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
+.kanban-card:hover { border-color: var(--orange-border); }
+.kanban-card-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.kanban-card-sub { font-size: 11px; color: var(--muted); }
+.kanban-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 10px; }
+.customer-detail-panel {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+}
+.cdp-header { padding: 24px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; }
+.cdp-avatar {
+  width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center;
+  justify-content: center; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 20px; color: white;
+}
+.cdp-name { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; }
+.cdp-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.cdp-tabs { display: flex; border-bottom: 1px solid var(--border); padding: 0 20px; }
+.cdp-tab {
+  padding: 12px 16px; font-size: 12px; font-weight: 600; color: var(--muted); cursor: pointer;
+  border-bottom: 2px solid transparent; transition: all 0.15s;
+}
+.cdp-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+.cdp-body { padding: 20px; }
+
+/* ── SCHEDULE ── */
+.cal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.cal-nav { display: flex; align-items: center; gap: 10px; }
+.cal-nav-btn { width: 28px; height: 28px; border-radius: 7px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.cal-month { font-family: 'Syne', sans-serif; font-size: 16px; font-weight: 800; }
+.cal-grid-header { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; margin-bottom: 2px; }
+.cal-day-name { text-align: center; font-size: 10px; font-weight: 600; color: var(--dim); padding: 6px 0; letter-spacing: 0.06em; text-transform: uppercase; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.cal-cell {
+  min-height: 90px; background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+  border-radius: 8px; padding: 8px; cursor: pointer; transition: all 0.15s;
+}
+.cal-cell:hover { border-color: rgba(249,115,22,0.2); background: rgba(249,115,22,0.03); }
+.cal-cell.today { border-color: var(--orange-border); background: var(--orange-glow); }
+.cal-cell.other-month { opacity: 0.3; }
+.cal-date { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.cal-cell.today .cal-date { color: var(--orange); }
+.cal-event { font-size: 10px; padding: 2px 6px; border-radius: 4px; margin-bottom: 2px; font-weight: 500; line-height: 1.3; }
+.cal-event.orange { background: var(--orange-glow); color: var(--orange); }
+.cal-event.green { background: var(--green-glow); color: var(--green); }
+.cal-event.blue { background: var(--blue-glow); color: var(--blue); }
+.upcoming-list { display: flex; flex-direction: column; gap: 10px; }
+.upcoming-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 10px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); cursor: pointer; transition: border-color 0.15s; }
+.upcoming-item:hover { border-color: var(--orange-border); }
+.upcoming-time { min-width: 52px; text-align: center; }
+.upcoming-time .time { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 700; color: var(--orange); }
+.upcoming-time .ampm { font-size: 10px; color: var(--dim); }
+.upcoming-dot { width: 3px; height: 40px; border-radius: 2px; flex-shrink: 0; }
+.upcoming-info .title { font-size: 13px; font-weight: 600; }
+.upcoming-info .sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.upcoming-badge { margin-left: auto; }
+
+/* ── ESTIMATE BOT ── */
+.chat-wrap { display: flex; flex-direction: column; height: calc(100vh - 160px); }
+.chat-messages { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 16px; padding-bottom: 16px; }
+.msg { display: flex; gap: 10px; max-width: 75%; }
+.msg.user { align-self: flex-end; flex-direction: row-reverse; }
+.msg-bubble {
+  padding: 12px 16px; border-radius: 14px; font-size: 13.5px; line-height: 1.6;
+}
+.msg.bot .msg-bubble { background: var(--card); border: 1px solid var(--border); color: var(--text); border-radius: 4px 14px 14px 14px; }
+.msg.user .msg-bubble { background: var(--orange); color: white; border-radius: 14px 4px 14px 14px; }
+.msg-avatar {
+  width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-size: 14px; flex-shrink: 0; margin-top: 2px;
+}
+.msg.bot .msg-avatar { background: var(--orange-glow); border: 1px solid var(--orange-border); }
+.msg.user .msg-avatar { background: var(--orange); color: white; font-family: 'Syne', sans-serif; font-weight: 800; font-size: 11px; }
+.estimate-card {
+  background: rgba(249,115,22,0.06); border: 1px solid var(--orange-border);
+  border-radius: 12px; padding: 16px; margin-top: 10px; min-width: 300px;
+}
+.estimate-card-title { font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; color: var(--orange); margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+.estimate-line { display: flex; justify-content: space-between; font-size: 12px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: var(--muted); }
+.estimate-line:last-child { border-bottom: none; }
+.estimate-line.total { color: var(--text); font-weight: 600; font-size: 13px; border-top: 1px solid var(--orange-border); padding-top: 8px; margin-top: 4px; }
+.estimate-line strong { color: var(--text); }
+.chat-input-area { flex-shrink: 0; padding-top: 14px; border-top: 1px solid var(--border); }
+.chat-input-wrap { display: flex; gap: 10px; align-items: flex-end; }
+.chat-input-wrap textarea {
+  flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 12px 16px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13.5px;
+  resize: none; outline: none; max-height: 120px; transition: border-color 0.18s;
+}
+.chat-input-wrap textarea:focus { border-color: var(--orange-border); }
+.chat-input-wrap textarea::placeholder { color: var(--dim); }
+.chat-send-btn {
+  width: 42px; height: 42px; border-radius: 10px; background: var(--orange); border: none;
+  cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px;
+  flex-shrink: 0; transition: opacity 0.15s;
+}
+.chat-send-btn:hover { opacity: 0.85; }
+.chat-suggestions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.chat-suggestion {
+  padding: 6px 14px; border-radius: 20px; background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  font-size: 12px; color: var(--muted); cursor: pointer; transition: all 0.15s;
+}
+.chat-suggestion:hover { border-color: var(--orange-border); color: var(--orange); background: var(--orange-glow); }
+.typing-indicator { display: flex; gap: 4px; align-items: center; padding: 12px 16px; }
+.typing-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: typing 1.2s infinite; }
+.typing-dot:nth-child(2) { animation-delay: 0.2s; }
+.typing-dot:nth-child(3) { animation-delay: 0.4s; }
+@keyframes typing { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+
+/* ── AI RECEPTIONIST ── */
+.call-row { display: flex; align-items: center; gap: 12px; padding: 13px 16px; border-bottom: 1px solid rgba(255,255,255,0.04); cursor: pointer; transition: background 0.12s; }
+.call-row:hover { background: rgba(255,255,255,0.02); }
+.call-row:last-child { border-bottom: none; }
+.call-icon { font-size: 18px; width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.call-icon.in { background: var(--green-glow); }
+.call-icon.out { background: var(--blue-glow); }
+.call-icon.missed { background: rgba(239,68,68,0.1); }
+.call-info { flex: 1; }
+.call-name { font-size: 13.5px; font-weight: 600; }
+.call-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.call-right { text-align: right; }
+.call-time { font-size: 11px; color: var(--dim); }
+.call-duration { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.ai-summary-box { background: var(--orange-glow); border: 1px solid var(--orange-border); border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #FED7AA; line-height: 1.7; margin-top: 8px; }
+.ai-summary-box strong { color: var(--orange); }
+
+/* ── PROJECTS ── */
+.project-row-main { display: flex; align-items: center; gap: 12px; }
+.project-color { width: 4px; height: 36px; border-radius: 2px; flex-shrink: 0; }
+.progress-mini { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
+
+/* ── INVOICES / ESTIMATES / EXPENSES ── */
+.finance-row { display: flex; align-items: center; gap: 12px; }
+.finance-type-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+
+/* ── SETTINGS ── */
+.settings-group { background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-bottom: 20px; }
+.settings-group-title { padding: 16px 20px; border-bottom: 1px solid var(--border); font-family: 'Syne', sans-serif; font-size: 13px; font-weight: 800; }
+.settings-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-bottom: 1px solid rgba(255,255,255,0.04); }
+.settings-row:last-child { border-bottom: none; }
+.settings-label { font-size: 13px; font-weight: 500; }
+.settings-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+.toggle { width: 38px; height: 20px; border-radius: 10px; background: var(--dim); cursor: pointer; position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle.on { background: var(--orange); }
+.toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px; border-radius: 50%; background: white; transition: transform 0.2s; }
+.toggle.on::after { transform: translateX(18px); }
+.settings-input {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border); border-radius: 8px;
+  padding: 7px 12px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; width: 220px;
+}
+.settings-input:focus { border-color: var(--orange-border); }
+
+/* ── MODAL ── */
+.overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); backdrop-filter: blur(5px); z-index: 300; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal { background: #141A27; border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; width: 580px; max-height: 85vh; overflow-y: auto; padding: 30px; transform: translateY(18px); transition: transform 0.22s; position: relative; }
+.overlay.open .modal { transform: translateY(0); }
+.modal-close { position: absolute; top: 16px; right: 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--muted); width: 28px; height: 28px; border-radius: 50%; cursor: pointer; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: rgba(255,255,255,0.12); color: var(--text); }
+.modal-title { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 6px; }
+.modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 24px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field.full { grid-column: 1 / -1; }
+.field label { font-size: 11px; font-weight: 600; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.field input, .field select, .field textarea {
+  background: rgba(255,255,255,0.04); border: 1px solid var(--border);
+  border-radius: 8px; padding: 10px 14px; color: var(--text);
+  font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none; transition: border-color 0.18s;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--orange-border); }
+.field select option { background: #1a2234; }
+.modal-actions { display: flex; gap: 10px; margin-top: 24px; justify-content: flex-end; }
+
+/* ── NOTIFICATION BADGE ── */
+.header-badge {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  color: var(--orange); padding: 4px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Main</div>
+    <div class="nav-item active" onclick="showSection('dashboard', this)">
+      <span class="nav-icon">⊞</span> Dashboard
+    </div>
+    <div class="nav-item" onclick="showSection('customers', this)">
+      <span class="nav-icon">👥</span> Customers
+      <span class="nav-badge">12</span>
+    </div>
+    <div class="nav-item" onclick="showSection('schedule', this)">
+      <span class="nav-icon">📅</span> Schedule
+    </div>
+    <div class="nav-item" onclick="showSection('projects', this)">
+      <span class="nav-icon">🔨</span> Projects
+      <span class="nav-badge green">4</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Finance</div>
+    <div class="nav-item" onclick="showSection('estimates', this)">
+      <span class="nav-icon">📋</span> Estimates
+    </div>
+    <div class="nav-item" onclick="showSection('invoices', this)">
+      <span class="nav-icon">🧾</span> Invoices
+    </div>
+    <div class="nav-item" onclick="showSection('expenses', this)">
+      <span class="nav-icon">💳</span> Expenses
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">AI Tools</div>
+    <div class="nav-item" onclick="showSection('estimatebot', this)">
+      <span class="nav-icon">🤖</span> Estimate Bot
+    </div>
+    <div class="nav-item" onclick="showSection('receptionist', this)">
+      <span class="nav-icon">📞</span> AI Receptionist
+      <span class="nav-badge">3</span>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Account</div>
+    <div class="nav-item" onclick="showSection('settings', this)">
+      <span class="nav-icon">⚙️</span> Settings
+    </div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="user-card">
+      <div class="user-avatar">O</div>
+      <div>
+        <div class="user-name">Omer</div>
+        <div class="user-role">Admin · Pro Plan</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN AREA -->
+<div class="main-area">
+  <div class="topbar">
+    <div class="topbar-title" id="topbarTitle">Dashboard</div>
+    <div class="topbar-right">
+      <div class="topbar-search">
+        <span style="color:var(--dim);font-size:13px;">🔍</span>
+        <input type="text" placeholder="Search anything...">
+      </div>
+      <div class="notif-btn" onclick="showSection('receptionist', document.querySelector('.nav-item'))">
+        🔔
+        <div class="notif-dot"></div>
+      </div>
+      <button class="topbar-btn primary" onclick="openModal('add-customer')">+ New Customer</button>
+    </div>
+  </div>
+
+  <div class="page-content">
+
+    <!-- ══════════ DASHBOARD ══════════ -->
+    <div id="dashboard" class="section active">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Good morning, Omer 👋</h1>
+          <p>Here's what's happening at Masmer today — Monday, June 15, 2026</p>
+        </div>
+        <button class="btn btn-ghost">📊 View Reports</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-num">12</div>
+          <div class="stat-label">Active Customers</div>
+          <div class="stat-source">↑ 3 this month</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num green">$24,800</div>
+          <div class="stat-label">Revenue MTD</div>
+          <div class="stat-source">4 invoices paid</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num blue">4</div>
+          <div class="stat-label">Active Projects</div>
+          <div class="stat-source">2 due this week</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num amber">3</div>
+          <div class="stat-label">Missed Calls</div>
+          <div class="stat-source">AI handled 2 of them</div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📞 Today's Schedule</div>
+          <div class="upcoming-list">
+            <div class="upcoming-item">
+              <div class="upcoming-time"><div class="time">9:00</div><div class="ampm">AM</div></div>
+              <div class="upcoming-dot" style="background:var(--orange);"></div>
+              <div class="upcoming-info"><div class="title">Kitchen estimate — Martinez</div><div class="sub">📍 142 Oak St · $4,200 est.</div></div>
+              <span class="badge badge-orange">Today</span>
+            </div>
+            <div class="upcoming-item">
+              <div class="upcoming-time"><div class="time">1:30</div><div class="ampm">PM</div></div>
+              <div class="upcoming-dot" style="background:var(--blue);"></div>
+              <div class="upcoming-info"><div class="title">Deck build check-in — Thompson</div><div class="sub">📍 On-site · Week 2</div></div>
+              <span class="badge badge-blue">Job</span>
+            </div>
+            <div class="upcoming-item">
+              <div class="upcoming-time"><div class="time">4:00</div><div class="ampm">PM</div></div>
+              <div class="upcoming-dot" style="background:var(--green);"></div>
+              <div class="upcoming-info"><div class="title">Invoice follow-up — Garcia</div><div class="sub">📞 Call · $3,100 overdue 7d</div></div>
+              <span class="badge badge-green">Call</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🤖 AI Receptionist — Recent</div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--green);"></div>
+            <div>
+              <div class="activity-text"><strong>New lead captured</strong> — Sarah K. called about a bathroom remodel. AI got contact info + job scope.</div>
+              <div class="activity-time">42 min ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--orange);"></div>
+            <div>
+              <div class="activity-text"><strong>Missed call handled</strong> — AI answered for Mike L. Scheduled a callback for 3pm.</div>
+              <div class="activity-time">2 hrs ago</div>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-dot" style="background:var(--blue);"></div>
+            <div>
+              <div class="activity-text"><strong>Follow-up sent</strong> — AI texted cold lead David R. with your estimate from last week.</div>
+              <div class="activity-time">Yesterday</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">📊 Lead Pipeline</div>
+          <div class="pipeline-bar" style="margin-bottom:10px;">
+            <div class="pipeline-seg" style="width:25%;background:var(--blue);"></div>
+            <div class="pipeline-seg" style="width:35%;background:var(--amber);"></div>
+            <div class="pipeline-seg" style="width:25%;background:var(--orange);"></div>
+            <div class="pipeline-seg" style="width:15%;background:var(--green);"></div>
+          </div>
+          <div class="pipeline-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:var(--blue);"></div>New (3)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--amber);"></div>Quoted (5)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--orange);"></div>Active (4)</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--green);"></div>Closed (2)</div>
+          </div>
+          <div class="divider"></div>
+          <div style="display:flex;gap:8px;font-size:12px;color:var(--muted);">
+            <span>Win rate: <strong style="color:var(--green);">68%</strong></span>
+            <span style="color:var(--dim);">·</span>
+            <span>Avg job: <strong style="color:var(--text);">$4,200</strong></span>
+            <span style="color:var(--dim);">·</span>
+            <span>Pipeline: <strong style="color:var(--amber);">$38,500</strong></span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">⚡ Quick Actions</div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+            <div class="quick-action" onclick="showSection('estimatebot', document.querySelectorAll('.nav-item')[8])">
+              <div class="qa-icon">🤖</div>
+              <div class="qa-label">New Estimate</div>
+            </div>
+            <div class="quick-action" onclick="openModal('add-customer')">
+              <div class="qa-icon">👤</div>
+              <div class="qa-label">Add Customer</div>
+            </div>
+            <div class="quick-action" onclick="showSection('schedule', document.querySelectorAll('.nav-item')[2])">
+              <div class="qa-icon">📅</div>
+              <div class="qa-label">Schedule Job</div>
+            </div>
+            <div class="quick-action" onclick="showSection('invoices', document.querySelectorAll('.nav-item')[6])">
+              <div class="qa-icon">🧾</div>
+              <div class="qa-label">Create Invoice</div>
+            </div>
+            <div class="quick-action" onclick="showSection('projects', document.querySelectorAll('.nav-item')[3])">
+              <div class="qa-icon">🔨</div>
+              <div class="qa-label">New Project</div>
+            </div>
+            <div class="quick-action" onclick="showSection('receptionist', document.querySelectorAll('.nav-item')[9])">
+              <div class="qa-icon">📞</div>
+              <div class="qa-label">Call Log</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CUSTOMERS ══════════ -->
+    <div id="customers" class="section">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Customers</h1>
+          <p>12 total customers · 4 with active projects</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <div class="section-tabs">
+            <button class="stab active" onclick="showCustomerView('table', this)">☰ Table</button>
+            <button class="stab" onclick="showCustomerView('kanban', this)">⊞ Pipeline</button>
+          </div>
+          <button class="btn btn-orange" onclick="openModal('add-customer')">+ Add Customer</button>
+        </div>
+      </div>
+
+      <!-- TABLE VIEW -->
+      <div id="customer-table-view">
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Status</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Last Job</th>
+                <th>Value</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr onclick="openCustomerDetail('Martinez')">
+                <td><div class="customer-row-name"><div class="customer-avatar-sm" style="background:linear-gradient(135deg,#F97316,#c2410c);">JM</div><div><div style="font-weight:600;">Jose Martinez</div><div style="font-size:11px;color:var(--muted);">jose@email.com</div></div></div></td>
+                <td><span class="badge badge-orange">Active</span></td>
+                <td style="color:var(--muted);">(555) 012-3456</td>
+                <td style="color:var(--muted);">Brooklyn, NY</td>
+                <td style="color:var(--muted);">Kitchen Reno</td>
+                <td><span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--green);">$8,400</span></td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;" onclick="openCustomerDetail('Martinez');event.stopPropagation()">View →</button></td>
+              </tr>
+              <tr onclick="openCustomerDetail('Thompson')">
+                <td><div class="customer-row-name"><div class="customer-avatar-sm" style="background:linear-gradient(135deg,#3B82F6,#1d4ed8);">AT</div><div><div style="font-weight:600;">Amy Thompson</div><div style="font-size:11px;color:var(--muted);">amy.t@email.com</div></div></div></td>
+                <td><span class="badge badge-blue">In Progress</span></td>
+                <td style="color:var(--muted);">(555) 234-5678</td>
+                <td style="color:var(--muted);">Queens, NY</td>
+                <td style="color:var(--muted);">Deck Build</td>
+                <td><span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--green);">$12,200</span></td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;">View →</button></td>
+              </tr>
+              <tr>
+                <td><div class="customer-row-name"><div class="customer-avatar-sm" style="background:linear-gradient(135deg,#10B981,#047857);">RG</div><div><div style="font-weight:600;">Ray Garcia</div><div style="font-size:11px;color:var(--muted);">rgarcia@email.com</div></div></div></td>
+                <td><span class="badge badge-amber">Invoice Due</span></td>
+                <td style="color:var(--muted);">(555) 345-6789</td>
+                <td style="color:var(--muted);">Staten Island</td>
+                <td style="color:var(--muted);">Bathroom Reno</td>
+                <td><span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--amber);">$3,100</span></td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;">View →</button></td>
+              </tr>
+              <tr>
+                <td><div class="customer-row-name"><div class="customer-avatar-sm" style="background:linear-gradient(135deg,#8B5CF6,#5b21b6);">SK</div><div><div style="font-weight:600;">Sarah Kim</div><div style="font-size:11px;color:var(--muted);">s.kim@email.com</div></div></div></td>
+                <td><span class="badge badge-dim">Lead</span></td>
+                <td style="color:var(--muted);">(555) 456-7890</td>
+                <td style="color:var(--muted);">Manhattan, NY</td>
+                <td style="color:var(--muted);">—</td>
+                <td><span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--dim);">New</span></td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;">View →</button></td>
+              </tr>
+              <tr>
+                <td><div class="customer-row-name"><div class="customer-avatar-sm" style="background:linear-gradient(135deg,#F59E0B,#b45309);">DL</div><div><div style="font-weight:600;">David Lee</div><div style="font-size:11px;color:var(--muted);">d.lee@email.com</div></div></div></td>
+                <td><span class="badge badge-green">Completed</span></td>
+                <td style="color:var(--muted);">(555) 567-8901</td>
+                <td style="color:var(--muted);">Bronx, NY</td>
+                <td style="color:var(--muted);">Flooring Install</td>
+                <td><span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--green);">$5,600</span></td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;">View →</button></td>
+              </tr>
+              <tr>
+                <td><div class="customer-row-name"><div class="customer-avatar-sm" style="background:linear-gradient(135deg,#EF4444,#991b1b);">MW</div><div><div style="font-weight:600;">Mike Wilson</div><div style="font-size:11px;color:var(--muted);">m.wilson@email.com</div></div></div></td>
+                <td><span class="badge badge-dim">Lead</span></td>
+                <td style="color:var(--muted);">(555) 678-9012</td>
+                <td style="color:var(--muted);">Brooklyn, NY</td>
+                <td style="color:var(--muted);">—</td>
+                <td><span style="font-family:'Syne',sans-serif;font-weight:700;color:var(--dim);">New</span></td>
+                <td><button class="btn btn-ghost" style="padding:4px 10px;font-size:11px;">View →</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- KANBAN VIEW -->
+      <div id="customer-kanban-view" style="display:none;">
+        <div class="kanban-board">
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="color:var(--muted);">New Lead <span class="kanban-count">3</span></div>
+            <div class="kanban-card">
+              <div class="kanban-card-name">Sarah Kim</div>
+              <div class="kanban-card-sub">📞 Bathroom remodel inquiry</div>
+              <div class="kanban-card-footer"><span class="badge badge-dim">Called in</span><span style="font-size:10px;color:var(--dim);">Today</span></div>
+            </div>
+            <div class="kanban-card">
+              <div class="kanban-card-name">Mike Wilson</div>
+              <div class="kanban-card-sub">🤖 AI captured — roofing</div>
+              <div class="kanban-card-footer"><span class="badge badge-dim">AI Lead</span><span style="font-size:10px;color:var(--dim);">Yesterday</span></div>
+            </div>
+            <div class="kanban-card">
+              <div class="kanban-card-name">Patricia Ramos</div>
+              <div class="kanban-card-sub">🌐 Website form — kitchen</div>
+              <div class="kanban-card-footer"><span class="badge badge-dim">Web Lead</span><span style="font-size:10px;color:var(--dim);">Jun 13</span></div>
+            </div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="color:var(--amber);">Quoted <span class="kanban-count">4</span></div>
+            <div class="kanban-card" style="border-color:var(--amber-border);">
+              <div class="kanban-card-name">Jose Martinez</div>
+              <div class="kanban-card-sub">🤖 AI estimate sent $4,200</div>
+              <div class="kanban-card-footer"><span class="badge badge-amber">Pending</span><span style="font-size:10px;color:var(--dim);">Jun 14</span></div>
+            </div>
+            <div class="kanban-card">
+              <div class="kanban-card-name">Linda Park</div>
+              <div class="kanban-card-sub">📋 Deck estimate $8,900</div>
+              <div class="kanban-card-footer"><span class="badge badge-amber">Follow up</span><span style="font-size:10px;color:var(--dim);">Jun 10</span></div>
+            </div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="color:var(--orange);">Active Job <span class="kanban-count">3</span></div>
+            <div class="kanban-card" style="border-color:var(--orange-border);">
+              <div class="kanban-card-name">Amy Thompson</div>
+              <div class="kanban-card-sub">🔨 Deck build — Week 2/4</div>
+              <div class="kanban-card-footer"><span class="badge badge-orange">On site</span><span style="font-size:10px;color:var(--green);">$12,200</span></div>
+            </div>
+            <div class="kanban-card" style="border-color:var(--orange-border);">
+              <div class="kanban-card-name">Ray Garcia</div>
+              <div class="kanban-card-sub">🚿 Bathroom reno — Final</div>
+              <div class="kanban-card-footer"><span class="badge badge-orange">Finishing</span><span style="font-size:10px;color:var(--amber);">Invoice due</span></div>
+            </div>
+          </div>
+          <div class="kanban-col">
+            <div class="kanban-col-header" style="color:var(--green);">Completed <span class="kanban-count">2</span></div>
+            <div class="kanban-card" style="border-color:var(--green-border);">
+              <div class="kanban-card-name">David Lee</div>
+              <div class="kanban-card-sub">🏠 Flooring — Paid ✓</div>
+              <div class="kanban-card-footer"><span class="badge badge-green">Closed</span><span style="font-size:10px;color:var(--green);">$5,600</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ CUSTOMER DETAIL ══════════ -->
+    <div id="customer-detail" class="section">
+      <div class="page-header">
+        <div class="page-header-left">
+          <button class="btn btn-ghost" onclick="showSection('customers', document.querySelectorAll('.nav-item')[1])" style="margin-bottom:10px;">← Back to Customers</button>
+          <h1>Jose Martinez</h1>
+          <p>Customer since March 2026 · 2 completed jobs</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost">📞 Call</button>
+          <button class="btn btn-ghost">✉️ Message</button>
+          <button class="btn btn-orange">+ New Job</button>
+        </div>
+      </div>
+
+      <div class="grid-2" style="grid-template-columns:1fr 2fr;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card">
+            <div style="text-align:center;padding-bottom:16px;border-bottom:1px solid var(--border);margin-bottom:16px;">
+              <div class="customer-avatar-sm" style="background:linear-gradient(135deg,#F97316,#c2410c);width:56px;height:56px;border-radius:14px;font-size:22px;margin:0 auto 10px;">JM</div>
+              <div style="font-family:'Syne',sans-serif;font-size:16px;font-weight:800;">Jose Martinez</div>
+              <div style="font-size:12px;color:var(--muted);margin-top:2px;">jose@email.com</div>
+              <span class="badge badge-orange" style="margin-top:8px;display:inline-block;">Active</span>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:10px;font-size:12px;">
+              <div style="display:flex;gap:8px;"><span style="color:var(--dim);width:60px;">Phone</span><span>(555) 012-3456</span></div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--dim);width:60px;">Location</span><span>142 Oak St, Brooklyn</span></div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--dim);width:60px;">Jobs</span><span style="color:var(--green);">3 total</span></div>
+              <div style="display:flex;gap:8px;"><span style="color:var(--dim);width:60px;">Revenue</span><span style="color:var(--green);font-weight:600;">$8,400</span></div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">Notes</div>
+            <div style="font-size:12px;color:var(--muted);line-height:1.7;">Prefers morning appointments. Very particular about cleanliness. Referred by David Lee. Potential for second bathroom next quarter.</div>
+          </div>
+        </div>
+
+        <div class="customer-detail-panel">
+          <div class="cdp-tabs">
+            <div class="cdp-tab active" onclick="showCdpTab('cdp-jobs', this)">Jobs</div>
+            <div class="cdp-tab" onclick="showCdpTab('cdp-estimates', this)">Estimates</div>
+            <div class="cdp-tab" onclick="showCdpTab('cdp-invoices', this)">Invoices</div>
+            <div class="cdp-tab" onclick="showCdpTab('cdp-activity', this)">Activity</div>
+          </div>
+          <div class="cdp-body">
+            <div id="cdp-jobs" class="cdp-section">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Job</th><th>Date</th><th>Status</th><th>Value</th></tr></thead>
+                  <tbody>
+                    <tr><td>Kitchen Renovation</td><td style="color:var(--muted);">Active</td><td><span class="badge badge-orange">In Progress</span></td><td style="color:var(--green);font-weight:600;">$4,200</td></tr>
+                    <tr><td>Bathroom Tile</td><td style="color:var(--muted);">Mar 2026</td><td><span class="badge badge-green">Completed</span></td><td style="color:var(--green);font-weight:600;">$2,800</td></tr>
+                    <tr><td>Drywall Repair</td><td style="color:var(--muted);">Jan 2026</td><td><span class="badge badge-green">Completed</span></td><td style="color:var(--green);font-weight:600;">$1,400</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="cdp-estimates" class="cdp-section" style="display:none;">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Estimate</th><th>Sent</th><th>Status</th><th>Total</th></tr></thead>
+                  <tbody>
+                    <tr><td>Kitchen Reno — Full Scope</td><td style="color:var(--muted);">Jun 12</td><td><span class="badge badge-amber">Pending</span></td><td style="color:var(--amber);font-weight:600;">$4,200</td></tr>
+                    <tr><td>Bathroom Tile Work</td><td style="color:var(--muted);">Mar 1</td><td><span class="badge badge-green">Accepted</span></td><td style="color:var(--green);font-weight:600;">$2,800</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="cdp-invoices" class="cdp-section" style="display:none;">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Invoice</th><th>Due</th><th>Status</th><th>Amount</th></tr></thead>
+                  <tbody>
+                    <tr><td>INV-2026-005</td><td style="color:var(--muted);">Jun 25</td><td><span class="badge badge-amber">Unpaid</span></td><td style="color:var(--amber);font-weight:600;">$2,100</td></tr>
+                    <tr><td>INV-2026-002</td><td style="color:var(--muted);">Mar 15</td><td><span class="badge badge-green">Paid</span></td><td style="color:var(--green);font-weight:600;">$2,800</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div id="cdp-activity" class="cdp-section" style="display:none;">
+              <div class="activity-item"><div class="activity-dot" style="background:var(--orange);"></div><div><div class="activity-text"><strong>Estimate sent</strong> — Kitchen reno $4,200 via email</div><div class="activity-time">Jun 12 · 2:34pm</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--blue);"></div><div><div class="activity-text"><strong>Call — 8 min</strong> — Discussed kitchen scope, wants subway tile backsplash</div><div class="activity-time">Jun 10 · 10:15am</div></div></div>
+              <div class="activity-item"><div class="activity-dot" style="background:var(--green);"></div><div><div class="activity-text"><strong>Invoice paid</strong> — $2,800 for bathroom tile job</div><div class="activity-time">Mar 16 · 4:00pm</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ SCHEDULE ══════════ -->
+    <div id="schedule" class="section">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>Schedule</h1>
+          <p>June 2026 · 8 jobs scheduled this month</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <div class="section-tabs">
+            <button class="stab active">📅 Month</button>
+            <button class="stab">📋 Week</button>
+            <button class="stab">☰ List</button>
+          </div>
+          <button class="btn btn-orange">+ New Job</button>
+        </div>
+      </div>
+
+      <div class="grid-2" style="grid-template-columns:2fr 1fr;gap:20px;">
+        <div>
+          <div class="card">
+            <div class="cal-header">
+              <div class="cal-nav">
+                <button class="cal-nav-btn">‹</button>
+                <div class="cal-month">June 2026</div>
+                <button class="cal-nav-btn">›</button>
+              </div>
+              <div style="display:flex;gap:8px;font-size:11px;color:var(--muted);">
+                <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:var(--orange);border-radius:2px;display:inline-block;"></span>Estimate</span>
+                <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:var(--blue);border-radius:2px;display:inline-block;"></span>Job</span>
+                <span style="display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;background:var(--green);border-radius:2px;display:inline-block;"></span>Follow-up</span>
+              </div>
+            </div>
+            <div class="cal-grid-header">
+              <div class="cal-day-name">Sun</div><div class="cal-day-name">Mon</div><div class="cal-day-name">Tue</div><div class="cal-day-name">Wed</div><div class="cal-day-name">Thu</div><div class="cal-day-name">Fri</div><div class="cal-day-name">Sat</div>
+            </div>
+            <div class="cal-grid">
+              <div class="cal-cell other-month"><div class="cal-date">1</div></div>
+              <div class="cal-cell"><div class="cal-date">2</div></div>
+              <div class="cal-cell"><div class="cal-date">3</div><div class="cal-event green">Follow-up — Lee</div></div>
+              <div class="cal-cell"><div class="cal-date">4</div></div>
+              <div class="cal-cell"><div class="cal-date">5</div><div class="cal-event blue">Thompson deck</div></div>
+              <div class="cal-cell"><div class="cal-date">6</div></div>
+              <div class="cal-cell"><div class="cal-date">7</div></div>
+              <div class="cal-cell"><div class="cal-date">8</div><div class="cal-event orange">Estimate — Kim</div></div>
+              <div class="cal-cell"><div class="cal-date">9</div><div class="cal-event blue">Thompson deck</div></div>
+              <div class="cal-cell"><div class="cal-date">10</div></div>
+              <div class="cal-cell"><div class="cal-date">11</div></div>
+              <div class="cal-cell"><div class="cal-date">12</div><div class="cal-event blue">Thompson deck</div></div>
+              <div class="cal-cell"><div class="cal-date">13</div><div class="cal-event green">Invoice — Garcia</div></div>
+              <div class="cal-cell"><div class="cal-date">14</div></div>
+              <div class="cal-cell today"><div class="cal-date">15</div><div class="cal-event orange">Est — Martinez 9am</div><div class="cal-event blue">Thompson 1:30pm</div></div>
+              <div class="cal-cell"><div class="cal-date">16</div></div>
+              <div class="cal-cell"><div class="cal-date">17</div><div class="cal-event blue">Thompson deck</div></div>
+              <div class="cal-cell"><div class="cal-date">18</div></div>
+              <div class="cal-cell"><div class="cal-date">19</div></div>
+              <div class="cal-cell"><div class="cal-date">20</div><div class="cal-event orange">Estimate — Wilson</div></div>
+              <div class="cal-cell"><div class="cal-date">21</div></div>
+              <div class="cal-cell"><div class="cal-date">22</div></div>
+              <div class="cal-cell"><div class="cal-date">23</div><div class="cal-event blue">Garcia — Final</div></div>
+              <div class="cal-cell"><div class="cal-date">24</div></div>
+              <div class="cal-cell"><div class="cal-date">25</div></div>
+              <div class="cal-cell"><div class="cal-date">26</div></div>
+              <div class="cal-cell"><div class="cal-date">27</div></div>
+              <div class="cal-cell"><div class="cal-date">28</div></div>
+              <div class="cal-cell"><div class="cal-date">29</div></div>
+              <div class="cal-cell"><div class="cal-date">30</div></div>
+              <div class="cal-cell other-month"><div class="cal-date">1</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card">
+            <div class="card-title">Today — June 15</div>
+            <div class="upcoming-list">
+              <div class="upcoming-item">
+                <div class="upcoming-time"><div class="time">9:00</div><div class="ampm">AM</div></div>
+                <div class="upcoming-dot" style="background:var(--orange);"></div>
+                <div class="upcoming-info"><div class="title">Martinez — Kitchen Estimate</div><div class="sub">142 Oak St · 90 min</div></div>
+              </div>
+              <div class="upcoming-item">
+                <div class="upcoming-time"><div class="time">1:30</div><div class="ampm">PM</div></div>
+                <div class="upcoming-dot" style="background:var(--blue);"></div>
+                <div class="upcoming-info"><div class="title">Thompson — Deck Check-in</div><div class="sub">On-site · Week 2</div></div>
+              </div>
+              <div class="upcoming-item">
+                <div class="upcoming-time"><div class="time">4:00</div><div class="ampm">PM</div></div>
+                <div class="upcoming-dot" style="background:var(--green);"></div>
+                <div class="upcoming-info"><div class="title">Garcia — Invoice Call</div><div class="sub">Follow up $3,100</div></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">This Week</div>
+            <div style="font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;justify-content:space-between;"><span>Jobs scheduled</span><strong style="color:var(--text);">5</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Estimates</span><strong style="color:var(--orange);">2</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Revenue potential</span><strong style="color:var(--green);">$18,400</strong></div>
+              <div style="display:flex;justify-content:space-between;"><span>Drive time est.</span><strong style="color:var(--text);">~4.5 hrs</strong></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ ESTIMATE BOT ══════════ -->
+    <div id="estimatebot" class="section">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>🤖 AI Estimate Bot</h1>
+          <p>Describe the job — get a full estimate in seconds</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost">📋 All Estimates</button>
+          <button class="btn btn-orange" onclick="clearChat()">+ New Estimate</button>
+        </div>
+      </div>
+
+      <div class="chat-wrap">
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg bot">
+            <div class="msg-avatar">🤖</div>
+            <div class="msg-bubble">
+              Hey! I'm your AI estimate assistant. Tell me about the job — what's the work, where is it, and who's the customer? I'll build out a detailed estimate you can send right away.
+              <br><br>
+              <strong>Example:</strong> "Kitchen reno for Jose Martinez in Brooklyn. Tile backsplash, new cabinets, paint. About 400 sq ft."
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="chat-suggestions" id="chatSuggestions">
+            <div class="chat-suggestion" onclick="sendSuggestion('Bathroom remodel, full gut — tile, vanity, tub. ~120 sq ft.')">🚿 Bathroom remodel</div>
+            <div class="chat-suggestion" onclick="sendSuggestion('Kitchen renovation — cabinets, counters, tile. 350 sq ft.')">🍳 Kitchen reno</div>
+            <div class="chat-suggestion" onclick="sendSuggestion('Deck build, pressure treated wood, 400 sq ft, railings included.')">🌿 Deck build</div>
+            <div class="chat-suggestion" onclick="sendSuggestion('Interior paint, 3 bedrooms, 2 bathrooms, ceiling included.')">🎨 Interior paint</div>
+            <div class="chat-suggestion" onclick="sendSuggestion('Hardwood flooring install, 600 sq ft, subfloor prep needed.')">🏠 Flooring</div>
+          </div>
+          <div class="chat-input-area">
+            <div class="chat-input-wrap">
+              <textarea id="chatInput" rows="1" placeholder="Describe the job, customer, location, and scope..." onkeydown="handleEnter(event)" oninput="autoResize(this)"></textarea>
+              <button class="chat-send-btn" onclick="sendMessage()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ AI RECEPTIONIST ══════════ -->
+    <div id="receptionist" class="section">
+      <div class="page-header">
+        <div class="page-header-left">
+          <h1>AI Receptionist</h1>
+          <p>Your 24/7 AI handles missed calls, captures leads, schedules callbacks</p>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--green);background:var(--green-glow);border:1px solid var(--green-border);padding:6px 14px;border-radius:20px;">
+            <span style="width:6px;height:6px;background:var(--green);border-radius:50%;display:inline-block;"></span> Online · Answering calls
+          </div>
+        </div>
+      </div>
+
+      <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);">
+        <div class="stat-card"><div class="stat-num green">47</div><div class="stat-label">Calls Handled</div><div class="stat-source">This month</div></div>
+        <div class="stat-card"><div class="stat-num">9</div><div class="stat-label">Leads Captured</div><div class="stat-source">AI collected info</div></div>
+        <div class="stat-card"><div class="stat-num amber">3</div><div class="stat-label">Awaiting Review</div><div class="stat-source">Action needed</div></div>
+        <div class="stat-card"><div class="stat-num blue">94%</div><div class="stat-label">Answer Rate</div><div class="stat-source">Up from 61%</div></div>
+      </div>
+
+      <div class="grid-2">
+        <div>
+          <div class="table-wrap">
+            <div style="padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;">
+              <div style="font-family:'Syne',sans-serif;font-size:13px;font-weight:800;">Recent Calls</div>
+              <div class="section-tabs" style="margin:0;">
+                <button class="stab active" style="padding:4px 12px;font-size:11px;">All</button>
+                <button class="stab" style="padding:4px 12px;font-size:11px;">Missed</button>
+                <button class="stab" style="padding:4px 12px;font-size:11px;">Leads</button>
+              </div>
+            </div>
+            <div class="call-row">
+              <div class="call-icon in">📞</div>
+              <div class="call-info"><div class="call-name">Sarah Kim <span class="badge badge-green" style="font-size:9px;">New Lead</span></div><div class="call-sub">🤖 AI answered · Bathroom remodel inquiry · Contact saved</div></div>
+              <div class="call-right"><div class="call-time">42 min ago</div><div class="call-duration">3:24</div></div>
+            </div>
+            <div class="call-row">
+              <div class="call-icon missed">📵</div>
+              <div class="call-info"><div class="call-name">Unknown <span class="badge badge-amber" style="font-size:9px;">Missed</span></div><div class="call-sub">🤖 AI answered after 2 rings · Left voicemail prompt</div></div>
+              <div class="call-right"><div class="call-time">1.5 hrs ago</div><div class="call-duration">1:10</div></div>
+            </div>
+            <div class="call-row">
+              <div class="call-icon in">📞</div>
+              <div class="call-info"><div class="call-name">Mike Wilson <span class="badge badge-amber" style="font-size:9px;">Callback Scheduled</span></div><div class="call-sub">🤖 AI scheduled callback for 3pm today</div></div>
+              <div class="call-right"><div class="call-time">2 hrs ago</div><div class="call-duration">2:48</div></div>
+            </div>
+            <div class="call-row">
+              <div class="call-icon out">📤</div>
+              <div class="call-info"><div class="call-name">David Lee</div><div class="call-sub">🤖 AI sent follow-up text on estimate from last week</div></div>
+              <div class="call-right"><div class="call-time">Yesterday</div><div class="call-duration">Auto</div></div>
+            </div>
+            <div class="call-row">
+              <div class="call-icon in">📞</div>
+              <div class="call-info"><div class="call-name">Amy Thompson</div><div class="call-sub">Inbound — deck job question · Transferred to voicemail</div></div>
+              <div class="call-right"><div class="call-time">Jun 14</div><div class="call-duration">1:55</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div class="card">
+            <div class="card-title">🆕 New Lead — Sarah Kim</div>
+            <div class="ai-summary-box">
+              <strong>AI Summary:</strong> Sarah called at 9:18am asking about a full bathroom remodel. She mentioned subway tile, a new vanity, and frameless glass shower. Home is in Manhattan. Budget range: $8K–$12K. Requested a callback Monday morning.
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px;">
+              <button class="btn btn-orange" style="justify-content:center;">📞 Call Back</button>
+              <button class="btn btn-ghost" style="justify-content:center;" onclick="showSection('estimatebot', document.querySelectorAll('.nav-item')[8])">🤖 Build Estimate</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title">⚙️ Receptionist Settings</div>
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:12px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--muted);">Answer after</span><span style="color:var(--text);font-weight:600;">2 rings</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--muted);">Business hours</span><span style="color:var(--text);font-weight:600;">8am – 6pm</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--muted);">After-hours mode</span><span class="badge badge-green">Active</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--muted);">Auto follow-up</span><span class="badge badge-green">On</span></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;"><span style="color:var(--muted);">Lead capture</span><span class="badge badge-green">On</span></div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:14px;justify-content:center;" onclick="showSection('settings', document.querySelectorAll('.nav-item')[10])">Edit AI Settings →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PROJECTS ══════════ -->
+    <div id="projects" class="section">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Projects</h1><p>4 active · 2 completing this week</p></div>
+        <button class="btn btn-orange">+ New Project</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num">4</div><div class="stat-label">Active</div><div class="stat-source">In progress</div></div>
+        <div class="stat-card"><div class="stat-num green">$48,200</div><div class="stat-label">In Flight Value</div><div class="stat-source">Across 4 jobs</div></div>
+        <div class="stat-card"><div class="stat-num amber">2</div><div class="stat-label">Due This Week</div><div class="stat-source">Final stages</div></div>
+        <div class="stat-card"><div class="stat-num blue">8</div><div class="stat-label">Completed YTD</div><div class="stat-source">$62,400 total</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Project</th><th>Customer</th><th>Start</th><th>Est. End</th><th>Progress</th><th>Value</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="project-row-main"><div class="project-color" style="background:var(--orange);"></div><div><div style="font-weight:600;">Kitchen Renovation</div><div style="font-size:11px;color:var(--muted);">Tile, cabinets, paint</div></div></div></td>
+              <td style="color:var(--muted);">Jose Martinez</td>
+              <td style="color:var(--muted);">Jun 15</td>
+              <td style="color:var(--muted);">Jul 8</td>
+              <td><div class="progress-mini">15%<div style="flex:1;"><div class="bar-wrap"><div class="bar-fill" style="width:15%;background:var(--orange);"></div></div></div></div></td>
+              <td style="color:var(--green);font-weight:600;">$4,200</td>
+              <td><span class="badge badge-orange">Starting</span></td>
+            </tr>
+            <tr>
+              <td><div class="project-row-main"><div class="project-color" style="background:var(--blue);"></div><div><div style="font-weight:600;">Deck Build</div><div style="font-size:11px;color:var(--muted);">400 sq ft pressure treated</div></div></div></td>
+              <td style="color:var(--muted);">Amy Thompson</td>
+              <td style="color:var(--muted);">Jun 2</td>
+              <td style="color:var(--muted);">Jun 23</td>
+              <td><div class="progress-mini">65%<div style="flex:1;"><div class="bar-wrap"><div class="bar-fill" style="width:65%;background:var(--blue);"></div></div></div></div></td>
+              <td style="color:var(--green);font-weight:600;">$12,200</td>
+              <td><span class="badge badge-blue">On Track</span></td>
+            </tr>
+            <tr>
+              <td><div class="project-row-main"><div class="project-color" style="background:var(--green);"></div><div><div style="font-weight:600;">Bathroom Reno</div><div style="font-size:11px;color:var(--muted);">Full gut — tile + vanity</div></div></div></td>
+              <td style="color:var(--muted);">Ray Garcia</td>
+              <td style="color:var(--muted);">Jun 5</td>
+              <td style="color:var(--muted);">Jun 18</td>
+              <td><div class="progress-mini">90%<div style="flex:1;"><div class="bar-wrap"><div class="bar-fill" style="width:90%;background:var(--green);"></div></div></div></div></td>
+              <td style="color:var(--green);font-weight:600;">$8,400</td>
+              <td><span class="badge badge-green">Finishing</span></td>
+            </tr>
+            <tr>
+              <td><div class="project-row-main"><div class="project-color" style="background:var(--amber);"></div><div><div style="font-weight:600;">Interior Paint</div><div style="font-size:11px;color:var(--muted);">4 rooms + hallway</div></div></div></td>
+              <td style="color:var(--muted);">Linda Park</td>
+              <td style="color:var(--muted);">Jun 12</td>
+              <td style="color:var(--muted);">Jun 17</td>
+              <td><div class="progress-mini">50%<div style="flex:1;"><div class="bar-wrap"><div class="bar-fill" style="width:50%;background:var(--amber);"></div></div></div></div></td>
+              <td style="color:var(--green);font-weight:600;">$3,800</td>
+              <td><span class="badge badge-amber">Mid-Job</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ ESTIMATES ══════════ -->
+    <div id="estimates" class="section">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Estimates</h1><p>7 total · $54,200 in open estimates</p></div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn btn-ghost" onclick="showSection('estimatebot', document.querySelectorAll('.nav-item')[8])">🤖 AI Estimate Bot</button>
+          <button class="btn btn-orange">+ New Estimate</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Customer</th><th>Job</th><th>Sent</th><th>Expires</th><th>Status</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--dim);font-size:11px;">EST-008</td><td>Jose Martinez</td><td style="color:var(--muted);">Kitchen Renovation</td><td style="color:var(--muted);">Jun 12</td><td style="color:var(--muted);">Jun 26</td><td><span class="badge badge-amber">Pending</span></td><td style="color:var(--amber);font-weight:600;">$4,200</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">EST-007</td><td>Sarah Kim</td><td style="color:var(--muted);">Bathroom Remodel</td><td style="color:var(--muted);">Jun 8</td><td style="color:var(--muted);">Jun 22</td><td><span class="badge badge-amber">Pending</span></td><td style="color:var(--amber);font-weight:600;">$9,800</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">EST-006</td><td>Mike Wilson</td><td style="color:var(--muted);">Roof Repair</td><td style="color:var(--muted);">Jun 1</td><td style="color:var(--muted);">Jun 15</td><td><span class="badge badge-red">Expired</span></td><td style="color:var(--red);font-weight:600;">$6,400</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">EST-005</td><td>Amy Thompson</td><td style="color:var(--muted);">Deck Build</td><td style="color:var(--muted);">May 28</td><td style="color:var(--muted);">Jun 11</td><td><span class="badge badge-green">Accepted</span></td><td style="color:var(--green);font-weight:600;">$12,200</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">EST-004</td><td>Linda Park</td><td style="color:var(--muted);">Interior Paint</td><td style="color:var(--muted);">May 25</td><td style="color:var(--muted);">Jun 8</td><td><span class="badge badge-green">Accepted</span></td><td style="color:var(--green);font-weight:600;">$3,800</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ INVOICES ══════════ -->
+    <div id="invoices" class="section">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Invoices</h1><p>$6,100 outstanding · $24,800 paid this month</p></div>
+        <button class="btn btn-orange">+ Create Invoice</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num green">$24,800</div><div class="stat-label">Collected MTD</div><div class="stat-source">4 invoices</div></div>
+        <div class="stat-card"><div class="stat-num amber">$6,100</div><div class="stat-label">Outstanding</div><div class="stat-source">2 invoices</div></div>
+        <div class="stat-card"><div class="stat-num red">$3,100</div><div class="stat-label">Overdue 7+ Days</div><div class="stat-source">1 invoice</div></div>
+        <div class="stat-card"><div class="stat-num">28d</div><div class="stat-label">Avg Days to Pay</div><div class="stat-source">Industry: 45d</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>#</th><th>Customer</th><th>Job</th><th>Issued</th><th>Due</th><th>Status</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--dim);font-size:11px;">INV-007</td><td>Jose Martinez</td><td style="color:var(--muted);">Kitchen — Deposit 50%</td><td style="color:var(--muted);">Jun 15</td><td style="color:var(--muted);">Jun 25</td><td><span class="badge badge-amber">Unpaid</span></td><td style="color:var(--amber);font-weight:600;">$2,100</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">INV-006</td><td>Ray Garcia</td><td style="color:var(--muted);">Bathroom Reno — Final</td><td style="color:var(--muted);">Jun 8</td><td style="color:var(--muted);">Jun 8</td><td><span class="badge badge-red">Overdue</span></td><td style="color:var(--red);font-weight:600;">$4,000</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">INV-005</td><td>Linda Park</td><td style="color:var(--muted);">Interior Paint</td><td style="color:var(--muted);">Jun 6</td><td style="color:var(--muted);">Jun 16</td><td><span class="badge badge-green">Paid ✓</span></td><td style="color:var(--green);font-weight:600;">$3,800</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">INV-004</td><td>Amy Thompson</td><td style="color:var(--muted);">Deck Build — Mid</td><td style="color:var(--muted);">Jun 10</td><td style="color:var(--muted);">Jun 20</td><td><span class="badge badge-green">Paid ✓</span></td><td style="color:var(--green);font-weight:600;">$6,100</td></tr>
+            <tr><td style="color:var(--dim);font-size:11px;">INV-003</td><td>David Lee</td><td style="color:var(--muted);">Flooring Install</td><td style="color:var(--muted);">May 30</td><td style="color:var(--muted);">Jun 9</td><td><span class="badge badge-green">Paid ✓</span></td><td style="color:var(--green);font-weight:600;">$5,600</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ EXPENSES ══════════ -->
+    <div id="expenses" class="section">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Expenses</h1><p>June 2026 · $8,420 spent this month</p></div>
+        <button class="btn btn-orange">+ Log Expense</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-num red">$8,420</div><div class="stat-label">Spent MTD</div><div class="stat-source">Materials + Labor</div></div>
+        <div class="stat-card"><div class="stat-num">62%</div><div class="stat-label">Gross Margin</div><div class="stat-source">Target: 60%</div></div>
+        <div class="stat-card"><div class="stat-num amber">$5,200</div><div class="stat-label">Materials</div><div class="stat-source">Home Depot + suppliers</div></div>
+        <div class="stat-card"><div class="stat-num blue">$3,220</div><div class="stat-label">Sub-Contractors</div><div class="stat-source">2 subs this month</div></div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Project</th><th>Receipt</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td style="color:var(--muted);">Jun 14</td><td>Home Depot — Tile + grout</td><td><span class="badge badge-blue">Materials</span></td><td style="color:var(--muted);">Garcia Bath</td><td style="color:var(--green);">✓</td><td style="color:var(--red);font-weight:600;">-$840</td></tr>
+            <tr><td style="color:var(--muted);">Jun 13</td><td>Sub labor — electrical rough</td><td><span class="badge badge-purple" style="background:var(--purple-glow);color:var(--purple);border:1px solid var(--purple-border);">Sub</span></td><td style="color:var(--muted);">Martinez Kitchen</td><td style="color:var(--dim);">—</td><td style="color:var(--red);font-weight:600;">-$1,200</td></tr>
+            <tr><td style="color:var(--muted);">Jun 12</td><td>Lumber — pressure treated 4x6</td><td><span class="badge badge-blue">Materials</span></td><td style="color:var(--muted);">Thompson Deck</td><td style="color:var(--green);">✓</td><td style="color:var(--red);font-weight:600;">-$1,960</td></tr>
+            <tr><td style="color:var(--muted);">Jun 10</td><td>Paint + primer — Sherwin</td><td><span class="badge badge-blue">Materials</span></td><td style="color:var(--muted);">Park Interior</td><td style="color:var(--green);">✓</td><td style="color:var(--red);font-weight:600;">-$320</td></tr>
+            <tr><td style="color:var(--muted);">Jun 8</td><td>Sub labor — plumbing finish</td><td><span class="badge badge-purple" style="background:var(--purple-glow);color:var(--purple);border:1px solid var(--purple-border);">Sub</span></td><td style="color:var(--muted);">Garcia Bath</td><td style="color:var(--dim);">—</td><td style="color:var(--red);font-weight:600;">-$2,020</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ══════════ SETTINGS ══════════ -->
+    <div id="settings" class="section">
+      <div class="page-header">
+        <div class="page-header-left"><h1>Settings</h1><p>Manage your Masmer account and AI tools</p></div>
+      </div>
+
+      <div style="max-width:680px;">
+        <div class="settings-group">
+          <div class="settings-group-title">👤 Business Profile</div>
+          <div class="settings-row"><div><div class="settings-label">Company Name</div></div><input class="settings-input" value="Masmer Contracting LLC"></div>
+          <div class="settings-row"><div><div class="settings-label">Owner</div></div><input class="settings-input" value="Omer"></div>
+          <div class="settings-row"><div><div class="settings-label">Phone</div></div><input class="settings-input" value="(555) 000-1234"></div>
+          <div class="settings-row"><div><div class="settings-label">License #</div></div><input class="settings-input" value="NY-CON-88241"></div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">🤖 AI Receptionist</div>
+          <div class="settings-row"><div><div class="settings-label">Answer After</div><div class="settings-sub">How many rings before AI picks up</div></div><input class="settings-input" value="2 rings" style="width:120px;"></div>
+          <div class="settings-row"><div><div class="settings-label">Business Hours</div></div><input class="settings-input" value="8:00am – 6:00pm" style="width:180px;"></div>
+          <div class="settings-row"><div><div class="settings-label">After-Hours Answering</div><div class="settings-sub">AI answers and captures lead info 24/7</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="settings-row"><div><div class="settings-label">Auto Follow-up Texts</div><div class="settings-sub">Send follow-up to missed calls automatically</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+          <div class="settings-row"><div><div class="settings-label">Lead Capture</div><div class="settings-sub">AI collects name, job type, and contact info</div></div><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">📋 Estimates</div>
+          <div class="settings-row"><div><div class="settings-label">Default Markup</div><div class="settings-sub">Applied to all AI-generated estimates</div></div><input class="settings-input" value="35%" style="width:100px;"></div>
+          <div class="settings-row"><div><div class="settings-label">Estimate Expiry</div></div><input class="settings-input" value="14 days" style="width:120px;"></div>
+          <div class="settings-row"><div><div class="settings-label">Auto-Send to Customer</div><div class="settings-sub">Email estimate PDF after AI generates it</div></div><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">🧾 Invoices & Payments</div>
+          <div class="settings-row"><div><div class="settings-label">Default Payment Terms</div></div><input class="settings-input" value="Net 10" style="width:120px;"></div>
+          <div class="settings-row"><div><div class="settings-label">Late Fee</div></div><input class="settings-input" value="1.5% / month" style="width:140px;"></div>
+          <div class="settings-row"><div><div class="settings-label">Stripe Connected</div><div class="settings-sub">Accept credit cards on invoices</div></div><span class="badge badge-green">Connected</span></div>
+        </div>
+
+        <div class="settings-group">
+          <div class="settings-group-title">💼 Plan & Billing</div>
+          <div class="settings-row"><div><div class="settings-label">Current Plan</div><div class="settings-sub">Masmer AI Pro — $199/mo</div></div><span class="badge badge-orange">Pro</span></div>
+          <div class="settings-row"><div><div class="settings-label">Billing Date</div></div><span style="font-size:12px;color:var(--muted);">July 1, 2026</span></div>
+          <div class="settings-row"><div><div class="settings-label">Upgrade to Growth</div><div class="settings-sub">Unlimited customers, VAPI + analytics — $349/mo</div></div><button class="btn btn-orange" style="padding:5px 14px;font-size:11px;">Upgrade</button></div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end page-content -->
+</div><!-- end main-area -->
+
+<!-- ══ ADD CUSTOMER MODAL ══ -->
+<div class="overlay" id="modal-add-customer" onclick="closeModal(event, 'modal-add-customer')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="document.getElementById('modal-add-customer').classList.remove('open')">✕</button>
+    <div class="modal-title">Add New Customer</div>
+    <div class="modal-sub">Fill in the details to add a customer to your CRM</div>
+    <div class="form-grid">
+      <div class="field"><label>First Name</label><input type="text" placeholder="Jose"></div>
+      <div class="field"><label>Last Name</label><input type="text" placeholder="Martinez"></div>
+      <div class="field"><label>Phone</label><input type="text" placeholder="(555) 000-1234"></div>
+      <div class="field"><label>Email</label><input type="text" placeholder="jose@email.com"></div>
+      <div class="field full"><label>Address</label><input type="text" placeholder="142 Oak St, Brooklyn, NY 11201"></div>
+      <div class="field"><label>Status</label><select><option>Lead</option><option>Active</option><option>Completed</option></select></div>
+      <div class="field"><label>Source</label><select><option>Referral</option><option>AI Receptionist</option><option>Website</option><option>Other</option></select></div>
+      <div class="field full"><label>Notes</label><textarea rows="3" placeholder="Any notes about this customer..."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="document.getElementById('modal-add-customer').classList.remove('open')">Cancel</button>
+      <button class="btn btn-orange" onclick="document.getElementById('modal-add-customer').classList.remove('open')">Add Customer</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── NAV ──
+const sectionTitles = {
+  dashboard: 'Dashboard', customers: 'Customers', 'customer-detail': 'Customer — Jose Martinez',
+  schedule: 'Schedule', estimatebot: 'AI Estimate Bot', receptionist: 'AI Receptionist',
+  projects: 'Projects', estimates: 'Estimates', invoices: 'Invoices', expenses: 'Expenses', settings: 'Settings'
+};
+
+function showSection(id, el) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById('topbarTitle').textContent = sectionTitles[id] || id;
+  if (el) {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (el.classList && el.classList.contains('nav-item')) el.classList.add('active');
+  }
+}
+
+// ── CUSTOMERS ──
+function showCustomerView(view, btn) {
+  document.querySelectorAll('.stab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('customer-table-view').style.display = view === 'table' ? 'block' : 'none';
+  document.getElementById('customer-kanban-view').style.display = view === 'kanban' ? 'block' : 'none';
+}
+
+function openCustomerDetail(name) {
+  showSection('customer-detail', null);
+}
+
+// ── CUSTOMER DETAIL TABS ──
+function showCdpTab(id, el) {
+  document.querySelectorAll('.cdp-section').forEach(s => s.style.display = 'none');
+  document.querySelectorAll('.cdp-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(id).style.display = 'block';
+  el.classList.add('active');
+}
+
+// ── MODAL ──
+function openModal(name) {
+  document.getElementById('modal-' + name).classList.add('open');
+}
+function closeModal(e, id) {
+  if (e.target === document.getElementById(id)) document.getElementById(id).classList.remove('open');
+}
+
+// ── ESTIMATE BOT ──
+const estimateResponses = {
+  default: async (msg) => {
+    const lower = msg.toLowerCase();
+    if (lower.includes('bathroom')) return generateEstimate('Bathroom Remodel', [
+      ['Demo + haul away', '$480'],['Tile labor (120 sq ft)', '$960'],['Tile materials', '$720'],['Vanity install', '$340'],['Plumbing rough-in', '$880'],['Paint + finish', '$280'],['Subtotal (materials)', '$1,940'],['Subtotal (labor)', '$2,460'],['Markup (35%)', '$1,540'],['TOTAL', '$5,940']
+    ]);
+    if (lower.includes('kitchen')) return generateEstimate('Kitchen Renovation', [
+      ['Demo + haul away', '$620'],['Cabinet install', '$1,200'],['Tile backsplash (40 sq ft)', '$480'],['Counter install', '$680'],['Paint', '$360'],['Subtotal (materials)', '$1,860'],['Subtotal (labor)', '$2,320'],['Markup (35%)', '$1,463'],['TOTAL', '$5,643']
+    ]);
+    if (lower.includes('deck')) return generateEstimate('Deck Build', [
+      ['Framing — pressure treated', '$2,400'],['Decking boards (400 sq ft)', '$1,800'],['Railing install', '$960'],['Hardware + fasteners', '$340'],['Labor total', '$3,200'],['Markup (35%)', '$3,080'],['TOTAL', '$11,780']
+    ]);
+    if (lower.includes('paint') || lower.includes('interior')) return generateEstimate('Interior Paint', [
+      ['Paint + primer (3 coats)', '$620'],['Prep + tape + drop cloths', '$180'],['Labor — 4 rooms', '$1,440'],['Markup (35%)', '$791'],['TOTAL', '$3,031']
+    ]);
+    if (lower.includes('floor') || lower.includes('hardwood')) return generateEstimate('Flooring Install', [
+      ['Hardwood material (600 sq ft)', '$3,600'],['Underlayment', '$480'],['Subfloor prep', '$720'],['Install labor', '$1,800'],['Markup (35%)', '$2,310'],['TOTAL', '$8,910']
+    ]);
+    return `Got it! I'm analyzing the job scope you described...\n\nTo build an accurate estimate, let me know:\n• **Square footage** or size of the space\n• **Any specific materials** you want (brand, grade)\n• **Customer name** and location\n\nOr just describe the job in plain English and I'll do the rest.`;
+  }
+};
+
+function generateEstimate(title, lines) {
+  const total = lines[lines.length - 1][1];
+  let html = `Here's your AI-generated estimate based on the job description:<br><br>`;
+  html += `<div class="estimate-card">`;
+  html += `<div class="estimate-card-title">📋 ${title}</div>`;
+  lines.forEach((line, i) => {
+    const isTot = line[0] === 'TOTAL';
+    html += `<div class="estimate-line${isTot ? ' total' : ''}"><span>${line[0]}</span><strong>${line[1]}</strong></div>`;
+  });
+  html += `</div>`;
+  html += `<br><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;">
+    <button onclick="showSection('estimates', document.querySelectorAll('.nav-item')[5])" style="padding:6px 14px;border-radius:8px;background:var(--orange);border:none;color:white;font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">💾 Save Estimate</button>
+    <button onclick="alert('PDF generated!')" style="padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">📄 Download PDF</button>
+    <button onclick="alert('Sent to customer!')" style="padding:6px 14px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid var(--border);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;">✉️ Email to Customer</button>
+  </div>`;
+  return html;
+}
+
+let isTyping = false;
+function addMessage(content, role) {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = role === 'bot'
+    ? `<div class="msg-avatar">🤖</div><div class="msg-bubble">${content.replace(/\n/g,'<br>').replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>')}</div>`
+    : `<div class="msg-bubble">${content}</div><div class="msg-avatar">O</div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function showTyping() {
+  const wrap = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg bot'; div.id = 'typingIndicator';
+  div.innerHTML = `<div class="msg-avatar">🤖</div><div class="msg-bubble"><div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div></div>`;
+  wrap.appendChild(div);
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+async function sendMessage() {
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if (!msg || isTyping) return;
+  input.value = ''; input.style.height = 'auto';
+  document.getElementById('chatSuggestions').style.display = 'none';
+  addMessage(msg, 'user');
+  isTyping = true;
+  showTyping();
+  await new Promise(r => setTimeout(r, 1400));
+  document.getElementById('typingIndicator')?.remove();
+  const response = await estimateResponses.default(msg);
+  addMessage(response, 'bot');
+  isTyping = false;
+}
+
+function sendSuggestion(text) {
+  document.getElementById('chatInput').value = text;
+  sendMessage();
+}
+
+function clearChat() {
+  document.getElementById('chatMessages').innerHTML = `<div class="msg bot"><div class="msg-avatar">🤖</div><div class="msg-bubble">Hey! I'm your AI estimate assistant. Tell me about the job — what's the work, where is it, and who's the customer? I'll build out a detailed estimate you can send right away.<br><br><strong>Example:</strong> "Kitchen reno for Jose Martinez in Brooklyn. Tile backsplash, new cabinets, paint. About 400 sq ft."</div></div>`;
+  document.getElementById('chatSuggestions').style.display = 'flex';
+}
+
+function handleEnter(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }
+function autoResize(el) { el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
+</script>
+</body>
+</html>
