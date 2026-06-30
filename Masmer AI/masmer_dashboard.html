@@ -877,14 +877,14 @@ input,textarea,select{font-family:'DM Sans',sans-serif;}
     <div class="tab-panel" id="tab-schedule">
       <div class="cal-header">
         <div class="cal-nav">
-          <button class="cal-nav-btn">‹</button>
-          <button class="cal-nav-btn">›</button>
+          <button class="cal-nav-btn" onclick="calNav(-1)">‹</button>
+          <button class="cal-nav-btn" onclick="calNav(1)">›</button>
         </div>
-        <div class="cal-month">July 2026</div>
+        <div class="cal-month" id="calMonthLabel">July 2026</div>
         <div class="cal-view-tabs">
-          <button class="cal-tab on">Month</button>
-          <button class="cal-tab">Week</button>
-          <button class="cal-tab">Day</button>
+          <button class="cal-tab on" onclick="setCalView('month',this)">Month</button>
+          <button class="cal-tab" onclick="setCalView('week',this)">Week</button>
+          <button class="cal-tab" onclick="setCalView('day',this)">Day</button>
         </div>
         <button class="topbar-btn primary" style="margin-left:12px;" onclick="openModal('newJob')">
           <svg style="width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -1218,6 +1218,97 @@ function buildCalendar() {
   for (let i = 0; i < rem; i++) {
     const d = document.createElement('div'); d.className='cal-day other-month'; grid.appendChild(d);
   }
+}
+
+/* ═══════════════════ CALENDAR VIEWS ═══════════════════ */
+let calView = 'month', calOffset = 0;
+
+function setCalView(view, el) {
+  document.querySelectorAll('.cal-tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+  calView = view;
+  calOffset = 0;
+  renderCalView();
+}
+
+function calNav(dir) {
+  calOffset += dir;
+  renderCalView();
+}
+
+function renderCalView() {
+  if (calView === 'month') buildCalendar();
+  else if (calView === 'week') buildWeekView();
+  else buildDayView();
+}
+
+function buildWeekView() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  const hours = Array.from({length:13}, (_,i) => i + 6); // 6am–6pm
+  // Base: week of June 21, 2026 (today = Sunday)
+  const base = new Date(2026, 5, 21);
+  const weekStart = new Date(base);
+  weekStart.setDate(weekStart.getDate() + calOffset * 7);
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
+  // Update label
+  document.getElementById('calMonthLabel').textContent =
+    weekStart.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' – ' +
+    weekEnd.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  // Build grid
+  let html = `<div style="display:grid;grid-template-columns:52px repeat(7,1fr);border:1px solid var(--b0);border-radius:10px;overflow:hidden;">`;
+  // Header
+  html += `<div style="background:var(--bg2);border-bottom:1px solid var(--b0);padding:8px;"></div>`;
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(weekStart); d.setDate(d.getDate() + i);
+    const isToday = d.toDateString() === new Date(2026,5,21).toDateString();
+    html += `<div style="padding:10px 6px;text-align:center;background:var(--bg2);border-bottom:1px solid var(--b0);border-left:1px solid var(--b0);">
+      <div style="font-size:10px;font-weight:700;color:var(--lo);text-transform:uppercase;letter-spacing:.06em;">${DAY_NAMES[d.getDay()]}</div>
+      <div style="font-size:17px;font-weight:700;margin-top:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:4px auto 0;
+        ${isToday ? 'background:var(--og);color:#fff;' : 'color:var(--hi);'}">${d.getDate()}</div>
+    </div>`;
+  }
+  // Hour rows
+  hours.forEach(h => {
+    const lbl = h > 12 ? `${h-12}pm` : h === 12 ? '12pm' : `${h}am`;
+    html += `<div style="padding:5px 8px;font-size:10px;color:var(--lo);text-align:right;border-bottom:1px solid var(--b0);background:var(--bg1);line-height:52px;">${lbl}</div>`;
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(weekStart); d.setDate(d.getDate() + i);
+      // Events: match July days only (month 6 = July)
+      const evts = d.getMonth() === 6 ? DB.events.filter(e => e.day === d.getDate() && h === 9) : [];
+      html += `<div style="min-height:52px;border-bottom:1px solid var(--b0);border-left:1px solid var(--b0);padding:3px;">
+        ${evts.map(e => `<div style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color};border-radius:4px;padding:3px 6px;font-size:10px;font-weight:600;cursor:pointer;margin-bottom:2px;">${e.title}</div>`).join('')}
+      </div>`;
+    }
+  });
+  html += `</div>`;
+  grid.innerHTML = html;
+}
+
+function buildDayView() {
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = '';
+  const today = new Date(2026, 5, 21);
+  today.setDate(today.getDate() + calOffset);
+  document.getElementById('calMonthLabel').textContent =
+    today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+  const hours = Array.from({length:14}, (_,i) => i + 6);
+  const dayEvts = today.getMonth() === 6 ? DB.events.filter(e => e.day === today.getDate()) : [];
+  let html = `<div style="border:1px solid var(--b0);border-radius:10px;overflow:hidden;">`;
+  hours.forEach((h,idx) => {
+    const lbl = h > 12 ? `${h-12}:00 PM` : h === 12 ? '12:00 PM' : `${h}:00 AM`;
+    const isNow = h === 9 && calOffset === 0;
+    const evts = dayEvts.filter((_,i) => h === 8 + i);
+    html += `<div style="display:grid;grid-template-columns:88px 1fr;border-bottom:1px solid var(--b0);min-height:64px;${isNow?'background:var(--og-bg);':''}">
+      <div style="padding:12px;font-size:11px;color:${isNow?'var(--og)':'var(--lo)'};font-weight:600;border-right:1px solid var(--b0);">${lbl}</div>
+      <div style="padding:6px 10px;">
+        ${evts.map(e=>`<div onclick="openModal('jobDetail')" style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color};border-radius:6px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:4px;">${e.title} <span style="font-weight:400;opacity:.75;">· ${e.sub}</span></div>`).join('')}
+      </div>
+    </div>`;
+  });
+  html += `</div>`;
+  grid.innerHTML = html;
 }
 
 /* ═══════════════════ PIPELINE ═══════════════════ */
