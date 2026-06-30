@@ -1190,7 +1190,9 @@ function switchTab(id, el) {
 /* ═══════════════════ CALENDAR ═══════════════════ */
 function buildCalendar() {
   const grid = document.getElementById('calGrid');
+  grid.style.cssText = ''; // restore original CSS class styles
   grid.innerHTML = '';
+  document.getElementById('calMonthLabel').textContent = 'July 2026';
   const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
   days.forEach(d => { const h = document.createElement('div'); h.className='cal-day-head'; h.textContent=d; grid.appendChild(h); });
   // July 2026 starts on Wed (index 3)
@@ -1244,70 +1246,72 @@ function renderCalView() {
 
 function buildWeekView() {
   const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
+  // Override the 7-col grid CSS so our inner layout takes over
+  grid.style.cssText = 'display:block;border:none;border-radius:14px;overflow:hidden;';
   const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-  const hours = Array.from({length:13}, (_,i) => i + 6); // 6am–6pm
-  // Base: week of June 21, 2026 (today = Sunday)
+  const hours = Array.from({length:13}, (_,i) => i + 6);
   const base = new Date(2026, 5, 21);
   const weekStart = new Date(base);
   weekStart.setDate(weekStart.getDate() + calOffset * 7);
   const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 6);
-  // Update label
   document.getElementById('calMonthLabel').textContent =
     weekStart.toLocaleDateString('en-US',{month:'short',day:'numeric'}) + ' – ' +
     weekEnd.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-  // Build grid
-  let html = `<div style="display:grid;grid-template-columns:52px repeat(7,1fr);border:1px solid var(--b0);border-radius:10px;overflow:hidden;">`;
-  // Header
-  html += `<div style="background:var(--bg2);border-bottom:1px solid var(--b0);padding:8px;"></div>`;
+
+  // Build as a table for clean column widths
+  let html = `<table style="width:100%;border-collapse:collapse;border:1px solid var(--b0);border-radius:14px;overflow:hidden;">
+    <thead><tr>
+      <th style="width:52px;background:var(--bg2);border-bottom:1px solid var(--b0);border-right:1px solid var(--b0);"></th>`;
   for (let i = 0; i < 7; i++) {
     const d = new Date(weekStart); d.setDate(d.getDate() + i);
     const isToday = d.toDateString() === new Date(2026,5,21).toDateString();
-    html += `<div style="padding:10px 6px;text-align:center;background:var(--bg2);border-bottom:1px solid var(--b0);border-left:1px solid var(--b0);">
+    html += `<th style="background:var(--bg2);border-bottom:1px solid var(--b0);border-right:1px solid var(--b0);padding:10px 6px;text-align:center;">
       <div style="font-size:10px;font-weight:700;color:var(--lo);text-transform:uppercase;letter-spacing:.06em;">${DAY_NAMES[d.getDay()]}</div>
-      <div style="font-size:17px;font-weight:700;margin-top:2px;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:4px auto 0;
-        ${isToday ? 'background:var(--og);color:#fff;' : 'color:var(--hi);'}">${d.getDate()}</div>
-    </div>`;
+      <div style="font-size:17px;font-weight:700;width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:50%;margin:4px auto 0;
+        ${isToday?'background:var(--og);color:#fff;':'color:var(--hi);'}">${d.getDate()}</div>
+    </th>`;
   }
-  // Hour rows
+  html += `</tr></thead><tbody>`;
   hours.forEach(h => {
     const lbl = h > 12 ? `${h-12}pm` : h === 12 ? '12pm' : `${h}am`;
-    html += `<div style="padding:5px 8px;font-size:10px;color:var(--lo);text-align:right;border-bottom:1px solid var(--b0);background:var(--bg1);line-height:52px;">${lbl}</div>`;
+    html += `<tr>
+      <td style="padding:0 8px;font-size:10px;color:var(--lo);text-align:right;border-bottom:1px solid var(--b0);border-right:1px solid var(--b0);background:var(--bg1);white-space:nowrap;vertical-align:top;padding-top:6px;">${lbl}</td>`;
     for (let i = 0; i < 7; i++) {
       const d = new Date(weekStart); d.setDate(d.getDate() + i);
-      // Events: match July days only (month 6 = July)
       const evts = d.getMonth() === 6 ? DB.events.filter(e => e.day === d.getDate() && h === 9) : [];
-      html += `<div style="min-height:52px;border-bottom:1px solid var(--b0);border-left:1px solid var(--b0);padding:3px;">
-        ${evts.map(e => `<div style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color};border-radius:4px;padding:3px 6px;font-size:10px;font-weight:600;cursor:pointer;margin-bottom:2px;">${e.title}</div>`).join('')}
-      </div>`;
+      html += `<td style="min-height:56px;height:56px;border-bottom:1px solid var(--b0);border-right:1px solid var(--b0);padding:3px;vertical-align:top;">
+        ${evts.map(e=>`<div style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color};border-radius:4px;padding:3px 5px;font-size:10px;font-weight:600;cursor:pointer;line-height:1.3;">${e.title}<br><span style="font-weight:400;opacity:.7;font-size:9px;">${e.sub}</span></div>`).join('')}
+      </td>`;
     }
+    html += `</tr>`;
   });
-  html += `</div>`;
+  html += `</tbody></table>`;
   grid.innerHTML = html;
 }
 
 function buildDayView() {
   const grid = document.getElementById('calGrid');
-  grid.innerHTML = '';
+  grid.style.cssText = 'display:block;border:none;border-radius:14px;overflow:hidden;';
   const today = new Date(2026, 5, 21);
   today.setDate(today.getDate() + calOffset);
   document.getElementById('calMonthLabel').textContent =
     today.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
   const hours = Array.from({length:14}, (_,i) => i + 6);
   const dayEvts = today.getMonth() === 6 ? DB.events.filter(e => e.day === today.getDate()) : [];
-  let html = `<div style="border:1px solid var(--b0);border-radius:10px;overflow:hidden;">`;
+
+  let html = `<table style="width:100%;border-collapse:collapse;border:1px solid var(--b0);border-radius:14px;overflow:hidden;"><tbody>`;
   hours.forEach((h,idx) => {
     const lbl = h > 12 ? `${h-12}:00 PM` : h === 12 ? '12:00 PM' : `${h}:00 AM`;
     const isNow = h === 9 && calOffset === 0;
     const evts = dayEvts.filter((_,i) => h === 8 + i);
-    html += `<div style="display:grid;grid-template-columns:88px 1fr;border-bottom:1px solid var(--b0);min-height:64px;${isNow?'background:var(--og-bg);':''}">
-      <div style="padding:12px;font-size:11px;color:${isNow?'var(--og)':'var(--lo)'};font-weight:600;border-right:1px solid var(--b0);">${lbl}</div>
-      <div style="padding:6px 10px;">
-        ${evts.map(e=>`<div onclick="openModal('jobDetail')" style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color};border-radius:6px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:4px;">${e.title} <span style="font-weight:400;opacity:.75;">· ${e.sub}</span></div>`).join('')}
-      </div>
-    </div>`;
+    html += `<tr style="${isNow?'background:var(--og-bg);':''}">
+      <td style="width:96px;padding:12px 14px;font-size:11px;color:${isNow?'var(--og)':'var(--lo)'};font-weight:600;border-bottom:1px solid var(--b0);border-right:1px solid var(--b0);white-space:nowrap;vertical-align:top;">${lbl}</td>
+      <td style="padding:6px 12px;border-bottom:1px solid var(--b0);min-height:64px;vertical-align:top;">
+        ${evts.map(e=>`<div onclick="openModal('jobDetail')" style="background:${e.color}22;color:${e.color};border-left:3px solid ${e.color};border-radius:6px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;margin-bottom:4px;display:inline-block;min-width:200px;">${e.title} <span style="font-weight:400;opacity:.75;">· ${e.sub}</span></div>`).join('')}
+      </td>
+    </tr>`;
   });
-  html += `</div>`;
+  html += `</tbody></table>`;
   grid.innerHTML = html;
 }
 
