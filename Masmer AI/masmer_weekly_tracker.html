@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Masmer AI — Weekly Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --bg: #EDEBE5;
+  --bg2: #E6E3DC;
+  --card: #FFFFFF;
+  --card-hover: #FAF9F7;
+  --orange: #F97316;
+  --orange-glow: rgba(249,115,22,0.09);
+  --orange-border: rgba(249,115,22,0.30);
+  --orange-dark: #EA6C0A;
+  --text: #111827;
+  --muted: #6B7280;
+  --dim: #9CA3AF;
+  --border: rgba(0,0,0,0.08);
+  --border-strong: rgba(0,0,0,0.13);
+  --green: #059669;
+  --green-glow: rgba(5,150,105,0.09);
+  --green-border: rgba(5,150,105,0.28);
+  --blue: #2563EB;
+  --blue-glow: rgba(37,99,235,0.09);
+  --blue-border: rgba(37,99,235,0.28);
+  --amber: #D97706;
+  --amber-glow: rgba(217,119,6,0.09);
+  --amber-border: rgba(217,119,6,0.28);
+  --purple: #7C3AED;
+  --purple-glow: rgba(124,58,237,0.09);
+  --purple-border: rgba(124,58,237,0.28);
+  --red: #DC2626;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.07), 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+  /* subtle concrete grain */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+}
+
+/* HEADER */
+.header {
+  padding: 14px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--border-strong);
+  position: sticky; top: 0;
+  background: rgba(237,235,229,0.94);
+  backdrop-filter: blur(14px);
+  z-index: 100;
+}
+.logo { display: flex; align-items: center; gap: 10px; }
+.logo-mark {
+  width: 34px; height: 34px; background: var(--orange); border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Syne', sans-serif; font-weight: 800; font-size: 17px; color: white;
+  box-shadow: 0 2px 8px rgba(249,115,22,0.35);
+}
+.logo-text { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 18px; letter-spacing: -0.3px; color: var(--text); }
+.logo-text span { color: var(--orange); }
+.header-badge {
+  background: var(--orange-glow); border: 1px solid var(--orange-border);
+  color: var(--orange); padding: 4px 14px; border-radius: 20px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase;
+}
+.header-link { font-size: 12px; color: var(--muted); }
+
+/* HERO */
+.hero {
+  padding: 40px 40px 0;
+  max-width: 1180px; margin: 0 auto;
+}
+.hero h1 {
+  font-family: 'Syne', sans-serif; font-size: 34px; font-weight: 800;
+  letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 8px; color: var(--text);
+}
+.hero h1 span { color: var(--orange); }
+.hero-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
+
+/* STATS GRID */
+.stats-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+  max-width: 1180px; margin: 0 auto; padding: 0 40px 28px;
+}
+.stat-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 22px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+}
+.stat-card:hover {
+  border-color: var(--orange-border);
+  box-shadow: var(--shadow-md), 0 0 0 3px rgba(249,115,22,0.06);
+  transform: translateY(-2px);
+}
+.stat-num {
+  font-family: 'Syne', sans-serif; font-size: 30px; font-weight: 800;
+  color: var(--orange); line-height: 1; margin-bottom: 5px;
+}
+.stat-label { font-size: 12px; color: var(--text); font-weight: 600; margin-bottom: 2px; }
+.stat-source { font-size: 10px; color: var(--dim); }
+
+/* TABS */
+.tabs-wrap {
+  padding: 0 40px; max-width: 1180px; margin: 0 auto;
+}
+.tabs { display: flex; gap: 2px; padding-top: 8px; }
+.tab {
+  padding: 10px 22px; border-radius: 8px 8px 0 0;
+  border: 1px solid transparent; border-bottom: none;
+  cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500;
+  color: var(--muted); background: none; transition: all 0.18s;
+  position: relative; bottom: -1px;
+}
+.tab:hover { color: var(--text); background: rgba(0,0,0,0.04); }
+.tab.active {
+  color: var(--orange); background: var(--card);
+  border-color: var(--border-strong); border-bottom-color: var(--card);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.04);
+}
+.tab-bar { border-bottom: 1px solid var(--border-strong); }
+
+/* CONTENT */
+.content {
+  padding: 28px 40px 60px;
+  max-width: 1180px; margin: 0 auto;
+}
+.section { display: none; }
+.section.active { display: block; animation: fadein 0.22s ease; }
+@keyframes fadein { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* WEEK HEADER */
+.week-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 20px;
+}
+.week-title {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  letter-spacing: -0.3px; color: var(--text);
+}
+.week-title span { color: var(--orange); }
+.week-progress-wrap { display: flex; align-items: center; gap: 12px; }
+.week-progress-label { font-size: 12px; color: var(--muted); font-weight: 500; }
+.week-progress-bar {
+  width: 140px; background: rgba(0,0,0,0.08);
+  border-radius: 4px; height: 6px; overflow: hidden;
+}
+.week-progress-fill {
+  height: 100%; background: var(--orange);
+  border-radius: 4px; transition: width 0.3s ease;
+}
+
+/* CATEGORY GROUPS */
+.cat-group { margin-bottom: 24px; }
+.cat-label {
+  font-size: 10px; font-weight: 600; color: var(--dim);
+  letter-spacing: 0.1em; text-transform: uppercase;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+}
+.cat-label::after { content: ''; flex: 1; height: 1px; background: var(--border-strong); }
+
+/* TASK CARDS */
+.task-list { display: flex; flex-direction: column; gap: 8px; }
+.task-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px 18px;
+  display: flex; align-items: flex-start; gap: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.18s, border-color 0.18s, transform 0.15s;
+  cursor: pointer;
+}
+.task-card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.task-card.done { opacity: 0.42; box-shadow: none; transform: none; }
+.task-card.done .task-title { text-decoration: line-through; color: var(--muted); }
+
+/* CHECKBOX */
+.check-wrap { flex-shrink: 0; margin-top: 2px; }
+.check-box {
+  width: 20px; height: 20px; border-radius: 6px;
+  border: 1.5px solid var(--dim); background: none;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s; flex-shrink: 0;
+}
+.check-box.checked { background: var(--green); border-color: var(--green); }
+.check-box svg { display: none; }
+.check-box.checked svg { display: block; }
+
+/* TASK BODY */
+.task-body { flex: 1; }
+.task-top {
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap; margin-bottom: 3px;
+}
+.task-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+}
+.task-desc { font-size: 12px; color: var(--muted); line-height: 1.5; }
+
+/* BADGES */
+.badge {
+  display: inline-flex; align-items: center;
+  font-size: 10px; font-weight: 600;
+  padding: 2px 8px; border-radius: 20px;
+  gap: 4px; white-space: nowrap;
+}
+.badge-green  { background: var(--green-glow);  color: var(--green);  border: 1px solid var(--green-border); }
+.badge-blue   { background: var(--blue-glow);   color: var(--blue);   border: 1px solid var(--blue-border); }
+.badge-amber  { background: var(--amber-glow);  color: var(--amber);  border: 1px solid var(--amber-border); }
+.badge-orange { background: var(--orange-glow); color: var(--orange-dark); border: 1px solid var(--orange-border); }
+.badge-purple { background: var(--purple-glow); color: var(--purple); border: 1px solid var(--purple-border); }
+.badge-red    { background: rgba(220,38,38,0.08); color: var(--red);  border: 1px solid rgba(220,38,38,0.28); }
+
+/* PRIORITY DOT */
+.priority-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+.p-high { background: var(--red); box-shadow: 0 0 5px rgba(220,38,38,0.45); }
+.p-med  { background: var(--amber); }
+.p-low  { background: var(--dim); }
+
+/* EXPLAINER */
+.explainer {
+  background: rgba(249,115,22,0.07);
+  border: 1px solid var(--orange-border);
+  border-radius: 10px; padding: 14px 18px;
+  font-size: 12px; color: #92400E; line-height: 1.7; margin-bottom: 20px;
+}
+.explainer strong { color: var(--orange-dark); font-weight: 600; }
+
+/* ORANGE BANNER */
+.orange-banner {
+  background: linear-gradient(135deg, rgba(249,115,22,0.10) 0%, rgba(249,115,22,0.05) 100%);
+  border: 1px solid var(--orange-border);
+  border-radius: 16px; padding: 28px 36px;
+  text-align: center; margin-top: 32px;
+  box-shadow: var(--shadow-sm);
+}
+.orange-banner h2 {
+  font-family: 'Syne', sans-serif; font-size: 20px; font-weight: 800;
+  margin-bottom: 8px; letter-spacing: -0.3px; color: var(--text);
+}
+.orange-banner h2 span { color: var(--orange); }
+.orange-banner p { color: var(--muted); font-size: 13px; max-width: 580px; margin: 0 auto; line-height: 1.75; }
+
+/* FOOTER */
+.footer {
+  border-top: 1px solid var(--border-strong); padding: 24px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  color: var(--dim); font-size: 12px; max-width: 1180px; margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .header { padding: 12px 16px; }
+  .hero, .tabs-wrap, .content, .stats-grid { padding-left: 16px; padding-right: 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .tabs { overflow-x: auto; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-mark">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div class="header-badge">Weekly Tracker</div>
+  <div class="header-link">masmer.info</div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Omer &amp; Eitan — <span>Launch Roadmap</span></h1>
+  <div class="hero-sub">4-week sprint from idea to investor-ready. Track every task, own every week.</div>
+</div>
+
+<!-- STATS -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-num" id="totalTasks">22</div>
+    <div class="stat-label">Total Tasks</div>
+    <div class="stat-source">Across 4 weeks</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" id="completedTasks">0</div>
+    <div class="stat-label">Completed</div>
+    <div class="stat-source">Keep pushing</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num" id="overallPct">0%</div>
+    <div class="stat-label">Overall Progress</div>
+    <div class="stat-source">Updated live</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">7</div>
+    <div class="stat-label">High Priority</div>
+    <div class="stat-source">Red dot = critical</div>
+  </div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+    <button class="tab active" onclick="showTab('w1', this)">Week 1 — Legal &amp; Entity</button>
+    <button class="tab" onclick="showTab('w2', this)">Week 2 — Team &amp; Product</button>
+    <button class="tab" onclick="showTab('w3', this)">Week 3 — Business Dev</button>
+    <button class="tab" onclick="showTab('w4', this)">Week 4 — Fundraising</button>
+  </div>
+  <div class="tab-bar"></div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- WEEK 1 -->
+  <div class="section active" id="w1">
+    <div class="week-header">
+      <div class="week-title">Week 1 — <span>Legal &amp; Entity</span></div>
+      <div class="week-progress-wrap">
+        <div class="week-progress-label" id="w1-label">0 / 6</div>
+        <div class="week-progress-bar"><div class="week-progress-fill" id="w1-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <strong>Priority this week:</strong> Get your legal foundation locked before anything else moves. The LLC vs C-corp decision affects how investors come in, how equity splits, and how you protect yourselves. Founders agreement before any work splits further.
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Entity Formation</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w1">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Research LLC vs C-corp for Masmer AI</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Compare tax implications, investor compatibility (VCs strongly prefer C-corp Delaware), liability protection, and complexity. C-corp is almost always the move if you're raising.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w1">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Make entity decision &amp; begin filing</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Once decided, initiate incorporation. Delaware C-corp is the standard for funded startups - takes 1-3 days online via Stripe Atlas, Clerky, or a lawyer.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Founders Agreement</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w1">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Draft founders agreement (Omer &amp; Eitan)</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Cover equity split, vesting schedule (4yr / 1yr cliff), roles, IP assignment, decision-making authority, and what happens if one founder exits. Use a lawyer or Clerky template.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w1">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Sign founders agreement</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Both parties sign. Use DocuSign or a notarized copy. This is your foundation - nothing else is safe until this is signed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Legal &amp; Liability</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w1">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Map out legal liability framework</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Identify: what data you collect from contractors, what data contractors collect from their customers (homeowners), and your exposure. Consider CCPA/GDPR implications for SaaS storing homeowner data.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w1">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Draft ToS &amp; Privacy Policy for Masmer AI platform</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Protects you from contractor disputes and covers how homeowner data (passed through by contractors) is handled. Must cover liability if the AI gives a bad estimate.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 2 -->
+  <div class="section" id="w2">
+    <div class="week-header">
+      <div class="week-title">Week 2 — <span>Team &amp; Product</span></div>
+      <div class="week-progress-wrap">
+        <div class="week-progress-label" id="w2-label">0 / 5</div>
+        <div class="week-progress-bar"><div class="week-progress-fill" id="w2-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <strong>Focus this week:</strong> Get the right people aligned. Yahli and Evyatar need a technical liaison - find a developer who can translate their designs into the Lovable/Supabase build. Also begin the API research for Eliko.
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Developer Hire</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w2">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Define developer role (scope + budget)</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Clarify: freelance vs. hire, React/Supabase experience required, whether they'll work directly in Lovable or take over the codebase. Define how they'll communicate with Yahli and Evyatar on UI/UX specs.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w2">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Post dev job &amp; begin outreach</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Post on Toptal, Contra, Upwork, or LinkedIn. Filter for React + Supabase + VAPI experience. Must be comfortable reading Figma/design specs from Yahli and Evyatar.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">UI/UX Team Alignment</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w2">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Brief Yahli &amp; Evyatar on Masmer design system</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Share brand tokens: colors, Syne + DM Sans typography, dark-only UI. Align on MVP screen priorities: Dashboard, CRM Pipeline, AI Receptionist log, Estimate Bot.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Eliko the Estimator - API Research</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w2">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Research Home Depot &amp; Lowe's API access</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Check Home Depot Pro Xtra API and Lowe's Pro Services API availability. Look into affiliate/partner programs as a path to API access. Real-time pricing data is the goal for Eliko's auto-quoting.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w2">
+          <div class="priority-dot p-low"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Identify API fallback if direct access is blocked</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-purple">Research</span>
+            </div>
+            <div class="task-desc">Fallback options: BuildingConnected, Procore material feeds, or a manually-updated materials database seeded by Omer. Don't let API friction block Eliko's MVP.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 3 -->
+  <div class="section" id="w3">
+    <div class="week-header">
+      <div class="week-title">Week 3 — <span>Business Dev</span></div>
+      <div class="week-progress-wrap">
+        <div class="week-progress-label" id="w3-label">0 / 6</div>
+        <div class="week-progress-bar"><div class="week-progress-fill" id="w3-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <strong>Goal this week:</strong> Start building distribution channels and validate demand. The affiliate angle with HD/Lowe's is a long-term play - start the conversation early. Market research needs real numbers before you pitch an investor.
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Affiliate Program</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w3">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Draft affiliate partnership proposal for HD &amp; Lowe's</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Value prop: Masmer contractors buy materials through the platform - you drive high-value referrals. Propose a % commission on purchases made by contractors using Eliko estimates. Frame as co-marketing.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w3">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Apply to Home Depot &amp; Lowe's affiliate programs</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">HD runs through Impact.com / Commission Junction. Lowe's through their Pro partner portal. Apply now - approval takes weeks. A pending application is still a story for investors.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Market Research</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w3">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Run TAM/SAM/SOM analysis for Masmer AI</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">US has ~3.7M licensed contractors. Target: small to mid-size home service businesses (1-25 employees). Calculate addressable revenue at $99-$349/mo. Investors need these numbers before you walk in.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w3">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Validate demand: survey or interview 10 contractors</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Primary research beats market reports. Ask: missed calls per week, how they track leads, time spent on estimates, what they'd pay for automation. Omer's network is the fastest path here.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Marketing Strategy</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w3">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Draft go-to-market strategy doc</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Cover: channel mix (direct outreach vs. content vs. paid), ICP definition (GC vs. specialty trades?), pricing page copy, launch sequence. Start with Omer's personal contractor network as seed customers.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w3">
+          <div class="priority-dot p-low"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Identify 3-5 contractor YouTube / TikTok creators</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-purple">Research</span>
+            </div>
+            <div class="task-desc">Contractor content creators have highly targeted audiences. A single collab video can outperform weeks of paid ads. Find creators talking about "running a contracting business."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WEEK 4 -->
+  <div class="section" id="w4">
+    <div class="week-header">
+      <div class="week-title">Week 4 — <span>Fundraising</span></div>
+      <div class="week-progress-wrap">
+        <div class="week-progress-label" id="w4-label">0 / 5</div>
+        <div class="week-progress-bar"><div class="week-progress-fill" id="w4-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="explainer">
+      <strong>End goal:</strong> Walk into any investor meeting knowing exactly how much you need, what it buys, and what your cap table looks like after. Never ask for money without a budget. The budget IS the ask.
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Budget &amp; Ask</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w4">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Build 18-month operating budget</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Line-item: salaries/contractor costs, VAPI usage, Supabase/hosting, legal fees, marketing spend, and buffer. 18 months of runway is the standard ask. Know your monthly burn rate cold.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w4">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Determine fundraising ask &amp; use-of-funds breakdown</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Tie every dollar to a milestone. "We need $X to hire 2 engineers, close 50 paying customers, and file IP." Investors fund outcomes, not operations. Build a use-of-funds slide from your budget.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w4">
+          <div class="priority-dot p-high"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Update cap table with option pool &amp; pre-seed scenario</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-red">Critical</span>
+            </div>
+            <div class="task-desc">Run the option pool shuffle: investors will require 10-15% ESOP carved from founders before they calculate their stake. Model pre/post-money dilution for $250K, $500K, and $1M scenarios using the Masmer cap table calculator.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cat-group">
+      <div class="cat-label">Investor Outreach</div>
+      <div class="task-list">
+        <div class="task-card" onclick="toggleTask(this)" data-week="w4">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Build target investor list (20+ names)</div>
+              <span class="badge badge-orange">Omer</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Focus on: pre-seed funds ($100K-$1M check size), proptech/construction tech angels, and operators who've built in home services. AngelList, Crunchbase, LinkedIn. Warm intros beat cold outreach 10:1.</div>
+          </div>
+        </div>
+        <div class="task-card" onclick="toggleTask(this)" data-week="w4">
+          <div class="priority-dot p-med"></div>
+          <div class="check-wrap"><div class="check-box"><svg width="12" height="9" viewBox="0 0 12 9" fill="none"><path d="M1 4L4.5 7.5L11 1" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div></div>
+          <div class="task-body">
+            <div class="task-top">
+              <div class="task-title">Update pitch deck with market research &amp; budget data</div>
+              <span class="badge badge-blue">Both</span>
+              <span class="badge badge-amber">Important</span>
+            </div>
+            <div class="task-desc">Pull in your TAM numbers, contractor survey results, and use-of-funds slide. The deck needs: problem, solution, market size, traction, team, ask. "Built by a contractor" is the opening line - lead with it.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="orange-banner">
+      <h2>The goal: a working product, a signed team, <span>and a number.</span></h2>
+      <p>4 weeks from now you should know your entity, have your founders agreement signed, have a developer working with Yahli and Evyatar, and be able to tell any investor exactly how much you need and what it buys. That's the sprint.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="logo">
+    <div class="logo-mark" style="width:24px;height:24px;font-size:12px;border-radius:6px;">M</div>
+    <div class="logo-text">Masmer <span>AI</span></div>
+  </div>
+  <div>Weekly Tracker — Omer &amp; Eitan — for internal use</div>
+</div>
+
+<script>
+  const weekTotals = { w1: 6, w2: 5, w3: 6, w4: 5 };
+  const weekDone   = { w1: 0, w2: 0, w3: 0, w4: 0 };
+  const totalTasks = 22;
+  let completedTotal = 0;
+
+  function toggleTask(el) {
+    const week = el.dataset.week;
+    const box  = el.querySelector('.check-box');
+    const wasDone = el.classList.contains('done');
+    if (wasDone) {
+      el.classList.remove('done');
+      box.classList.remove('checked');
+      weekDone[week]   = Math.max(0, weekDone[week] - 1);
+      completedTotal   = Math.max(0, completedTotal - 1);
+    } else {
+      el.classList.add('done');
+      box.classList.add('checked');
+      weekDone[week]++;
+      completedTotal++;
+    }
+    updateStats();
+  }
+
+  function updateStats() {
+    ['w1','w2','w3','w4'].forEach(w => {
+      const pct = Math.round((weekDone[w] / weekTotals[w]) * 100);
+      document.getElementById(w + '-bar').style.width = pct + '%';
+      document.getElementById(w + '-label').textContent = weekDone[w] + ' / ' + weekTotals[w];
+    });
+    document.getElementById('completedTasks').textContent = completedTotal;
+    const pct = Math.round((completedTotal / totalTasks) * 100);
+    document.getElementById('overallPct').textContent = pct + '%';
+  }
+
+  function showTab(id, el) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    el.classList.add('active');
+  }
+</script>
+</body>
+</html>

@@ -800,6 +800,114 @@ h1,h2,h3,h4,h5 {
   .marquee-inner { animation:none; }
   * { animation-duration:.01ms !important; transition-duration:.01ms !important; }
 }
+
+/* ═══════════════════════════════════════════
+   MOTION v2 — Masmer Landing
+═══════════════════════════════════════════ */
+
+/* — Scroll progress bar — */
+#m-prog {
+  position:fixed; top:0; left:0; z-index:9999;
+  height:2px; width:0%;
+  background:var(--orange);
+  box-shadow:0 0 10px rgba(249,115,22,.55), 0 0 4px var(--orange);
+  pointer-events:none;
+}
+
+/* — Cursor orange glow (desktop only) — */
+#m-cursor {
+  position:fixed; z-index:0; pointer-events:none;
+  width:420px; height:420px; border-radius:50%;
+  background:radial-gradient(circle, rgba(249,115,22,.058) 0%, transparent 68%);
+  transform:translate(-50%,-50%);
+  transition:left .13s ease-out, top .13s ease-out;
+}
+
+/* — Nav entrance — */
+.nav {
+  animation:navSlide .55s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes navSlide {
+  from { opacity:0; transform:translateY(-100%); }
+}
+
+/* — Hero stagger (bypass group .r, animate children individually) — */
+.hero-left.r {
+  opacity:1 !important;
+  transform:none !important;
+  transition:none !important;
+}
+.hero-left > * {
+  opacity:0;
+  transform:translateY(22px);
+  animation:hIn .72s cubic-bezier(.22,1,.36,1) forwards;
+}
+.hero-left > *:nth-child(1) { animation-delay:.10s; }
+.hero-left > *:nth-child(2) { animation-delay:.22s; }
+.hero-left > *:nth-child(3) { animation-delay:.35s; }
+.hero-left > *:nth-child(4) { animation-delay:.48s; }
+.hero-left > *:nth-child(5) { animation-delay:.60s; }
+@keyframes hIn { to { opacity:1; transform:none; } }
+
+/* — Animated gradient text — */
+.grad, .grad-line {
+  background-size:220% auto !important;
+  animation:gradFlow 6s ease infinite;
+}
+@keyframes gradFlow {
+  0%,100% { background-position:0% center; }
+  50%      { background-position:100% center; }
+}
+
+/* — Hero glow breathing — */
+.hero-glow { animation:glowBreath 7s ease-in-out infinite; }
+.glow-b    { animation-delay:-3.5s; }
+@keyframes glowBreath {
+  0%,100% { opacity:.5; transform:scale(1); }
+  50%     { opacity:.88; transform:scale(1.12); }
+}
+
+/* — Pain card hover — */
+.pain-card {
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease;
+}
+.pain-card:hover {
+  transform:translateY(-4px);
+  box-shadow:var(--shadow-float), 0 0 28px rgba(249,115,22,.12);
+  border-color:var(--og-border);
+}
+
+/* — Pricing plan hover — */
+.plan {
+  transition:transform .28s ease, box-shadow .28s ease, border-color .28s ease !important;
+}
+.plan:not(.featured):hover {
+  transform:translateY(-5px);
+  border-color:var(--og-border);
+  box-shadow:var(--shadow-float), 0 0 32px rgba(249,115,22,.1);
+}
+.plan.featured:hover {
+  transform:translateY(-5px) scale(1.012);
+}
+
+/* — Featured plan glow pulse — */
+.plan.featured {
+  animation:featGlow 4s ease-in-out infinite;
+}
+@keyframes featGlow {
+  0%,100% { box-shadow:var(--shadow-og), 0 0 24px rgba(249,115,22,.18); }
+  50%     { box-shadow:var(--shadow-og), 0 0 56px rgba(249,115,22,.38); }
+}
+
+/* — CTA ripple — */
+.btn-primary { position:relative; overflow:hidden; }
+.m-ripple {
+  position:absolute; border-radius:50%; pointer-events:none;
+  background:rgba(255,255,255,.22);
+  transform:scale(0);
+  animation:ripOut .62s linear forwards;
+}
+@keyframes ripOut { to { transform:scale(4); opacity:0; } }
 </style>
 </head>
 <body>
@@ -1487,6 +1595,54 @@ function runDemo() {
 
 const dObs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { runDemo(); dObs.disconnect(); } }, { threshold:.3 });
 dObs.observe(document.getElementById('callCard'));
+
+/* ══ MOTION v2 ══ */
+
+/* Scroll progress bar */
+(function(){
+  const p = document.createElement('div');
+  p.id = 'm-prog';
+  document.body.prepend(p);
+  window.addEventListener('scroll', () => {
+    const pct = scrollY / (document.body.scrollHeight - innerHeight) * 100;
+    p.style.width = Math.min(pct, 100) + '%';
+  }, {passive:true});
+})();
+
+/* Cursor orange glow — desktop only */
+if (window.matchMedia('(pointer:fine)').matches) {
+  const c = document.createElement('div');
+  c.id = 'm-cursor';
+  document.body.appendChild(c);
+  document.addEventListener('mousemove', e => {
+    c.style.left = e.clientX + 'px';
+    c.style.top  = e.clientY + 'px';
+  }, {passive:true});
+}
+
+/* CTA button ripple */
+document.querySelectorAll('.btn-primary').forEach(btn => {
+  btn.addEventListener('click', e => {
+    const r = document.createElement('span');
+    r.className = 'm-ripple';
+    const rect = btn.getBoundingClientRect();
+    const s = Math.max(rect.width, rect.height);
+    r.style.cssText = `width:${s}px;height:${s}px;left:${e.clientX-rect.left-s/2}px;top:${e.clientY-rect.top-s/2}px`;
+    btn.appendChild(r);
+    setTimeout(() => r.remove(), 660);
+  });
+});
+
+/* Eased stat counters (cubic ease-out replaces linear) */
+function countUp(el, target, pre, suf) {
+  const t0 = performance.now(), dur = 1800;
+  (function tick(now) {
+    const p = Math.min((now - t0) / dur, 1);
+    const v = 1 - Math.pow(1 - p, 3);
+    el.textContent = pre + Math.round(v * target) + suf;
+    if (p < 1) requestAnimationFrame(tick);
+  })(t0);
+}
 
 /* ── Waveform ── */
 const wf = document.getElementById('wf');
